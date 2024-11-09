@@ -30,6 +30,6 @@ const bannerSchema = new Schema ({
   
 });
 
-const Banner = mongoose,model("Banner",bannerSchema);
+const Banner = mongoose.model("Banner",bannerSchema);
 
 module.exports = Banner;
