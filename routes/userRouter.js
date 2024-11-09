@@ -1,6 +1,8 @@
 const express =  require("express");
 const router = express.Router();
-const userController = require("../controllers/user/userController")
+const userController = require("../controllers/user/userController");
+
+router.get("/pageNotFound",userController.pageNotFound)
 
 //path to join home page 
 router.get("/", userController.loadHomepage);
