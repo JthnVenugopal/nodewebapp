@@ -38,10 +38,12 @@ const loadShopping = async (req,res) => {
 }
 
 const signup = async (req,res)=>{
-  const {name,email,phNumber,password,confirmPassword} = req.body;
+  const {name,email,phone,password,confirmPassword} = req.body;
+
+  
   try{
        
-      const newUser = new User({name,email,phNumber, password, confirmPassword});
+      const newUser = new User({name,email,phone, password, confirmPassword});
 
       await newUser.save();
 
