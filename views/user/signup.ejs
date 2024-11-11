@@ -6,10 +6,11 @@
   <title>sign-up</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body {
-      background: linear-gradient(to bottom, #ffcccc79, #ffffff88);
+      body {
+      background: linear-gradient(to bottom, #fae1e175, #ffd0d06f);
+    
       background-repeat: no-repeat;
-      height: 100vh;
+      height: 700px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -19,14 +20,23 @@
 
     .container {
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 2px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      width: 500px;
+      width: 600px;
+      height: 100%;
+      background: linear-gradient(to bottom, #fce2e26d, #ffd0d070);
+      margin-bottom: 75px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-left: 70px;
     }
 
     .form-label {
       font-weight: bold;
+      color: rgb(0, 0, 0);
     }
+    
 
     .btn-primary {
       background-color: #ff6699;
@@ -58,6 +68,7 @@
     .signup, .google {
       height: 40px;
       font-size: 12px;
+      margin-left: 30px;
     }
 
     .error-message {
@@ -65,14 +76,56 @@
       font-size: 0.75rem;
       display: none;
     }
+
+    h5{
+      opacity: 0.8;
+      margin-left: 30px;
+      
+      color: aliceblue;
+    }
+
+    .signHead{
+      
+      margin-bottom: 10%;
+    }
+
+    .signHead p{
+      width: 400px;
+      font-size: 15px;
+      margin-left:40px;
+      color: aliceblue;
+      font-style: italic;
+    }
+
+    .signLeft{
+      
+      height: 100%;
+      display: flex;
+      align-items: center;
+      width: 600px;
+     
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size:cover;
+      
+      
+    }
+
+    .formInput{
+       height: 100%;
+    }
+
   </style>
 </head>
 <body>
-  <h3>Signup To Join on BuyHive</h3>
+  <div class="signLeft">
+  
+    
+   </div>
 
   <section class="container mt-5">
     <!-- form starts -->
-    <form action="/signup" method="post" id="signform">
+    <form action="/signup" method="post" id="signform"  class=" formInput">
       <div class="mb-3">
         <label class="form-label">Enter Full Name</label>
         <input type="text" class="form-control" name="name" id="name">
@@ -107,11 +160,9 @@
       <button type="submit" class="btn btn-primary signup">Signup</button>
     </form>
 
-    <div class="mt-3">
-      <form action="">
-        <button type="submit" name="googleLogin" class="btn btn-secondary google">Login with Google</button>
-      </form>
-    </div>
+    <form action="">
+      <button type="submit" name="googleLogin" class="btn btn-secondary google">Login with Google</button>
+    </form>
   </section>
 
   <script>
