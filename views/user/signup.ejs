@@ -7,74 +7,64 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-  background: linear-gradient(to bottom, #ffcccc79, #ffffff88);
-  background-repeat: no-repeat;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
+      background: linear-gradient(to bottom, #ffcccc79, #ffffff88);
+      background-repeat: no-repeat;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
 
-.container {
-  
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+    .container {
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 500px;
+    }
 
-.form-label {
-  font-weight: bold;
-}
+    .form-label {
+      font-weight: bold;
+    }
 
-.btn-primary {
-  background-color: #ff6699;
-  border: none;
-}
+    .btn-primary {
+      background-color: #ff6699;
+      border: none;
+    }
 
-.btn-primary:hover {
-  background-color: #ff3366;
-}
+    .btn-primary:hover {
+      background-color: #ff3366;
+    }
 
-.btn-secondary {
-  background-color: #6699ff;
-  border: none;
-}
+    .btn-secondary {
+      background-color: #6699ff;
+      border: none;
+    }
 
-.btn-secondary:hover {
-  background-color: #3366ff;
-}
+    .btn-secondary:hover {
+      background-color: #3366ff;
+    }
 
-label{
-  font-size: 13px;
-  opacity: 0.7;
-}
+    label {
+      font-size: 13px;
+      opacity: 0.7;
+    }
 
-.form-control{
-  height: 40px;
-}
+    .form-control {
+      height: 40px;
+    }
 
-.container{
-  width: 500px;
-}
+    .signup, .google {
+      height: 40px;
+      font-size: 12px;
+    }
 
-.signup{
-  height: 40px;
-  font-size: 12px;
-}
-
-.google{
-  height: 40px;
-  font-size: 12px;
-}
-
-.error-message{
-  color: #ff3366;
-  font-size: 0.75rem;
-  display: none;
-}
-
+    .error-message {
+      color: #ff3366;
+      font-size: 0.75rem;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -85,32 +75,32 @@ label{
     <form action="/signup" method="post" id="signform">
       <div class="mb-3">
         <label class="form-label">Enter Full Name</label>
-        <input type="text" class="form-control" name="name">
+        <input type="text" class="form-control" name="name" id="name">
         <!-- form validation -->
         <div id="error1" class="error-message"></div>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Enter Email</label>
-        <input type="email" class="form-control" name="email">
+        <input type="email" class="form-control" name="email" id="email">
         <div id="error2" class="error-message"></div>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Enter Phone number</label>
-        <input type="text" class="form-control" name="phone">
+        <input type="text" class="form-control" name="phone" id="phone">
         <div id="error3" class="error-message"></div>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Enter Password</label>
-        <input type="password" class="form-control" name="password">
+        <input type="password" class="form-control" name="password" id="password">
         <div id="error4" class="error-message"></div>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Confirm Password</label>
-        <input type="password" class="form-control" name="confirmPassword">
+        <input type="password" class="form-control" name="confirmPassword" id="confirmPassword">
         <div id="error5" class="error-message"></div>
       </div>
 
@@ -124,11 +114,10 @@ label{
     </div>
   </section>
 
-  
   <script>
     const nameid = document.getElementById("name");
-    const emailid = document.getElementById("email")
-    const phoneid = document.getElementById("phone")
+    const emailid = document.getElementById("email");
+    const phoneid = document.getElementById("phone");
     const passid = document.getElementById("password");
     const cpassid = document.getElementById("confirmPassword");
 
@@ -141,131 +130,104 @@ label{
     const signform = document.getElementById("signform");
 
     //---------------------------------------------
-    function nameValidateChecking (e) {
-      
-      const nameVal = nameid.value;
-      const namepattern = /^[A-Za_z\s]+$/;
+    function nameValidateChecking() {
+      const nameval = nameid.value;
+      const namepattern = /^[A-Za-z\s]+$/;
 
-      //trim method is used to remove  empty spcae in starting and ending 
-      if(nameVal.trim()===""){
+      //trim method is used to remove empty space in starting and ending 
+      if (nameval.trim() === "") {
           error1.style.display = "block";
           error1.innerHTML = "Please enter a valid name";
-      }else if(namepattern.test(nameval)){
+      } else if (!namepattern.test(nameval)) {
           error1.style.display = "block";
-          error1.innerHTML = "Name can only contain alphabets and spaces"
-      }else {
+          error1.innerHTML = "Name can only contain alphabets and spaces";
+      } else {
            error1.style.display = "none";
            error1.innerHTML = "";
       }
-
     }
 
-     //---------------------------------------------
+    //---------------------------------------------
 
-     function emailValidateChecking(e){
-      const emailVal = emailid.value;
+    function emailValidateChecking() {
+      const emailval = emailid.value;
 
-      // const emailpattern = /^[a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      //The email starts with a username that can include letters, numbers, dots, underscores, and hyphens.
-     // It must be followed by an @ symbol.
-     // After the @, there must be a domain name that can include letters, numbers, dots, and hyphens.
-     // The domain name must end with a dot followed by a top-level domain that consists of 2 to 4 letters.
+      const emailpattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-     if(!emailpattern.test(emailVal)){
-      error2.style.display = "block";
-      error2.innerHTML = "Please enter a valid email";
-     }else{
-      error2.style.display = "none";
-      error2.innerHTML = "";
-     }
+      if (!emailpattern.test(emailval)) {
+        error2.style.display = "block";
+        error2.innerHTML = "Please enter a valid email";
+      } else {
+        error2.style.display = "none";
+        error2.innerHTML = "";
+      }
+    }
 
-     }
+    //------------------------------------------------------
 
-     //------------------------------------------------------
-
-     function phoneValidateChecking(e){
+    function phoneValidateChecking() {
       const phoneval = phoneid.value;
 
-      if(phoneval.trim()===""){
-         error3.style.display = "block";
-         error3.innerHTML = "Please enter a valid phone number";
-      }else if(phoneval.length<10 || phoneval.length>10){
+      if (phoneval.trim() === "") {
+        error3.style.display = "block";
+        error3.innerHTML = "Please enter a valid phone number";
+      } else if (phoneval.length !== 10) {
         error3.style.display = "block";
         error3.innerHTML = "Please enter a valid 10 digit phone number";
-      }else{
+      } else {
         error3.style.display = "none";
         error3.innerHTML = "";
       }
+    }
 
-     }
+    //---------------------------------------------------
 
-     //---------------------------------------------------
+    function passValidateChecking() {
+      const passval = passid.value;
+      const cpassval = cpassid.value;
 
-     function passValidateChecking (e) {
+      const alpha = /[a-zA-Z]/;
+      const digit = /\d/;
 
-       const passval = passid.value;
-       const cpassval =cpassid.value;
-
-       const alpha = /[a-zA-Z]/;
-       const digit = /\d/;
-
-       if(passval.length<8){
+      if (passval.length < 8) {
         error4.style.display = "block";
         error4.innerHTML = "Password must be at least 8 characters long";
-       }else if(!alpha.test(passval) || !digit.test(passval)){
+      } else if (!alpha.test(passval) || !digit.test(passval)) {
         error4.style.display = "block";
         error4.innerHTML = "Password must contain at least Alphabets and Numbers";
-       }else{
+      } else {
         error4.style.display = "none";
         error4.innerHTML = "";
-       }
+      }
 
-       if(passval !== cpassval){
-          error5.style.display = "block";
-          error5.innerHTML = "Passwords do not match";
-       }else{
+      if (passval !== cpassval) {
+        error5.style.display = "block";
+        error5.innerHTML = "Passwords do not match";
+      } else {
         error5.style.display = "none";
-        error5.innerHTML="";
-       }
+        error5.innerHTML = "";
+      }
+    }
 
-     }
-
-    document.addEventListener("DOMContentLoaded",function(){
-      signform.addEventListener("submit",function(e){
+    //---------------------------------------------
+    document.addEventListener("DOMContentLoaded", function() {
+      signform.addEventListener("submit", function(e) {
         nameValidateChecking();
         emailValidateChecking();
         phoneValidateChecking();
         passValidateChecking();
 
-        if(
-          !nameid ||
-          !emailid ||
-          !phoneid ||
-          !passid ||
-          !cpassid ||
-          !error1 ||
-          !error2 ||
-          !error3 ||
-          !error4 ||
-          !error5 ||
-          !signform
-        ){
-          console.error("One or more elements not found")
-        }
-
-        if(
-          error1.innerHTML ||
-          error2.innerHTML ||
-          error3.innerHTML ||
-          error4.innerHTML ||
-          error5.innerHTML
-        ){
+        if (
+          error1.innerHTML !== "" ||
+          error2.innerHTML !== "" ||
+          error3.innerHTML !== "" ||
+          error4.innerHTML !== "" ||
+          error5.innerHTML !== ""
+        ) {
           e.preventDefault();
         }
-    }  )
-
-  } )
+      });
+    });
   </script>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
