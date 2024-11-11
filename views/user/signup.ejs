@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>sign-up</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -48,6 +48,7 @@
 
 label{
   font-size: 13px;
+  opacity: 0.7;
 }
 
 .form-control{
@@ -55,7 +56,7 @@ label{
 }
 
 .container{
-  width: 400px;
+  width: 500px;
 }
 
 .signup{
@@ -68,33 +69,54 @@ label{
   font-size: 12px;
 }
 
+.error-message{
+  color: #ff3366;
+  font-size: 0.75rem;
+  display: none;
+}
+
   </style>
 </head>
 <body>
+  <h3>Signup To Join on BuyHive</h3>
+
   <section class="container mt-5">
-    <form action="/signup" method="post">
+    <!-- form starts -->
+    <form action="/signup" method="post" id="signform">
       <div class="mb-3">
         <label class="form-label">Enter Full Name</label>
         <input type="text" class="form-control" name="name">
+        <!-- form validation -->
+        <div id="error1" class="error-message"></div>
       </div>
+
       <div class="mb-3">
         <label class="form-label">Enter Email</label>
         <input type="email" class="form-control" name="email">
+        <div id="error2" class="error-message"></div>
       </div>
+
       <div class="mb-3">
         <label class="form-label">Enter Phone number</label>
         <input type="text" class="form-control" name="phone">
+        <div id="error3" class="error-message"></div>
       </div>
+
       <div class="mb-3">
         <label class="form-label">Enter Password</label>
         <input type="password" class="form-control" name="password">
+        <div id="error4" class="error-message"></div>
       </div>
+
       <div class="mb-3">
         <label class="form-label">Confirm Password</label>
         <input type="password" class="form-control" name="confirmPassword">
+        <div id="error5" class="error-message"></div>
       </div>
+
       <button type="submit" class="btn btn-primary signup">Signup</button>
     </form>
+
     <div class="mt-3">
       <form action="">
         <button type="submit" name="googleLogin" class="btn btn-secondary google">Login with Google</button>
@@ -102,6 +124,151 @@ label{
     </div>
   </section>
 
+  
+  <script>
+    const nameid = document.getElementById("name");
+    const emailid = document.getElementById("email")
+    const phoneid = document.getElementById("phone")
+    const passid = document.getElementById("password");
+    const cpassid = document.getElementById("confirmPassword");
+
+    const error1 = document.getElementById("error1");
+    const error2 = document.getElementById("error2");
+    const error3 = document.getElementById("error3");
+    const error4 = document.getElementById("error4");
+    const error5 = document.getElementById("error5");
+
+    const signform = document.getElementById("signform");
+
+    //---------------------------------------------
+    function nameValidateChecking (e) {
+      
+      const nameVal = nameid.value;
+      const namepattern = /^[A-Za_z\s]+$/;
+
+      //trim method is used to remove  empty spcae in starting and ending 
+      if(nameVal.trim()===""){
+          error1.style.display = "block";
+          error1.innerHTML = "Please enter a valid name";
+      }else if(namepattern.test(nameval)){
+          error1.style.display = "block";
+          error1.innerHTML = "Name can only contain alphabets and spaces"
+      }else {
+           error1.style.display = "none";
+           error1.innerHTML = "";
+      }
+
+    }
+
+     //---------------------------------------------
+
+     function emailValidateChecking(e){
+      const emailVal = emailid.value;
+
+      // const emailpattern = /^[a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      //The email starts with a username that can include letters, numbers, dots, underscores, and hyphens.
+     // It must be followed by an @ symbol.
+     // After the @, there must be a domain name that can include letters, numbers, dots, and hyphens.
+     // The domain name must end with a dot followed by a top-level domain that consists of 2 to 4 letters.
+
+     if(!emailpattern.test(emailVal)){
+      error2.style.display = "block";
+      error2.innerHTML = "Please enter a valid email";
+     }else{
+      error2.style.display = "none";
+      error2.innerHTML = "";
+     }
+
+     }
+
+     //------------------------------------------------------
+
+     function phoneValidateChecking(e){
+      const phoneval = phoneid.value;
+
+      if(phoneval.trim()===""){
+         error3.style.display = "block";
+         error3.innerHTML = "Please enter a valid phone number";
+      }else if(phoneval.length<10 || phoneval.length>10){
+        error3.style.display = "block";
+        error3.innerHTML = "Please enter a valid 10 digit phone number";
+      }else{
+        error3.style.display = "none";
+        error3.innerHTML = "";
+      }
+
+     }
+
+     //---------------------------------------------------
+
+     function passValidateChecking (e) {
+
+       const passval = passid.value;
+       const cpassval =cpassid.value;
+
+       const alpha = /[a-zA-Z]/;
+       const digit = /\d/;
+
+       if(passval.length<8){
+        error4.style.display = "block";
+        error4.innerHTML = "Password must be at least 8 characters long";
+       }else if(!alpha.test(passval) || !digit.test(passval)){
+        error4.style.display = "block";
+        error4.innerHTML = "Password must contain at least Alphabets and Numbers";
+       }else{
+        error4.style.display = "none";
+        error4.innerHTML = "";
+       }
+
+       if(passval !== cpassval){
+          error5.style.display = "block";
+          error5.innerHTML = "Passwords do not match";
+       }else{
+        error5.style.display = "none";
+        error5.innerHTML="";
+       }
+
+     }
+
+    document.addEventListener("DOMContentLoaded",function(){
+      signform.addEventListener("submit",function(e){
+        nameValidateChecking();
+        emailValidateChecking();
+        phoneValidateChecking();
+        passValidateChecking();
+
+        if(
+          !nameid ||
+          !emailid ||
+          !phoneid ||
+          !passid ||
+          !cpassid ||
+          !error1 ||
+          !error2 ||
+          !error3 ||
+          !error4 ||
+          !error5 ||
+          !signform
+        ){
+          console.error("One or more elements not found")
+        }
+
+        if(
+          error1.innerHTML ||
+          error2.innerHTML ||
+          error3.innerHTML ||
+          error4.innerHTML ||
+          error5.innerHTML
+        ){
+          e.preventDefault();
+        }
+    }  )
+
+  } )
+  </script>
+  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
