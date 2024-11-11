@@ -64,6 +64,8 @@ function generateOtp(){
   return Math.floor(100000 + Math.random()*900000).toString();
 }
 
+console.log("random number"+generateOtp())
+
 async function sendVerificationEmail(email,otp){
   try{
      
@@ -100,6 +102,7 @@ const signup = async (req,res) => {
   try{
      const {name, email,phone, password, confirmPassword} = req.body;
 
+  
      if(password !== confirmPassword ){
        return res.render("signup",{message:"Password do not match"});
      }
@@ -111,12 +114,14 @@ const signup = async (req,res) => {
 
      const otp = generateOtp();
 
+     console.log(otp)
+
      const emailSent = await sendVerificationEmail(email,otp);
      if(!emailSent){
       return res.json("email.error")
      }
      req.session.userOTP = otp;
-     req.session.userData = {email,password};
+     req.session.userData = {name,phone,email,password,confirmPassword};
 
     //  res.render("verify-otp");
      console.log("OTP Sent",otp);

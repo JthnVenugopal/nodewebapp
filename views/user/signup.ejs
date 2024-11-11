@@ -103,7 +103,7 @@
       display: flex;
       align-items: center;
       width: 600px;
-     
+      background-image: url("/public/signup/pink_purple_tunnel_artistic_digital_art_stock_windows_11_purple_background_4k_hd_windows_11.jpg");
       background-repeat: no-repeat;
       background-position: center;
       background-size:cover;
@@ -120,7 +120,7 @@
 <body>
   <div class="signLeft">
   
-    
+   
    </div>
 
   <section class="container mt-5">
@@ -250,13 +250,22 @@
         error4.style.display = "none";
         error4.innerHTML = "";
       }
-
-      if (passval !== cpassval) {
+      if (cpassval.length===0) {
+        error5.style.display = "none";
+        error.innerHTML="";
+      } 
+      else if(passval !== cpassval){
         error5.style.display = "block";
         error5.innerHTML = "Passwords do not match";
-      } else {
+      }
+      else {
         error5.style.display = "none";
         error5.innerHTML = "";
+      }
+
+      if(passval.length===0){
+        error4.style.display = "block";
+        error4.innerHTML = "Password cannot be empty";
       }
     }
 
