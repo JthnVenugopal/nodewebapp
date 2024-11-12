@@ -10,7 +10,7 @@
       background: linear-gradient(to bottom, #fae1e175, #ffd0d06f);
     
       background-repeat: no-repeat;
-      height: 700px;
+      height: 1000px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -29,7 +29,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-left: 70px;
+      margin-left: 30%;
+      padding-top: 15%;
     }
 
     .form-label {
@@ -70,7 +71,15 @@
       height: 40px;
       font-size: 12px;
       margin-left: 30px;
+      border-radius: 50px;
+      margin-bottom: 50%;
     }
+
+    .google {
+  background-color: rgb(255, 228, 228);
+  border: 1px solid #000000;
+  color: #000000;
+}
 
     .error-message {
       color: #ff3366;
@@ -120,8 +129,7 @@
 </head>
 <body>
   <div class="signLeft">
-  
-   
+       <img src="/public/images/buyHiveLogo.png" alt="">
    </div>
 
   <section class="container mt-5">
@@ -162,7 +170,7 @@
     </form>
 
     <form action="">
-      <button type="submit" name="googleLogin" class="btn btn-secondary google">Login with Google</button>
+      <a href="/auth/google" name="googleLogin" class="btn btn-secondary google">Login with Google</a>
     </form>
   </section>
 

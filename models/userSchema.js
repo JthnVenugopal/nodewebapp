@@ -15,10 +15,14 @@ const userSchema = new Schema ({
     type: String,
     required: false,
     unique: false,
-    sparse: true,
+    sparse: true,// to avoid multiple null
     default:null,
   },
 
+  googleId:{
+    type:String,
+    unique:true
+  },
   password: {
     type: String,
     required: false,
