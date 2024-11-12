@@ -1,6 +1,7 @@
 const User = require("../../models/userSchema");
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
+const bcrypt = require("bcrypt");
 
 const pageNotFound = async (req,res) => {
   try{
@@ -120,10 +121,13 @@ const signup = async (req,res) => {
      if(!emailSent){
       return res.json("email.error")
      }
-     req.session.userOTP = otp;
+
+      // Save OTP and user data in session
+     req.session.userOtp = otp;
+
      req.session.userData = {name,phone,email,password,confirmPassword};
 
-    //  res.render("verify-otp");
+     res.render("verify-otp");
      console.log("OTP Sent",otp);
 
   } catch (error) {
@@ -135,10 +139,61 @@ const signup = async (req,res) => {
 
 }
 
+//------------------------------------------------
+
+const securePassword = async (password)=>{
+  try{
+
+      const passwordHash = await bcrypt.hash(password,10);
+
+      return passwordHash;
+
+  }catch(error){
+
+      console.error(error)
+
+  }
+}
+
+const verifyOtp =  async(req,res)=>{
+    
+  try{
+    const {otp} = req.body;
+    console.log(otp);
+
+    if(otp==req.session.userOtp){
+      const user = req.session.userData;
+      const passwordHash = await securePassword(user.password);
+
+      const saveUserData = new User({
+        name:user.name,
+        email:user.email,
+        phone:user.phone,
+        password:passwordHash,
+      })
+
+      await saveUserData.save();
+      req.session.user = saveUserData._id;
+      res.json ({success:true, redirectUrl:"/login"});
+
+    }else{
+      res.status(400).json({success:false,message:"Invalid OTP, Please try again!"})
+    }
+  }catch(error){
+      console.error("Error verifying OTP",error);
+      res.status(500).json({success:false,message:"An error Occured"})
+  }
+}
+
+
+
+
+//-------------------------------------------------
 module.exports = {
   loadHomepage, 
   pageNotFound, 
   loadSignup, 
   loadShopping,
   signup,
+  verifyOtp
 }
