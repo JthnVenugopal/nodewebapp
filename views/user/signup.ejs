@@ -5,174 +5,150 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>sign-up</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-      body {
-      background: linear-gradient(to bottom, #fae1e175, #ffd0d06f);
-    
-      background-repeat: no-repeat;
-      height: 1000px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
-      font-family: Verdana, Geneva, Tahoma, sans-serif;
-    }
+<style>
+     
+     body {
+            /* background: linear-gradient(rgba(255, 176, 176, 0.491),rgba(250, 216, 216, 0.486)); */
+            background-image: url(https://img.freepik.com/free-photo/sport-equipment_23-2148149004.jpg?t=st=1731441030~exp=1731444630~hmac=cf8726e1718a1c5c98977ec3361fb09b29a8f1b82c5c215de3284c48c5963169&w=900);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            font-family: Arial, sans-serif; /* Font styling */
+            height: 1200px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
 
-    .container {
-      padding: 20px;
-      border-radius: 2px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      width: 600px;
-      height: 100%;
-      background: linear-gradient(to bottom, #fce2e26d, #ffd0d070);
-      margin-bottom: 75px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-left: 30%;
-      padding-top: 15%;
-    }
+        /* Center the form and add margins */
+        .container {
+            max-width: 700px;
+            margin-top: 20px; 
+            padding: 20px; /* Padding around the container */
+            background: linear-gradient(rgba(248, 252, 45, 0.914),rgb(0, 0, 0));
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            height: 1100px;
+            
+        }
 
-    .form-label {
-      font-weight: bold;
-      color: rgb(0, 0, 0);
-    }
-    
+        /* Error message styling */
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
 
-    .btn-primary {
-      background-color: #ff6699;
-      border: none;
-    }
+        /* Interactive button effects */
+        .signup, .google {
+            transition: all 0.3s ease;
+            border-radius: 0.375rem; /* Rounded corners for buttons */
+        }
 
-    .btn-primary:hover {
-      background-color: #ff3366;
-    }
+        .signup:hover, .google:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
 
-    .btn-secondary {
-      background-color: #6699ff;
-      border: none;
-    }
+        .signup {
+            background-color: #007bff; /* Bootstrap primary color */
+            color: white;
+        }
 
-    .btn-secondary:hover {
-      background-color: #3366ff;
-    }
+        .signup:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
 
-    label {
-      font-size: 13px;
-      opacity: 0.7;
-    }
+        .google {
+            background-color: #03c01267;
+            color: white;
+            text-align: center;
+        }
 
-    .form-control {
-      height: 40px;
-      font-size: 15px;
-    }
+        .google:hover {
+            background-color: #c1361d65; /* Darker red on hover */
+        }
 
-    .signup, .google {
-      height: 40px;
-      font-size: 12px;
-      margin-left: 30px;
-      border-radius: 50px;
-      margin-bottom: 50%;
-    }
+        /* Style the form inputs */
+        .formInput input {
+            border-radius: 0.375rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .google {
-  background-color: rgb(255, 228, 228);
-  border: 1px solid #000000;
-  color: #000000;
-}
+        .formInput {
+            /* background-color: #f9f9f9; */
+            padding: 30px;
+            border-radius: 10px;
+            
+        }
 
-    .error-message {
-      color: #ff3366;
-      font-size: 0.75rem;
-      display: none;
-    }
+        .form-label{
+          font-size: 18px;
+        }
 
-    h5{
-      opacity: 0.8;
-      margin-left: 30px;
-      
-      color: aliceblue;
-    }
+        h2 {
+            color: #333;
+            margin-bottom: 20px; 
+        }
 
-    .signHead{
-      
-      margin-bottom: 10%;
-    }
-
-    .signHead p{
-      width: 400px;
-      font-size: 15px;
-      margin-left:40px;
-      color: aliceblue;
-      font-style: italic;
-    }
-
-    .signLeft{
-      
-      height: 100%;
-      display: flex;
-      align-items: center;
-      width: 600px;
-      background-image: url("/public/signup/pink_purple_tunnel_artistic_digital_art_stock_windows_11_purple_background_4k_hd_windows_11.jpg");
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size:cover;
-      
-      
-    }
-
-    .formInput{
-       height: 100%;
-    }
-
-  </style>
+        .btn-primary{
+          margin-left: 198px;
+          width: 200px;
+        }
+    </style>
 </head>
 <body>
-  <div class="signLeft">
-       <img src="/public/images/buyHiveLogo.png" alt="">
-   </div>
+  
 
-  <section class="container mt-5">
-    <!-- form starts -->
-    <form action="/signup" method="post" id="signform"  class=" formInput">
-      <div class="mb-3">
-        <label class="form-label">Enter Full Name</label>
-        <input type="text" class="form-control" name="name" id="name">
-        <!-- form validation -->
-        <div id="error1" class="error-message"></div>
-      </div>
+    <section class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <h2 class="text-center" style="font-family: Verdana, Geneva, Tahoma, sans-serif; font-weight: 600;">Sign Up</h2>
+                <!-- form starts -->
+                <form action="/signup" method="post" id="signform" class="formInput ">
+                    <div class="mb-3">
+                        <label class="form-label" for="name">Enter Full Name</label>
+                        <input type="text" class="form-control" name="name" id="name" required style="border-radius: 50px;">
+                        <!-- form validation -->
+                        <div id="error1" class="error-message"></div>
+                    </div>
 
-      <div class="mb-3">
-        <label class="form-label">Enter Email</label>
-        <input type="email" class="form-control" name="email" id="email">
-        <div id="error2" class="error-message"></div>
-      </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="email">Enter Email</label>
+                        <input type="email" class="form-control" name="email" id="email" required style="border-radius: 50px;">
+                        <div id="error2" class="error-message"></div>
+                    </div>
 
-      <div class="mb-3">
-        <label class="form-label">Enter Phone number</label>
-        <input type="text" class="form-control" name="phone" id="phone">
-        <div id="error3" class="error-message"></div>
-      </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="phone">Enter Phone number</label>
+                        <input type="text" class="form-control" name="phone" id="phone" required style="border-radius: 50px;">
+                        <div id="error3" class="error-message"></div>
+                    </div>
 
-      <div class="mb-3">
-        <label class="form-label">Enter Password</label>
-        <input type="password" class="form-control" name="password" id="password">
-        <div id="error4" class="error-message"></div>
-      </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="password">Enter Password</label>
+                        <input type="password" class="form-control" name="password" id="password" required style="border-radius: 50px;">
+                        <div id="error4" class="error-message"></div>
+                    </div>
 
-      <div class="mb-3">
-        <label class="form-label">Confirm Password</label>
-        <input type="password" class="form-control" name="confirmPassword" id="confirmPassword">
-        <div id="error5" class="error-message"></div>
-      </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                        <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" required style="border-radius: 50px;">
+                        <div id="error5" class="error-message"></div>
+                    </div>
 
-      <button type="submit" class="btn btn-primary signup">Signup</button>
-    </form>
+                    <button type="submit" class="btn btn-primary " >Signup</button>
+                </form>
 
-    <form action="">
-      <a href="/auth/google"  class="btn btn-secondary google">Login with Google</a>
-    </form>
-  </section>
+                <form action="">
+                    <a href="/auth/google" class="btn btn-secondary google  mt-3 d-flex justify-content-center" style="width: 100px;margin-left: 280px;"><img src="/images/google.png" alt="" style="height: 50px;"></a>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="/login" style="font-size: 18px;">Already a member? Login</a>
+                </div>
+            </div>
+        </div>
+    </section>
+  
 
   <script>
     const nameid = document.getElementById("name");

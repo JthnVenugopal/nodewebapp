@@ -1,4 +1,4 @@
 git init 
 git add .
-git commit -m "message"
+git commit -m "process initialized"
 git push -u origin main
