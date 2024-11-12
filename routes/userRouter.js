@@ -19,12 +19,8 @@ router.post("/resend-otp",userController.resendOtp);
 
 
 //google authentication routes
-scope: ["openid", "profile", "email"]
 
-router.get("/auth/google",passport.authenticate("google",{scope:["openid","profile","email"]}));
-
-router.get('/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
-   res.render('home');
-})
+router.get("/auth/google",passport.authenticate("google",{scope:["profile","email"]}));
+router.get("/google/callback",passport.authenticate("google",{failureRedirect:"/signup"}),(req,res)=>{res.redirect("/")});
 
 module.exports = router;
