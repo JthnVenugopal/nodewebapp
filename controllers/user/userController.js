@@ -30,6 +30,9 @@ const loadHomepage = async (req,res) => {
     res.status(500).send("Server error");
   }
 }
+
+// console.log("User  signed up:", userData);
+// console.log("User  session data:", req.session.user);
 //------------------------------------------------------
 const loadSignup = async (req,res) => {
   try{
@@ -150,7 +153,7 @@ const verifyOtp =  async(req,res)=>{
     
   try{
     const {otp} = req.body;
-    console.log("OTP entered by user"+otp);
+    console.log("OTP entered by user "+otp);
 
     if(otp==req.session.userOtp){
       const user = req.session.userData;
@@ -164,11 +167,11 @@ const verifyOtp =  async(req,res)=>{
       })
 
       await saveUserData.save();
-
-      req.session.user = saveUserData._id;
-      res.json ({success:true, redirectUrl:"/login"});
-      // res.redirect("login");
-      // // console.log("User registered successfully, redirecting to login.");
+ // Store user data in session
+      req.session.user = { _id: saveUserData._id, name: saveUserData.name, email: saveUserData.email };
+      // req.session.user = saveUserData._id;// This should store the user ID in the session
+      res.json ({success:true, redirectUrl:"/"});
+     
 
     }else{
       res.status(400).json({success:false,message:"Invalid OTP, Please try again!"})
