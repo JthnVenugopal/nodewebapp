@@ -22,6 +22,52 @@
     <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+
+    <style>
+         .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 1000;
+            right: 0;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+        }
+
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        a{
+            text-decoration: none;
+            color: black;
+            font-weight: 700;
+        }
+        .header{
+            position: relative;
+            z-index: 500;
+        }
+    </style>
 </head>
 
 <body>
@@ -62,32 +108,7 @@
 
     <!-- Header Section Begin -->
     <header class="header">
-        <!-- <div class="header__top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-md-7">
-                        <div class="header__top__left">
-                            <p>Free shipping, 30-day return or refund guarantee.</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-5">
-                        <div class="header__top__right">
-                            <div class="header__top__links">
-                                <a href="#">Sign in</a>
-                                <a href="#">FAQs</a>
-                            </div>
-                            <div class="header__top__hover">
-                                <span>Usd <i class="arrow_carrot-down"></i></span>
-                                <ul>
-                                    <li>USD</li>
-                                    <li>EUR</li>
-                                    <li>USD</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
+       
         </div>
         <div class="container">
             <div class="row">
@@ -117,8 +138,28 @@
                 </div>
                 <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option">
-                        <a href="/signup" class="sign-in-link" style="text-decoration: none; font-size: 18px; color: black;">Sign Up</a>
+
+                        <% if (locals.user) { %>
+                            <div class="dropdown">
+
+                                <div class="user-info">
+                                    <i class="fa-solid fa-circle-user"></i>
+                                    <span class="username"><a href="#" class="sign-in-link">
+                                            <%= locals.user.name %>
+                                        </a></span>
+                                </div>
+                                <div class="dropdown-content">
+                                    <a href="/userProfile">Profile</a>
+                                    <a href="/logout">Logout</a>
+                                </div>
+                            </div>
+                            <% } else { %>
+                                <a href="/signup" class="sign-in-link" style="text-decoration: none; font-size: 18px; color: black;">Sign Up</a>
                         <a href="/login" class="sign-in-link" style="text-decoration: none; font-size: 18px; color: black;">Log in</a>
+
+                                <% } %>
+
+                        
                         <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
                         <a href="#"><img src="img/icon/heart.png" alt=""></a>
                         <a href="#"><img src="img/icon/cart.png" alt=""> <span>0</span></a>

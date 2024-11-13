@@ -23,4 +23,7 @@ router.get("/google/callback",passport.authenticate("google",{failureRedirect:"/
 router.get("/login",userController.loadLogin);
 router.post("/login",userController.login);
 
+//logout
+router.get("/logout",userController.logout);
+
 module.exports = router;
