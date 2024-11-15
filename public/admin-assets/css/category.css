@@ -1,0 +1,68 @@
+.col-md-3 {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin: 10px;
+}
+
+.form-label {
+  margin-bottom: 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.d-grid {
+  margin-top: 20px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.pagination-container {
+  text-align: center;
+}
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination a,
+.pagination .current-page {
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 0 2px;
+  border: 1px solid #ddd;
+  text-decoration: none;
+  color: #333;
+}
+
+.pagination a:hover {
+  background-color: #f5f5f5;
+}
+
+.error-message {
+  color: red;
+}
+
+.create-cat-card{
+  max-width: 1800px;
+  margin-left: 260px;
+}

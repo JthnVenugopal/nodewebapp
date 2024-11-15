@@ -1,0 +1,113 @@
+<%- include("../../views/partials/admin/header") %>
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css"/>
+  <link rel="stylesheet" href="/admin-assets/css/category.css">
+</head>
+<body>
+  <section class="content-main">
+    
+    <header class="card-header text-center mb-20">
+      <form action="/admin/category/" method="get" class="d-inline">
+        <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 600px;height: 60px; margin-left: 1300px;">
+          <input style="margin-left: 10px;" type="text" class="form-control border-0 rounded-pill mt-1" placeholder="Search categories" name="search"/>
+          <button class="btn" type="submit">Search</button>
+        </div>
+      </form>
+    </header>
+    <div class="card create-cat-card">
+      <div class="card-body"  >
+        <div class="row">
+          <div class="col-md-3" style="font-size: 15px;">
+            <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
+              <div class="mb-4" >
+                <label for="product_name" class="form-label">Name</label>
+                <input type="text" name="name" class="form-control" id="product_name" required/>
+                <div id="name-error" class="error-message"></div>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Description</label>
+                <textarea  name="description" class="form-control" id="descriptionId" required></textarea>
+                <div id="description-error" class="error-message"></div>
+              </div>
+              <div class="d-grid">
+                <button class="btn btn-primary" type="submit" style="font-size: 15px;">
+                  Create category
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-8 ml-10">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th class="text-center"></th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th >Offer</th>
+                    <th>Status</th>
+                    <th>List/Unlist</th>
+                    <th class="text-start">Edit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td></td>
+                    <td class="text-start"></td>
+                    <td class="text-start"></td>
+                    <td>
+                    </td>
+                    <td class="text-start">
+                      <button class="btn btn-info" style="width: 120px; font-size: 15px;">
+                        <a href="#" class="text-white" >Add Offer</a>
+                      </button>
+                      <button class="btn btn-info mt-2"style="width: 120px; font-size: 15px;">
+                        <a href="#" class="text-white">Remove</a>
+                      </button>
+                    </td>
+                    <td class="text-start">
+                      <span class="badge rounded-pill alert-success" style="width: 60px; color: black;">Listed</span>
+                      <span class="badge rounded-pill alert-danger" style="width: 60px; color: black;">Unlisted</span>
+                    </td>
+                    <td class="text-start">
+                      <button class="btn btn-danger" style="width: 100px; font-size: 15px;">
+                        <a href="#" class="text-white">Unlist</a>
+                      </button>
+                      <button class="btn btn-success mt-2" style="width: 100px; font-size: 15px;">
+                        <a href="" class="text-white">List</a>
+                      </button>
+                    </td>
+                    <td class="text-start">
+                      <a href="" class="btn btn-info text-white" style="font-size: 15px;">Edit</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pagination-container mt-5" >
+      <a href="#" style="margin-left: 50px;">&laquo; Previous</a>
+      <span class="current-page"></span>
+      <a href="#"></a>
+      <a href="#" style="margin-left: 50px;">Next &raquo;</a>
+    </div>
+  </section>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <script>
+    function handleFormSubmit(event){
+      
+      event.preventDefault();
+      if(!validateForm()){
+        return
+      }
+
+
+    }
+  </script>
+<%- include("../../views/partials/admin/footer") %>
