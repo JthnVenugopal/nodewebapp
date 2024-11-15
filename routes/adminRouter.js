@@ -13,6 +13,7 @@ router.get("/logout",adminController.logout);
 
 //customer management
 router.get("/users",adminAuth,customerController.customerInfo);
-
+router.get("/blockCustomer",adminAuth,customerController.customerBlocked);
+router.get("/unblockCustomer",adminAuth,customerController.customerunBlocked)
 
 module.exports = router;
