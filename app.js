@@ -4,14 +4,12 @@ const path = require('path');
 const env  = require('dotenv').config();
 const session = require("express-session");
 const DB =  require("./config/db");
-const port = process.env.PORT || 3001;
+const passport = require("./config/passport");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter")
-const passport = require("./config/passport")
+DB();
 
-
-
-DB()
+const port = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
