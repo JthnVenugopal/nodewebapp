@@ -58,14 +58,23 @@
                     <td class="text-start"><%=category.name%></td>
                     <td class="text-start"><%category.description%></td>
                     <td>
+                      <%if(category.categoryOffer){%>
+
+                      <%=category.categoryOffer%>
+                      <%}else{%>
+                            0%
+                        <%}%>
                     </td>
                     <td class="text-start">
+                      <%if(category.categoryOffer===0){%>
                       <button class="btn btn-info" style="width: 120px; font-size: 15px;">
-                        <a href="#" class="text-white" >Add Offer</a>
-                      </button>
+                        <a href="#" class="text-white" onclick="addOffer('<%=category._id%>')">Add Offer</a>
+                      </button> 
+                      <%}else{%>
                       <button class="btn btn-info mt-2"style="width: 120px; font-size: 15px;">
-                        <a href="#" class="text-white">Remove</a>
+                        <a href="#" class="text-white" onclick="removeOffer('<%=category._id%>')">Remove</a>
                       </button>
+                     <%}%>
                     </td>
                     <td class="text-start">
                       <span class="badge rounded-pill alert-success" style="width: 60px; color: black;">Listed</span>
@@ -194,6 +203,55 @@
       element.innerText = "";
       element.style.display = "none";
     });
+  }
+
+  async function addOffer(categoryId) {
+    const { value: amount } = await Swal.fire({
+      title: 'Offer in Percentage',
+      input: 'number',
+      inputLabel: 'Percentage',
+      inputPlaceholder: '%',
+      inputAttributes: {
+        min: 0, // Optional: Set minimum value
+        max: 100 // Optional: Set maximum value
+      },
+      showCancelButton: true // Optional: Show cancel button
+    });
+
+    if (amount) {
+      try {
+        const response = await fetch("/admin/addCategoryOffer", {
+          method: "POST",
+          headers: {
+            'Content-Type': "application/json",
+          },
+          body: JSON.stringify({
+            percentage: amount,
+            categoryId: categoryId,
+          }),
+        });
+
+        const data = await response.json();
+        if (response.ok && data.status === true) {
+          Swal.fire(
+            "Offer added",
+            "Offer added successfully",
+            "success"
+          ).then(() => {
+            location.reload();
+          });
+        } else {
+          Swal.fire("Failed", data.message || "Adding offer failed", "error");
+        }
+      } catch (error) {
+        Swal.fire(
+           "Error",
+          "An error occurred while adding the offer",
+          "error"
+        );
+        console.error("Error removing offer", error)
+      }
+    }
   }
 </script>
 <%- include("../../views/partials/admin/footer") %>

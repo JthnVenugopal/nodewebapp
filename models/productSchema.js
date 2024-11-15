@@ -16,7 +16,7 @@ const productSchema = new Schema ({
   },
   category:{
     type:Schema.Types.ObjectId,
-    ref: "category",
+    ref: "Category",
     required: true,
   },
   regularPrice:{
@@ -33,7 +33,7 @@ const productSchema = new Schema ({
   },
   quantity: {
     type: Number,
-    default: true
+    default: 0
   },
   color:{
     type:String,
@@ -55,7 +55,7 @@ const productSchema = new Schema ({
   }},{timestamps:true //automatically adds two fields to schema: createdAt and updatedAt
 })
 
-const Product = mongoose.Model("Product", productSchema);
+const Product = mongoose.model("Product", productSchema);
 
 module.exports = Product;
 
