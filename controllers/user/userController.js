@@ -170,7 +170,7 @@ const verifyOtp =  async(req,res)=>{
  // Store user data in session
       req.session.user = { _id: saveUserData._id, name: saveUserData.name, email: saveUserData.email };
       // req.session.user = saveUserData._id;// This should store the user ID in the session
-      res.json ({success:true, redirectUrl:"/"});
+      res.json ({success:true, redirectUrl:"/login"});
      
 
     }else{

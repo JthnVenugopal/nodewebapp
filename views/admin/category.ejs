@@ -52,47 +52,53 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <%cat.reverse().forEach((category,index)=>{%>
-                  <tr>
-                    <td></td>
-                    <td class="text-start"><%=category.name%></td>
-                    <td class="text-start"><%category.description%></td>
-                    <td>
-                      <%if(category.categoryOffer){%>
-
-                      <%=category.categoryOffer%>
-                      <%}else{%>
-                            0%
-                        <%}%>
-                    </td>
-                    <td class="text-start">
-                      <%if(category.categoryOffer===0){%>
-                      <button class="btn btn-info" style="width: 120px; font-size: 15px;">
-                        <a href="#" class="text-white" onclick="addOffer('<%=category._id%>')">Add Offer</a>
-                      </button> 
-                      <%}else{%>
-                      <button class="btn btn-info mt-2"style="width: 120px; font-size: 15px;">
-                        <a href="#" class="text-white" onclick="removeOffer('<%=category._id%>')">Remove</a>
-                      </button>
-                     <%}%>
-                    </td>
-                    <td class="text-start">
-                      <span class="badge rounded-pill alert-success" style="width: 60px; color: black;">Listed</span>
-                      <span class="badge rounded-pill alert-danger" style="width: 60px; color: black;">Unlisted</span>
-                    </td>
-                    <td class="text-start">
-                      <button class="btn btn-danger" style="width: 100px; font-size: 15px;">
-                        <a href="#" class="text-white">Unlist</a>
-                      </button>
-                      <button class="btn btn-success mt-2" style="width: 100px; font-size: 15px;">
-                        <a href="" class="text-white">List</a>
-                      </button>
-                    </td>
-                    <td class="text-start">
-                      <a href="" class="btn btn-info text-white" style="font-size: 15px;">Edit</a>
-                    </td>
-                  </tr> 
-                  <%})%>
+                  <% cat.reverse().forEach((category, index) => { %>
+                    <tr>
+                        <td></td>
+                        <td class="text-start"><%= category.name %></td>
+                        <td class="text-start"><%= category.description %></td> <!-- Changed here -->
+                        <td>
+                            <% if (category.categoryOffer) { %>
+                                <%= category.categoryOffer %>
+                            <% } else { %>
+                                0%
+                            <% } %>
+                        </td>
+                        <td class="text-start">
+                            <% if (category.categoryOffer === 0) { %>
+                                <button class="btn btn-info" style="width: 120px; font-size: 15px;">
+                                    <a href="#" class="text-white" onclick="addOffer('<%= category._id %>')">Add Offer</a>
+                                </button> 
+                            <% } else { %>
+                                <button class="btn btn-info mt-2" style="width: 120px; font-size: 15px;">
+                                    <a href="#" class="text-white" onclick="removeOffer('<%= category._id %>')">Remove</a>
+                                </button>
+                            <% } %>
+                        </td>
+                        <td class="text-start">
+                            <% if (category.isListed) { %>
+                                <span class="badge rounded-pill alert-success" style="width: 60px; color: black;">Listed</span>
+                            <% } else { %>
+                                <span class="badge rounded-pill alert-danger" style="width: 60px; color: black;">Unlisted</span>
+                            <% } %>
+                        </td>
+                        <td class="text-start">
+                            <% if (category.isListed) { %>
+                                <button class="btn btn-danger" style="width: 100px; font-size: 15px;">
+                                    <a href="/admin/listCategory?id=<%= category._id %>" class=" text-white">Unlist</a>
+                                </button>
+                            <% } else { %>
+                                <button class="btn btn-success mt-2" style="width: 100px; font-size: 15px;">
+                                    <a href="/admin/unlistCategory?id=<%= category._id %>" class="text-white">List</a>
+                                </button>
+                            <% } %>
+                        </td>
+                        <td class="text-start">
+                            <a href="" class="btn btn-info text-white" style="font-size: 15px;">Edit</a>
+                        </td>
+                    </tr>
+                    <% }); %>
+                 
                 </tbody>
               </table>
             </div>
@@ -163,7 +169,7 @@
       else {
         Swal.fire({
           icon: 'error',
-          title: 'Oops',
+          title: 'Category already exists',
           text: 'An error occurred while adding category',
         });
       }
@@ -243,6 +249,8 @@
         } else {
           Swal.fire("Failed", data.message || "Adding offer failed", "error");
         }
+
+
       } catch (error) {
         Swal.fire(
            "Error",
@@ -253,5 +261,41 @@
       }
     }
   }
+
+  async function removeOffer(categoryId) {
+    try {
+        const response = await fetch("/admin/removeCategoryOffer", {
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json",
+            },
+            body: JSON.stringify({ categoryId: categoryId }),
+        });
+
+        const data = await response.json(); // Parse the JSON response
+
+        // Check if the response is successful
+        if (response.ok && data.status === true) {
+            Swal.fire(
+                "Offer removed",
+                "The offer has been removed",
+                "success"
+            ).then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire(data.message || "Removing offer failed", "error");
+        }
+    } catch (error) {
+        Swal.fire(
+            "Error",
+            "An error occurred while removing the offer",
+            "error"
+        );
+        console.error("Error removing offer", error);
+    }
+}
+
+
 </script>
 <%- include("../../views/partials/admin/footer") %>

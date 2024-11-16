@@ -30,25 +30,34 @@ const categoryInfo = async (req,res)=>{
 
 //-------------------------------------------------------------
 
-const addCategory =  async (req,res) =>{
-  const {name,description} = req.body;
+const addCategory = async (req, res) => {
+  const { name, description } = req.body;
 
   try {
-    const existingCategory = await Category.findOne({name});// checking that category already exist or not 
-    if(existingCategory){
-      return res.status(400).json({error:"Category already exists"});// if there passing error
+    // Check if the category already exists
+    const existingCategory = await Category.findOne({ name });
+    if (existingCategory) {
+      return res.status(400).json({ error: "Category already exists" });
     }
 
-    const newCategory = new Category({//  if not exists creating a new category and saving inside DB
+    // Check if a product with the same name exists in the same category
+    const existingProduct = await Product.findOne({ name });
+    if (existingProduct) {
+      return res.status(400).json({ error: "Product with the same name already exists" });
+    }
+
+    // Create a new category if it does not exist
+    const newCategory = new Category({
       name,
       description,
-    })
-    await newCategory.save()//saving in DB
-    return res.json({message:"Category Added Successfully"})
+    });
+    await newCategory.save(); // Save in DB
+    return res.json({ message: "Category Added Successfully" });
   } catch (error) {
-    return res.status(500).json({error:"Internal Server error"})
+    console.error(error); // Log the error for debugging
+    return res.status(500).json({ error: "Internal Server error" });
   }
-}
+};
 
 //------------------------------------------------------------
 
@@ -56,12 +65,6 @@ const addCategoryOffer = async (req, res) => {
   try {
     const percentage = parseInt(req.body.percentage);
     const categoryId = req.body.categoryId;
-
-    // Check if percentage is a valid number
-    if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-      return res.status(400).json({ status: false, message: "Invalid percentage value" });
-    }
-
     const category = await Category.findById(categoryId);
     if (!category) {
       return res.status(404).json({ status: false, message: "Category not found" });
@@ -79,7 +82,7 @@ const addCategoryOffer = async (req, res) => {
     // Reset product offers and sale prices
     for (const product of products) {
       product.productOffer = 0;
-      product.salePrice = product.regularPrice; // Reset sale price
+      product.salePrice = product.regularPrice; // Resetting sale price
       await product.save();
     }
 
@@ -126,9 +129,41 @@ const removeCategoryOffer = async (req, res) => {
 
 //------------------------------------------------------------
 
+const getListCategory = async (req,res) => {
+
+try {
+  
+ let id = req.query.id;
+
+ await Category.updateOne({_id:id},{$set:{isListed:false}});
+ res.redirect("/admin/category");
+
+} catch (error) {
+  res.redirect("/pageerror");
+}
+
+}
+
+//------------------------------------------------------------
+
+const getUnlistCategory = async (req,res) => {
+  try {
+    let id = req.query.id;
+    await Category.updateOne({_id:id},{$set:{isListed:true}});
+    res.redirect("/admin/category");
+
+  } catch (error) {
+    res.redirect("/pageerror")
+  }
+}
+
+//------------------------------------------------------------
+
 module.exports = {
   categoryInfo,
   addCategory,
   addCategoryOffer,
-  removeCategoryOffer
+  removeCategoryOffer,
+  getListCategory,
+  getUnlistCategory
 }
