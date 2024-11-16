@@ -1,0 +1,50 @@
+<%- include("../../views/partials/admin/header") %>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 mt-60">
+            <form method="post" action="/admin/editCategory/<%= category._id %>">
+                <div class="mb-4 mt-30">
+                    <label for="category_name" class="form-label">Name</label>
+                    <input type="text" name="categoryName" value="<%= category.name %>" class="form-control border" required />
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control border" required><%= category.description %></textarea>
+                </div>
+
+                <div class="d-grid text-end mt-30 col-md-5">
+                    <button class="btn btn-primary" type="submit">Update category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+  document.getElementById('editCategoryForm').onsubmit = async function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(this);
+        const response = await fetch(this.action, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Redirect or perform any other action on success
+            window.location.href = '/admin/category'; // Adjust as needed
+        } else {
+            // Show SweetAlert for error
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: result.error,
+                confirmButtonText: 'OK'
+            });
+        }
+    };
+</script>
+<%- include("../../views/partials/admin/footer") %>
