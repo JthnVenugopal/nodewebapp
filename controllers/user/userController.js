@@ -152,7 +152,7 @@ const securePassword = async (password)=>{
 const verifyOtp =  async(req,res)=>{
     
   try{
-    const {otp} = req.body;// destructured otp 
+    const {otp} = req.body;// deconstructed otp 
     console.log("OTP entered by user "+ otp);
 
     if(otp==req.session.userOtp){
@@ -176,8 +176,6 @@ const verifyOtp =  async(req,res)=>{
 
       res.json ({success:true, redirectUrl:"login"});
 
-  
-      
     }else{
       res.status(400).json({success:false,message:"Invalid OTP, Please try again!"})
     }
@@ -270,9 +268,6 @@ const logout = async (req,res)=>{
       res.redirect("/PageNotFound");  
   }
 }
-
-
-
 
 
 //-------------------------------------------------
