@@ -1,0 +1,178 @@
+<%- include("../../views/partials/admin/header") %>
+<style>
+  .error-message {
+    color: red;
+  }
+  .pagination-container {
+    text-align: center;
+    margin-top: 20px;
+    
+  }
+  .pagination {
+    display: inline-block;
+  }
+  .pagination a,
+  .pagination .current-page {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 0 2px;
+    border: 1px solid #ddd;
+    text-decoration: none;
+    color: #333;
+  }
+  .pagination a:hover {
+    background-color: #f5f5f5;
+  }
+
+  .card{
+    max-width: 1700px;
+    margin-left:  255px;
+    height: 90vh;
+    padding-top: 50px;
+    padding-left: 50px;
+  }
+
+  
+</style>
+<section class="content-main">
+  <div class="content-header">
+    
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4 col-lg-3 ">
+          <form method="post" action="/admin/addBrand" enctype="multipart/form-data">
+            <div class="mb-4">
+              <label for="product_name" class="form-label">Brand Name</label>
+              <input type="text" name="name" placeholder="Type here" class="form-control" required />
+            </div>
+            <label for="product_image" class="form-label">Brand Image</label>
+            <div class="input-upload mb-3">
+              <input class="form-control border" name="image" type="file"  />
+            </div>
+            <div class="d-grid">
+              <button class="btn btn-primary mt-20" type="submit">Add Brand</button>
+            </div>
+          </form>
+        </div>
+        <div class="w-75">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Brand</th>
+                  <th>Logo</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% data.reverse().forEach((brand, index) => { %>
+                <tr>
+                  <td class="text-start"><%= brand.brandName %></td>
+                  <td class="text-start">
+                    <div class="d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
+                      <img src="/uploads/re-image/<%= brand.brandImage %>" alt="<%= brand.brandName %>" class="img-fluid rounded-circle" style="width: 100%; height: auto" />
+                    </div>
+                  </td>
+                  <td class="text-start">
+                    <%if(brand.isBlocked===true){%>
+                    <span class="badge rounded-pill alert-danger" style="width: 60px">Blocked</span>
+                    <%}else{%>
+                    <span class="badge rounded-pill alert-success" style="width: 60px">Active</span>
+                    <%}%>
+                  </td>
+
+                  <td class="text-start">
+                    <%if(brand.isBlocked===false){%>
+                    <button class="btn btn-danger btn-sm" style="width: 90px; font-size: 15px;">
+                      <a href="/admin/blockBrand?id=<%=brand._id%>" class="text-white">Block</a>
+                    </button>
+                    <%}else{%>
+                    <button class="btn btn-success btn-sm" style="width: 90px; font-size: 15px;">
+                      <a href="/admin/unBlockBrand?id=<%=brand._id%>" class="text-white">Unblock</a>
+                    </button>
+                    <%}%>
+
+
+                    <button class="btn btn-danger btn-sm" style="width: 90px; font-size: 15px;" onclick="return confirmDelete()">
+                      <a href="/admin/deleteBrand?id=<%=brand._id%>" class="text-white">Delete</a>
+                    </button>
+
+
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="pagination-container">
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  const form = document.querySelector("form");
+ 
+  form.addEventListener("submit", async (e) => {
+  e.preventDefault(); // Prevent default form submission
+
+  const formData = new FormData(form);
+
+  try {
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: formData,
+    });
+
+    // Check if the response is OK (status 200)
+    if (response.ok) {
+      const successMessage = await response.text(); // Get success message as text
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: successMessage, // Display the success message
+      }).then(() => {
+        window.location.href = "/admin/brands"; // Redirect on success
+      });
+    } else {
+      const errorMessage = await response.text(); // Get error message as text
+      // Display the error message from the server
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: errorMessage, // Display the error message from the server
+      });
+    }
+  } catch (error) {
+    // Handle unexpected errors
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "An unexpected error occurred. Please try again.",
+    });
+  }
+});
+
+//-------------------------------------------------------
+
+function confirmDelete(){
+  return confirm("Are you sure, You want to delete this brand?")
+}
+  
+</script>
+
+<%- include("../../views/partials/admin/footer") %>

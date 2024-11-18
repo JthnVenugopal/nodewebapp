@@ -11,7 +11,7 @@ const customerInfo = async (req,res) => {
         if(req.query.page){
             page = req.query.page;
         } 
-        const limit = 3;// 3 users in one pagination 
+        const limit = 5;// 3 users in one pagination 
         const userData = await User.find({
             isAdmin:false,
             $or:[

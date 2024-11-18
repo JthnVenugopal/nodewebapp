@@ -148,12 +148,12 @@ const securePassword = async (password)=>{
 
   }
 }
-
+//-----------------------------------------------------
 const verifyOtp =  async(req,res)=>{
     
   try{
-    const {otp} = req.body;
-    console.log("OTP entered by user "+otp);
+    const {otp} = req.body;// destructured otp 
+    console.log("OTP entered by user "+ otp);
 
     if(otp==req.session.userOtp){
       const user = req.session.userData;
@@ -167,12 +167,17 @@ const verifyOtp =  async(req,res)=>{
       })
 
       await saveUserData.save();
- // Store user data in session
-      req.session.user = { _id: saveUserData._id, name: saveUserData.name, email: saveUserData.email };
-      // req.session.user = saveUserData._id;// This should store the user ID in the session
-      res.json ({success:true, redirectUrl:"/login"});
-     
 
+      // Store user data in session
+      req.session.user = { _id: saveUserData._id, 
+                           name: saveUserData.name, 
+                           email: saveUserData.email };
+      // req.session.user = saveUserData._id;// This should store the user ID in the session
+
+      res.json ({success:true, redirectUrl:"login"});
+
+  
+      
     }else{
       res.status(400).json({success:false,message:"Invalid OTP, Please try again!"})
     }
@@ -224,7 +229,7 @@ const loadLogin = async (req,res) => {
       res.redirect("/PageNotFound");
   }
 }
-
+//--------------------------------------------------------
 const login = async (req,res)=>{
   try {
       const {email,password} = req.body;
@@ -266,7 +271,7 @@ const logout = async (req,res)=>{
   }
 }
 
-//----------------------------------
+
 
 
 
