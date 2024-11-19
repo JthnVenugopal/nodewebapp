@@ -1,4 +1,27 @@
-multipart formdata is used to upload images as form data
+multipart formdata is used to upload images as form data,
+// so we need to add the image to the form data,
+// and then send the form data to the server.
+// We use the 'multipart/form-data' boundary to separate the image from the other form data.
+const formData = new FormData();
+formData.append('image', imageFile)
+formData.append('otherData', 'otherData')
 
 ------------------------------------------------------------------
 
+blob - binary large object,
+it is used to upload images as binary data 
+// We use the 'blob' type to upload images as binary data.
+// We create a new blob object from the image file
+const blob = new Blob([imageFile], { type: 'image/jpeg' })
+// We send the blob to the server using the 'blob' type
+fetch('/upload', {
+  method: 'POST',
+  body: blob,
+  headers: {
+    'Content-Type': 'application/octet-stream',
+    },
+    })
+
+    ----------------------------------------------------------------
+
+    
