@@ -11,8 +11,9 @@ const brandController = require("../controllers/admin/brandController");
 const productController = require("../controllers/admin/productController");
 
 
-//Error management
-router.get("/pageerror",adminController.pageerror);
+
+router.get("/pageerror",adminController.pageerror);//Error management
+
 router.get("/login",adminController.loadLogin);
 router.post("/login",adminController.login);
 router.get("/",adminAuth,adminController.loadDashboard);
@@ -42,6 +43,14 @@ router.get("/deleteBrand",adminAuth,brandController.deleteBrand);
 
 //Product Management
 router.get("/addProducts",adminAuth,productController.getProductAddPage);
-router.post("/addProducts",adminAuth,uploads.array("images",4), productController.addProducts)
+router.post("/addProducts",adminAuth,uploads.array("images",4), productController.addProducts);
+router.get("/products",adminAuth,productController.getAllProducts);
+router.post('/addProductOffer',adminAuth,productController.addProductOffer);
+router.post("/removeProductOffer",adminAuth,productController.removeProductOffer);
+router.get("/blockProduct",adminAuth,productController.blockProduct);
+router.get("/unblockProduct",adminAuth,productController.unblockProduct);
+
+
+
 
 module.exports = router;
