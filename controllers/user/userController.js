@@ -1,4 +1,6 @@
 const User = require("../../models/userSchema");
+const Category = require("../../models/categorySchema");
+const Product = require("../../models/ProductSchema");
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
@@ -14,25 +16,33 @@ const pageNotFound = async (req,res) => {
 }
 
 //-------------------------------------------------------
-const loadHomepage = async (req,res) => {
-  try{
-    const user = req.session.user;
-    
-    if (user) {
-      const userData = await User.findOne({ _id: user._id });
-      return res.render("home", { user: userData});
-    }else{
-      return res.render("home"); 
-  }
+const loadHomepage = async (req, res) => {
+  try {
+      const user = req.session.user;
+      const  categories = await Category.find({isListed:true});
+      let productData = await Product.find(
+          {isBlocked:false,
+              category:{$in:categories.map(category=>category._id)},quantity:{$gt:0}
+          }
+      )
 
-  }catch(error){
-    console.log("Home page not found");
-    res.status(500).send("Server error");
-  }
-}
+      productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));// need products added newly
+      productData = productData.slice(0,4);// shows pdt from 0 to 4
 
-// console.log("User  signed up:", userData);
-// console.log("User  session data:", req.session.user);
+
+
+      if (user) {
+          const userData = await User.findOne({ _id: user._id });
+          return res.render("home", { user: userData ,products:productData});
+      } else {
+          return res.render("home", {products:productData}); 
+      }
+  } catch (error) {
+      console.log("Home page not found");
+      return res.status(500).send("Server error");
+  }
+};
+
 //------------------------------------------------------
 const loadSignup = async (req,res) => {
   try{
