@@ -1,14 +1,6 @@
 <%- include("../../views/partials/admin/header") %>
 <head>
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
-   <!-- cropper is used to crop images  -->
-</head>
-<style>
-   .error-message{
-       color: red;
-   }
-
-
+   <style>
        .thumbnails-container {
            display: flex;
            overflow-x: auto;
@@ -17,110 +9,118 @@
 
        .thumbnail {
            margin-right: 10px;
-
-
        }
-</style>
+       .input-upload {
+   position: relative;
+}
 
-<div>
-    <h2 class="d-flex justify-content-center my-2">Add Products</h2>
-</div>
+
+.error-message {
+           color: red;
+           display: none;
+       }
+
+
+   </style>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+</head>
    <section class="content-main">
        <div class="row">
-           <div class="col-9">
+        <div>
+            <h2 class="d-flex justify-content-center my-2">Edit Product</h2>
+        </div>
            </div>
-           <div class=" product-add-card" style="margin-left: 300px; max-width: 1500px; margin-top: 50px;">
-            <div class="card mb-4">
-              <div class="card-body">
+           <div class="col-lg-6 " style="width: 1500px;">
+               <div class="card mb-4" style="width: 99%;margin-left: 20%;margin-top: 2%;">
+                <div class="card-body">
 
-                 <form method="post" action="/admin/addProducts" enctype="multipart/form-data"
-                           onsubmit="return validateForm()">
+                  <form method="post" action="/admin/editProduct/<%=product._id%>" enctype="multipart/form-data"
+                      onsubmit="return validateForm()">
+                <div class="mb-4">
+                    <label for="product_name" class="form-label">Product Name</label>
+                      <input type="text" name="productName" value="<%=product.productName%>"
+                         class="form-control border" id="product_name">
+                           <div id="productName-error" class="error-message"></div>
+                        </div>
+                          <div class="col-lg-4 mb-4">
+                            <label class="form-label">Brand</label>
+                          <select class="form-select border" name="brand">
 
-                           <div class="mb-4">
-                               <label for="product_name" class="form-label">Product Name</label>
-                               <input type="text" placeholder="Type here" name="productName"
-                                   class="form-control border" id="product_name">
-                               <div id="productName-error" class="error-message"></div>
-                           </div>
-                           <div class="col-lg-4 mb-4">
-                               <label class="form-label">Brand</label>
+                            //tp iterate brand 
+                        <%for(let i=0; i<brand.length; i++){%>
+                            <option value="<%brand[i].brandName%>">
+                                          
+                            </option>
+                        <%}%>  
 
-                               <select class="form-select border" name="brand" >
-
-                                <% for (let i=0;i<brand.length;i++){%>
-                                
-                                 <option value="<%=brand[i].brandName%> ">
-                                        <%=brand[i].brandName%>
-                                    </option>
-    
-                                    <% } %>
-
-
-                               </select>
-
-                             
+                        </select>
+           <div id="brand-error" class="error-message"></div>
 
 
-                               <div id="brand-error" class="error-message"></div>
-                           </div>
+        </div>
                            <div class="mb-4">
                                <label class="form-label">Full description</label>
-                               <textarea placeholder="Type here" id="descriptionid" name="description" class="form-control border"
-                                   rows="4"></textarea>
-                               <div id="description-error" class="error-message"></div>
+                               <input name="descriptionData" value="<%=product.description%>"  class="form-control border"
+                                   rows="4">
+                                   <div id="description-error" class="error-message"></div>
                            </div>
                            <div class="row">
                                <div class="col-lg-4">
                                    <div class="mb-4">
                                        <label class="form-label">Regular price</label>
-                                       <input placeholder="$" name="regularPrice" type="text"
-                                           class="form-control border">
+                                       <input placeholder="₹" name="regularPrice" type="text"
+                                        value="<%product.regularPrice%>" class="form-control border">
                                            <div id="regularPrice-error" class="error-message"></div>
                                    </div>
                                </div>
                                <div class="col-lg-4">
                                    <div class="mb-4">
                                        <label class="form-label">Sale price</label>
-                                       <input placeholder="$" name="salePrice" type="text" class="form-control border">
-                                      
+                                       <input name="salePrice" type="text" value="<%=product.salePrice%>"
+                                           class="form-control border">
                                    </div>
                                    <div id="salePrice-error" class="error-message"></div>
                                </div>
                                <div class="col-lg-4">
                                    <div class="mb-4">
                                        <label class="form-label">Quantity</label>
-                                       <input placeholder="" name="quantity" type="text" class="form-control border">
-                                       <div id="quantity-error" class="error-message"></div>
+                                       <input name="quantity" type="text" value="<%=product.quantity%>"
+                                           class="form-control border">
+                                           <div id="quantity-error" class="error-message"></div>
                                    </div>
                                </div>
                            </div>
                            <div class="row">
-                              
+                             
                                <div class="col-lg-4">
                                    <div class="mb-4">
                                        <label class="form-label">Color</label>
-                                       <input  name="color" type="text" class="form-control border">
+                                       <input name="color" type="text" value="<%=product.color%>"
+                                           class="form-control border">
+                                           <div id="color-error" class="error-message"></div>
                                    </div>
-                                   <div id="color-error" class="error-message"></div>
                                </div>
-                            
+                              
                            </div>
                            <div class="card mb-4">
+
+
                                <div class="card-body">
                                    <div class="row gx-2">
                                        <div class="col-sm-6 mb-3">
                                            <label class="form-label">Category</label>
-
                                            <select class="form-select border" style="width: 150px;" name="category">
-                                            <%for(let i=0; i<cat.length; i++){%>
+
+                                              <%for(let i=0; i<cat.length; i++){%>
                                                    <option value="<%=cat[i].name%>">
-                                                    <%=cat[i].name%>
+                                                      <%=cat[i].name%>
                                                    </option>
-                                                  <%}%>
-                                            </select>
+                                               <%}%>   
+
+                                           </select>
+
 
                                            <div id="category-error" class="error-message"></div>
-
                                        </div>
                                    </div>
                                </div>
@@ -129,90 +129,95 @@
                                <div class="card-header">
                                    <h4>Choose images</h4>
                                </div>
-                               <div class="border row">
-                                   <div id="addedImagesContainer" class="thumbnails-container"></div>
+
+                                  <%for(let i=0; i<product.productImage.length; i++){%>
+                                       <div class="col-md-12">
+                                           <div class="mb-4">
+                                               <div class="col-12">
+                                                   <td>
+                                                       <input type="hidden" value="<%=product.productImage[i]%>" id="imageDatas">
+                                                       <img class="rounded" style="width: 50px; height: 60px;"
+                                                           src="/uploads/re-image/<%=product.productImage[i]%>"
+                                                           alt="">
+                                                       <i onclick="deleteSingleImage('<%=product.productImage[i]%>','<%=product._id%>')" style="position: absolute; margin-left: .5rem; cursor: pointer;" class="fa-thin fa-x"></i>
+                                                   </td>
+                                               </div>
+                                           </div>
+                                       </div>
+                              <%}%>
+                                  
+                               <div class="card-body">
+                                   <div class="card-body align-items-center" style="margin-bottom: 20px;">
+                                       <img src="" alt="" id="imgView1">
+                                       <input class="form-control" type="file" name="images" id="input1"
+                                           accept="image/png, image/jpeg, image/jpg"
+                                           onchange="viewImage1(event), viewImage(event, 1)">
+                                           <div id="images-error" class="error-message"></div>
+                                   </div>
+                                   <div class="image-cropper d-flex align-items-center"
+                                   style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
+                                   <img src="" id="croppedImg1" alt="">
+                                   <button type="button" id="saveButton1" class="btn-sm btn-primary">Save</button>
                                </div>
-            <div class="row">  
-                <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                    <img src="" alt="" id="imgView1">
-                             <input class="form-control" type="file" name="images" id="input1"
-                                        accept="image/png, image/jpeg, image/jpg"
-                                        onchange="viewImage1(event), viewImage(event, 1)">
-
-                        <div id="images-error" class="error-message"></div>
-                    </div>
-                    <div class="image-cropper d-flex align-items-center"style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
-                    <img src="" id="croppedImg1" alt="">
-                    <button type="button" id="saveButton1" class="btn-sm btn-primary">Save</button>
-                      </div>
-                      </div>
-                                                          
-                      <div class="row">
-                      <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                      <img src="" alt="" id="imgView2">
-
-
+          <div class="row">
+                 <div class="card-body align-items-center" style="margin-bottom: 20px;">
+                    <img src="" alt="" id="imgView2">
                       <input class="form-control" type="file" name="images" id="input2"
                             accept="image/png, image/jpeg, image/jpg"
-                            onchange="viewImage2(event),viewImage(event, 2)">
-                      </div>
-                      
-                      <div class="image-cropper d-flex align-items-center"
-                           style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
+                        onchange="viewImage2(event),viewImage(event, 2)">
+                    /div>
+           <div class="image-cropper d-flex align-items-center"
+       style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
                       <img src="" id="croppedImg2" alt="">
-                      <button type="button" id="saveButton2" class="btn-sm btn-primary">Save</button>
-                      </div>
-                      </div>
-                                                          
-                      <div class="row">
-                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                        <img src="" alt="" id="imgView3">
-
-
-                        <input class="form-control" type="file" name="images" id="input3"
-                              accept="image/png, image/jpeg, image/jpg"
-                              onchange="viewImage3(event),viewImage(event, 3)">
+     <button type="button" id="saveButton2" class="btn-sm btn-primary">Save</button>
                     </div>
-                                                
-                    <div class="image-cropper d-flex align-items-center"
-                         style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
-                            <img src="" id="croppedImg3" alt="">
-                            <button type="button" id="saveButton3" class="btn-sm btn-primary">Save</button>
+                 </div>
+                                                          
+      <div class="row">
+         <div class="card-body align-items-center" style="margin-bottom: 20px;">
+                <img src="" alt="" id="imgView3">
+                   <input class="form-control" type="file" name="images" id="input3"
+                             accept="image/png, image/jpeg, image/jpg"
+                          onchange="viewImage3(event),viewImage(event, 3)">
+                    </div>
+         <div class="image-cropper d-flex align-items-center"
+              style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
+           <img src="" id="croppedImg3" alt="">
+        <button type="button" id="saveButton3" class="btn-sm btn-primary">Save</button>
+                                  </div>
                         </div>
-                    </div>
                                                           
-                <div class="row">
-                     <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                    <img src="" alt="" id="imgView4">
-
-
-                <input class="form-control" type="file" name="images" id="input4"
-                      accept="image/png, image/jpeg, image/jpg"
-                     onchange="viewImage4(event),viewImage(event, 4)">
-              </div>
-                    
-              <div class="image-cropper d-flex align-items-center"
-                   style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
+            <div class="row">
+              <div class="card-body align-items-center" style="margin-bottom: 20px;">
+              <img src="" alt="" id="imgView4">
+            <input class="form-control" type="file" name="images" id="input4"
+                          accept="image/png, image/jpeg, image/jpg"
+                        onchange="viewImage4(event),viewImage(event, 4)">
+                    </div>
+          <div class="image-cropper d-flex align-items-center"
+               style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
               <img src="" id="croppedImg4" alt="">
               <button type="button" id="saveButton4" class="btn-sm btn-primary">Save</button>
-                                           </div>
-                                     </div>
-                              </div>
-                           </div>
-
-<div>
-<button class="btn btn-md rounded font-sm hover-up"  type="button" onclick="return validateAndSubmit()">Publish</button>
+        </div>
+    </div>
 </div>
+ </div>
 
+ <div>
+  <button class="btn btn-md rounded font-sm hover-up" id="updatebtn"
+    type="button"  onclick="validateAndSubmit()">Update</button>
+    </div>
                        </form>
                    </div>
                </div>
            </div>
        </div>
+       </div>
    </section>
-<script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
-<script>
-   
+   <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+    
+   <script>
+        
 
 
 function validateAndSubmit() {
@@ -229,16 +234,14 @@ function validateForm() {
            console.log("validate form");
            clearErrorMessages();
            const name = document.getElementsByName('productName')[0].value;
-        //    const description = document.getElementsByName('descriptionData')[0].value;
-        const description = document.getElementsByName('description')[0].value;
+           const description = document.getElementsByName('descriptionData')[0].value;
            const brand = document.getElementsByName('brand')[0].value;
            const price = document.getElementsByName('regularPrice')[0].value;
            const saleprice = document.getElementsByName('salePrice')[0].value;
            const color = document.getElementsByName('color')[0].value;
            const category = document.getElementsByName('category')[0].value;
-           const images = document.getElementById('input1');
-        //    const quantity=document.getElementsByName('quantity')
-        const quantity = document.getElementsByName('quantity')[0].value; // Get the first element's value
+           const images = document.getElementById('input1')
+           const quantity=document.getElementsByName('quantity')
 imageDatas = document.getElementById("imageDatas")?.value;
            let isValid = true;    
            if (name.trim() === "") {
@@ -393,7 +396,29 @@ function viewImage1(event) {
                addedImagesContainer.appendChild(thumbnail);
            }
        };
+
+       //----------------------------------------------------------------
+
+       function deleteSingleImage(imageId,productId){
+              
+              $.ajax({
+                url:"/admin/deleteImage",
+                method:post,
+                data:{
+                    imageNameToServer:imageId,
+                    productIdToServer:productId,
+
+                }
+                ,success:((response)=>{
+                    if(response.status===true){
+                        window.location.reload()
+                    }
+                })
+              })
+            
+       }
        
+
    </script>
 
 

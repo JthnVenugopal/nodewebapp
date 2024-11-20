@@ -57,6 +57,10 @@
     </form>
 </header>
 
+<div>
+    <h2 class="d-flex justify-content-center my-5">Products</h2>
+</div>
+
 <div class="container mt-5" style="width: 2000px;">
     <div class="table-responsive">
         <table class="text-center">
@@ -101,7 +105,7 @@
                     </td>
                     <td><%= data[i].quantity %></td>
                     <td>
-                        <% if (data[i]._isBlocked === false) { %>
+                        <% if (data[i].isBlocked === false) { %>
                         <button class="btn btn-danger">
                             <a href="/admin/blockProduct?id=<%= data[i]._id %>" class="text-white" style="text-decoration: none;">Block</a>
                         </button>
@@ -113,7 +117,7 @@
                     </td>
                     <td>
                         <button class="btn btn-info">
-                            <a href="#" class="text-white" style="text-decoration: none;">Edit</a>
+                            <a href="/admin/editProduct?id=<%=data[i]._id%>" class="text-white" style="text-decoration: none;">Edit</a>
                         </button>
                     </td>
                 </tr>

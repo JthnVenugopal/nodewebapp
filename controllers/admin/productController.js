@@ -202,67 +202,68 @@ const unblockProduct = async (req,res) => {
 
 //-----------------------------------------------------------------------------------
 
-// const getEditProduct = async (req,res) => {
-//     try {
-//         const id = req.query.id;
-//         const product = await Product.findOne({_id:id});
-//         const category = await Category.find({});
-//         const brand = await Brand.find({});
-//         res.render("edit-product",{
-//             product:product,
-//             cat:category,
-//             brand:brand,
-//         })
-//     } catch (error) {
-//         res.redirect("/admin/pageerror");
-//     }
-// }
+const getEditProduct = async (req,res) => {
+    try {
+        const id = req.query.id;
+        const product = await Product.findOne({_id:id});
+        const category = await Category.find({});
+        const brand = await Brand.find({});
+        res.render("edit-product",{
+            product:product,
+            cat:category,
+            brand:brand,
+        })
+    } catch (error) {
+        res.redirect("/admin/pageerror");
+    }
+}
 
+//----------------------------------------------------------------------------------
 
-// const editProduct = async (req, res) => {
-//     try {
-//         const id = req.params.id;
-//         const product = await Product.findOne({ _id: id });
-//         const data = req.body;
+const editProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const product = await Product.findOne({ _id: id });
+        const data = req.body;
 
-//         const existingProduct = await Product.findOne({
-//             productName: data.productName,
-//             _id: { $ne: id },
-//         });
+        const existingProduct = await Product.findOne({
+            productName: data.productName,
+            _id: { $ne: id },
+        });
 
-//         if (existingProduct) {
-//             return res.status(400).json({ error: "Product with this name already exists. Please try with another name" });
-//         }
+        if (existingProduct) {
+            return res.status(400).json({ error: "Product with this name already exists. Please try with another name" });
+        }
 
-//         const images = req.files && req.files.length > 0 ? req.files.map(file => file.filename) : [];
+        const images = req.files && req.files.length > 0 ? req.files.map(file => file.filename) : [];
     
 
-//         const updateFields = {
-//             productName: data.productName,
-//             description: data.descriptionData,
-//             brand: data.brand,
-//             category: product.category,
-//             regularPrice: data.regularPrice,
-//             salePrice: data.salePrice,
-//             quantity: data.quantity,
-//             size: data.size,
-//             color: data.color,
-//         };
+        const updateFields = {
+            productName: data.productName,
+            description: data.descriptionData,
+            brand: data.brand,
+            category: product.category,
+            regularPrice: data.regularPrice,
+            salePrice: data.salePrice,
+            quantity: data.quantity,
+            size: data.size,
+            color: data.color,
+        };
 
-//         if (images.length > 0) {
-//             updateFields.$push = { productImages: { $each: images } };
-//         }
+        if (images.length > 0) {
+            updateFields.$push = { productImages: { $each: images } };
+        }
 
-//         await Product.findByIdAndUpdate(id, updateFields, { new: true });
-//         res.redirect("/admin/products");
+        await Product.findByIdAndUpdate(id, updateFields, { new: true });
+        res.redirect("/admin/products");
 
-//     } catch (error) {
-//         console.error(error);
-//         res.redirect("/admin/pageerror");
-//     }
-// };
+    } catch (error) {
+        console.error(error);
+        res.redirect("/admin/pageerror");
+    }
+};
 
-
+//------------------------------------------------------------------
 
 // const deleteSingleImage = async (req,res) => {
 //     try {
@@ -290,8 +291,8 @@ module.exports = {
     removeProductOffer,
     blockProduct,
     unblockProduct,
-    // getEditProduct,
-    // editProduct,
+    getEditProduct,
+    editProduct,
     // deleteSingleImage,
 
 
