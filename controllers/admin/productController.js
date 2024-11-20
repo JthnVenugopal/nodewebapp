@@ -265,23 +265,23 @@ const editProduct = async (req, res) => {
 
 //------------------------------------------------------------------
 
-// const deleteSingleImage = async (req,res) => {
-//     try {
-//         const {imageNameToServer,productIdToServer} = req.body;
-//         const product = await Product.findByIdAndUpdate(productIdToServer,{$pull:{productImages:imageNameToServer}});
-//         const imagePath = path.join("public","uploads","re-image","imageNameToServer");
-//         if(fs.existsSync(imagePath)){
-//             await fs.unlinkSync(imagePath);
-//             console.log(`Image ${imageNameToServer} deleted successfully`);
-//         }else{
-//             console.log(`Image ${imageNameToServer} not found`);
-//         }
+const deleteSingleImage = async (req,res) => {
+    try {
+        const {imageNameToServer,productIdToServer} = req.body;
+        const product = await Product.findByIdAndUpdate(productIdToServer,{$pull:{productImages:imageNameToServer}});
+        const imagePath = path.join("public","uploads","re-image","imageNameToServer");
+        if(fs.existsSync(imagePath)){
+            await fs.unlinkSync(imagePath);
+            console.log(`Image ${imageNameToServer} deleted successfully`);
+        }else{
+            console.log(`Image ${imageNameToServer} not found`);
+        }
 
-//         res.send({status:true});
-//     } catch (error) {
-//         res.redirect("/admin/pageerror");
-//     }
-// }
+        res.send({status:true});
+    } catch (error) {
+        res.redirect("/admin/pageerror");
+    }
+}
 
 module.exports = {
     getProductAddPage,
@@ -293,7 +293,7 @@ module.exports = {
     unblockProduct,
     getEditProduct,
     editProduct,
-    // deleteSingleImage,
+    deleteSingleImage,
 
 
     
