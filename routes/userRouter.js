@@ -29,6 +29,7 @@ router.get("/logout",userController.logout);
 
 //product management
 
-router.get("/productDetails",userAuth,productController.productDetails)
+
+router.get("/productDetails", productController.productDetails);
 
 module.exports = router;

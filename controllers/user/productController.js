@@ -6,8 +6,8 @@ const productDetails = async (req,res)=> {
   try {
     const userId = req.session.user;
     const userData = await User.findById(userId);
-    const productId = req.querry.id;
-    const product = await Product.findById(ProductId).populate('category');
+    const productId = req.query.id;
+    const product = await Product.findById(productId).populate('category');
     const findCategory = product.category;
     const categoryOffer = findCategory ?.categoryOffer || 0;//fetching catwgory offer offer
                                                             // 0 because when there is a product offer category offer will be 0
@@ -16,8 +16,12 @@ const productDetails = async (req,res)=> {
 
     const totalOffer = categoryOffer + productOffer;
 
-    res.render("product-details");
-
+    // Render the product details page and pass the required data
+    res.render("product-detail", {
+      product, // Pass the product data to the view
+      user: userData, // Optionally pass user data
+      totalOffer // Pass the total offer if needed
+  });
 
 
 
