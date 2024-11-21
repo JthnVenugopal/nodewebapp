@@ -3,29 +3,47 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
 <style>
+body {
+    background: linear-gradient(to bottom, #ffe6f2, #ffffff); /* Light rose to white gradient */
+}
+
 .product-image-slider {
-display: flex;
-overflow: hidden;
-justify-content: center;
-margin-bottom: 1rem;
+    display: flex;
+    overflow: hidden;
+    justify-content: center;
+    margin-bottom: 1rem;
 }
+
 .slider-nav-thumbnails {
-display: flex;
-overflow-x: auto;
-margin-top: 1rem;
-overflow: hidden;
+    display: flex;
+    overflow-x: auto;
+    margin-top: 1rem;
+    overflow: hidden;
 }
+
 .slider-nav-thumbnails img {
-width: 100px;
-height: 100px;
-object-fit: cover;
-margin-right: 1rem;
-cursor: pointer;
-
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 1rem;
+    cursor: pointer;
 }
 
+.main {
+    padding: 20px; /* Add some padding to the main section */
+}
 
-/* Additional styles for product rating and other elements can remain unchanged */
+.title-detail {
+    font-weight: bold;
+    font-size: 24px; /* Adjust font size for the title */
+}
+
+.product-detail {
+    background: rgba(255, 255, 255, 0.8); /* Slightly transparent white background for product detail */
+    padding: 20px;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
 </style>
 </head>
 <body>
@@ -91,16 +109,14 @@ cursor: pointer;
                                     <ins>
                                         <span class="text-brand" style="font-weight: 800;"><%=product.salePrice%></span>
                                     </ins>
-                                    <br>
+ <br>
                                     <span class="save-price font-md color3 ml-15">
 
-                                        No Offers
-
-                                        <%if(!totalOffer){%>
-
-                                            <%=totalOffer%> % Offer
-
-                                            <%}else{%> <%}%>
+                                        <% if (totalOffer) { %>
+                                            <%= totalOffer %> % Offer
+                                        <% } else { %>
+                                            No Offers
+                                        <% } %>
 
                                         </span>
                                 </div>
@@ -109,7 +125,7 @@ cursor: pointer;
                             <div class="short-desc mb-30">
                                 <p><%product.description%></p>
                             </div>
-                            <div class="product_sort_info font-xs mb- 30">
+                            <div class="product_sort_info font-xs mb-30">
                                 <ul>
                                     <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year Brand Warranty</li>
                                     <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
@@ -139,7 +155,7 @@ cursor: pointer;
                             <ul class="product-meta font-xs color-grey mt-50">
                                 <li class="mb-5">Stock Code: <a href="#">FWM15VKT</a></li>
                                 <li class="mb-5">Tags: <a href="#" rel="tag">Fashion</a> <a href="#" rel="tag"><%=category.name%></a> <a href="#" rel="tag ">Accessories</a></li>
-                                <li>Availability:<span class="in-stock text-success ml-5"><%=quantity%> Items in stock</span></li>
+                                <li>Availability:<span class="in-stock text-success ml-5"><%=product.quantity%> Items in stock</span></li>
                             </ul>
                         </div>
                     </div>
@@ -174,6 +190,6 @@ cursor: pointer;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 <script>
 function changeMainImage(imageSrc) {
-document.getElementById('mainImage').src = imageSrc;
+    document.getElementById('mainImage').src = imageSrc;
 }
 </script>
