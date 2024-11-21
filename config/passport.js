@@ -11,25 +11,60 @@ passport.use(new GoogleStrategy({
     callbackURL:"http://localhost:3000/google/callback"
 },
 
-async (accessToken,refreshToken,profile,done) => {
+// async (accessToken,refreshToken,profile,done) => {
+//     try {
+//         let user = await User.findOne({googleId:profile.id})
+//         if(user){
+//             return done(null,user)
+//         }else{
+//             user = new User({
+//                 name:profile.displayName,
+//                 email:profile.emails[0].value,
+//                 googleId:profile.id,
+//             })
+//             await user.save();
+//             return done(null,user);
+//         }
+//     } catch (error) {
+//         return done(error,null)
+//     }
+// }
+// ));
+
+async (accessToken, refreshToken, profile, done) => {
     try {
-        let user = await User.findOne({googleId:profile.id})
-        if(user){
-            return done(null,user)
-        }else{
+        // Check if a user with the same email exists
+        let user = await User.findOne({ email: profile.emails[0].value });
+
+        if (user) {
+            // If the user exists but doesn't have a Google ID, add it
+            if (!user.googleId) {
+                user.googleId = profile.id;
+                await user.save();
+            }
+
+            // Check if the user is blocked
+            if (user.isBlocked) {
+                // If the user is blocked, prevent login and return an error via done
+                return done(null, false, { message: 'Your account has been blocked by the admin.' });
+            }
+
+            return done(null, user);
+        } else {
+            // If no user found, create a new one
             user = new User({
-                name:profile.displayName,
-                email:profile.emails[0].value,
-                googleId:profile.id,
-            })
+                name: profile.displayName,
+                email: profile.emails[0].value,
+                googleId: profile.id,
+            });
+            
             await user.save();
-            return done(null,user);
+            return done(null, user);
         }
     } catch (error) {
-        return done(error,null)
+        return done(error, null);  // If an error occurs, pass it to done()
     }
-}
-));
+}));
 
 passport.serializeUser((user,done)=>{
     done(null,user.id)

@@ -1,5 +1,5 @@
 
-const Product = require("../../models/productSchema");
+const Product = require("../../models/productSchema")
 const category = require("../../models/categorySchema");
 const Brand = require("../../models/brandSchema");
 const User = require("../../models/userSchema");
@@ -283,6 +283,25 @@ const deleteSingleImage = async (req,res) => {
     }
 }
 
+//-----------------------------------------------------------------
+
+const deleteProduct = async (req, res) => {
+    try {
+      const id = req.query.id;
+      const deletedProduct= await Product.findByIdAndDelete(id);
+  
+      if (deletedProduct) {
+        res.json({ status: true, message: 'Product successfully deleted' });
+      } else {
+        res.status(404).json({ status: false, message: 'Product not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ status: false, message: 'Internal server error' });
+    }
+};
+
+
+
 module.exports = {
     getProductAddPage,
     addProducts,
@@ -294,7 +313,7 @@ module.exports = {
     getEditProduct,
     editProduct,
     deleteSingleImage,
-
+    deleteProduct
 
     
 }

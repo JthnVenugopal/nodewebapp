@@ -141,9 +141,12 @@
 
       if (passwordValue.length < 6) {
         passwordError.textContent = "Password must be at least 6 characters long.";
-      }  else if (!/[A-Z]/.test(passwordValue)) {
-    passwordError.textContent = "Password must contain at least one uppercase letter.";
-     }  else if (!/[0-9]/.test(passwordValue)) {
+      }
+    //     else if (!/[A-Z]/.test(passwordValue)) {
+    // passwordError.textContent = "Password must contain at least one uppercase letter.";
+    //  }
+     
+     else if (!/[0-9]/.test(passwordValue)) {
     passwordError.textContent = "Password must contain at least one number.";
        }else if (!/[!@#$%^&*(),.?":{}|<>]/.test(passwordValue)) {
     passwordError.textContent = "Password must contain at least one special symbol.";
