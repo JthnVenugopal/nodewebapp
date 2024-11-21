@@ -55,7 +55,8 @@ const productSchema = new Schema ({
   }},{timestamps:true //automatically adds two fields to schema: createdAt and updatedAt
 })
 
-const Product = mongoose.model("Product", productSchema);
+// Check if the model already exists, if not, create it
+const Product =  mongoose.models.Product || mongoose.model("Product", productSchema);
 
 module.exports = Product;
 

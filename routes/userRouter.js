@@ -1,12 +1,13 @@
 const express =  require("express");
 const router = express.Router();
 const userController = require("../controllers/user/userController");
-const passport = require("passport")
+const passport = require("passport");
+const productController = require("../controllers/user/productController");
+const {userAuth,adminAuth} = require("../middlewares/auth");
 
 
 //path to join home page 
 router.get("/", userController.loadHomepage);
-
 router.get("/pageNotFound",userController.pageNotFound);
 
 router.get("/signup", userController.loadSignup);
@@ -25,5 +26,9 @@ router.post("/login",userController.login);
 
 //logout
 router.get("/logout",userController.logout);
+
+//product management
+
+router.get("/productDetails",userAuth,productController.productDetails)
 
 module.exports = router;
