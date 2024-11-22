@@ -235,7 +235,7 @@ const verifyOtp =  async(req,res)=>{
                            email: saveUserData.email };
       // req.session.user = saveUserData._id;// This should store the user ID in the session
 
-      res.json ({success:true, redirectUrl:"login"});
+      res.json ({success:true, redirectUrl:"/login"});
 
     }else{
       res.status(400).json({success:false,message:"Invalid OTP, Please try again!"})
@@ -401,8 +401,8 @@ const login = async (req,res)=>{
 //     next(error);
 //   }
 // };
-//--------------------------------------------------
 
+//-------------------------------------------------
 const logout = async (req,res)=>{
   try {
       req.session.destroy((err)=>{ //destroying session 
@@ -419,7 +419,7 @@ const logout = async (req,res)=>{
 }
 
 
-//-------------------------------------------------
+//--------------------------------------------------
 module.exports = {
   loadHomepage, 
   pageNotFound, 

@@ -37,17 +37,7 @@ const adminAuth = (req,res,next)=>{
 }
 
 
-const userCheck = async (req, res, next) => {
-    try {
-        if (req.session.user) {
-            // User is logged in, redirect to home page
-            return res.redirect('/home');
-        }
-        next();
-}catch(error){
 
-}
-}
 
 // const userIsAuthenticated = (req, res, next) => {
 //     if (req.session.user) {
@@ -65,6 +55,6 @@ const userCheck = async (req, res, next) => {
 module.exports = {
     userAuth,
     adminAuth,
-    userCheck,
-    // userIsAuthenticated
+    
+   
 }

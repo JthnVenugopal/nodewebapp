@@ -3,7 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/user/userController");
 const passport = require("passport");
 const productController = require("../controllers/user/productController");
-const { userAuth, adminAuth, userCheck, userIsAuthenticated } = require("../middlewares/auth");
+const { userAuth, adminAuth,  } = require("../middlewares/auth");
 
 // Path to join home page 
 router.get("/", userController.loadHomepage);
@@ -29,6 +29,6 @@ router.post("/login",userController.login);
 router.get("/logout", userController.logout);
 
 // Product management
-router.get("/productDetails",userCheck , productController.productDetails);
+router.get("/productDetails", productController.productDetails);
 
 module.exports = router;

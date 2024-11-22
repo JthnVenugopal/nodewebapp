@@ -103,6 +103,11 @@
                         <td class="text-start">
                             <a href="/admin/editCategory?id=<%=category.id%>" class="btn btn-info text-white" style="font-size: 15px;">Edit</a>
                         </td>
+
+                        <td class="text-start">
+                          <button class="btn btn-danger" onclick="deleteCategory('<%= category._id %>' )">Delete Category</button>
+
+                      </td>
                     </tr>
                     <% }); %>
                  
@@ -302,6 +307,26 @@
         console.error("Error removing offer", error);
     }
 }
+
+
+
+async function deleteCategory(categoryId) {
+    const response = await fetch(`/admin/deleteCategory/${categoryId}`, {
+        method: 'DELETE', // Use DELETE method
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (response.ok) {
+        // Handle successful deletion (e.g., reload the page or remove the category from the UI)
+        window.location.reload(); // Reload the page to see the changes
+    } else {
+        const result = await response.json();
+        alert(result.message || 'Failed to delete category');
+    }
+}
+
 
 
 </script>

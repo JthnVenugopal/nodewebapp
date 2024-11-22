@@ -203,6 +203,38 @@ const editCategory = async (req,res) => {
 
 //---------------------------------------------------------------------------
 
+
+
+// Controller to delete a category
+const deleteCategory = async (req, res) => {
+  const categoryId = req.params.id;
+
+  try {
+    const result = await deleteCategoryFromDatabase(categoryId);
+
+    if (!result) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    return res.status(200).json({ message: 'Category deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting category:', error); // Log the error for debugging
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Function to delete the category from the database
+const deleteCategoryFromDatabase = async (id) => {
+  try {
+    const result = await Category.findByIdAndDelete(id); // Use Mongoose to find and delete the category by ID
+    return result; // Returns the deleted category or null if not found
+  } catch (error) {
+    console.error('Error in deleteCategoryFromDatabase:', error);
+    throw error; // Rethrow the error to be handled in the controller
+  }
+};
+
+//--------------------------------------------------------------------------
 module.exports = {
   categoryInfo,
   addCategory,
@@ -211,5 +243,7 @@ module.exports = {
   getListCategory,
   getUnlistCategory,
   getEditCategory,
-  editCategory
+  editCategory,
+  deleteCategory,
+  deleteCategoryFromDatabase
 }
