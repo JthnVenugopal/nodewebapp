@@ -3,10 +3,10 @@ const router = express.Router();
 const userController = require("../controllers/user/userController");
 const passport = require("passport");
 const productController = require("../controllers/user/productController");
-const { userAuth, adminAuth,  } = require("../middlewares/auth");
+const { userAuth, adminAuth,userIsAuthenticated,  } = require("../middlewares/auth");
 
 // Path to join home page 
-router.get("/", userController.loadHomepage);
+router.get("/",userIsAuthenticated, userController.loadHomepage);
 router.get("/pageNotFound",userController.pageNotFound);
 
 router.get("/signup", userController.loadSignup);

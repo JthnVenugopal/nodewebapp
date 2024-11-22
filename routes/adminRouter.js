@@ -12,6 +12,7 @@ const productController = require("../controllers/admin/productController");
 
 
 
+
 router.get("/pageerror",adminController.pageerror);//Error management
 
 router.get("/login",adminController.loadLogin)

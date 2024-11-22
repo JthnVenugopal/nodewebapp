@@ -39,22 +39,36 @@ const adminAuth = (req,res,next)=>{
 
 
 
-// const userIsAuthenticated = (req, res, next) => {
-//     if (req.session.user) {
-//         // User is authenticated, allow the request to proceed
-//         return next(); // Call next() to proceed to the next middleware/route
-//     } else {
-//         // User is not authenticated, set cache control headers
-//         res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-//         res.set('Pragma', 'no-cache');
-//         res.set('Expires', '0');
-//         return res.render('login'); // Render the login page
+const userIsAuthenticated = (req, res, next) => {
+
+
+    console.log('Session:', req.session);
+    const isAuthenticated =req.session.user || req.isAuthenticated()  ;
+
+    if (isAuthenticated) {
+     
+        return next(); 
+    } else {
+       
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+        return res.render('login'); // Render the login page
+    }
+}
+
+
+// const adminAuthenticated = (req,res,next) => {
+//     try {
+        
+//     } catch (error) {
+        
 //     }
 // }
 
 module.exports = {
     userAuth,
     adminAuth,
-    
+    userIsAuthenticated
    
 }
