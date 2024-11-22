@@ -63,6 +63,15 @@ body {
     margin: 0 5px; /* Add spacing between elements */
     color: #6c757d; /* Change color for separators */
 }
+
+.image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+#mainImage {
+    transition: transform 0.2s ease; /* Smooth transition for zoom effect */
+}
 </style>
 </head>
 <body>
@@ -71,7 +80,7 @@ body {
         <div class="container">
             <div class="breadcrumb">
                 <a href="#" rel="nofollow">Home</a>
-                <span> &gt; </span> <!-- Use a separator like '>' -->
+                <span> &gt; </span>
                 <span>Fashion</span>
                 <span> &gt; </span>
                 <span>Product Detail Page</span>
@@ -88,7 +97,7 @@ body {
                     <div class="col-md-6 col-sm-12 col-xs-12 ">
                         <div class="detail-gallery">
                             <span class="zoom-icon"><i class="fi-rs-search"></i></span>
-                            <div class="product-image-slider bg-info" style="height: 420px; width: 400px;">
+                            <div class="product-image-slider bg-info image-container" style="height: 420px; width: 400px;">
                                 <figure class="border-radius-10">
                                     <img src="/uploads/re-image/<%= product.productImages[0] %>" alt="Product Image 1" id="mainImage" style="width: 400px; height: 420px;">
                                 </figure>
@@ -104,8 +113,7 @@ body {
                     </div>
                     <div class="col-md-6 col-sm-12 col-xs-12">
                         <div class="detail-info">
-                            <h2 class="title-detail"><%=product.productName%></h2>
-                            <div class="product-detail-rating">
+                            <h2 class="title-detail"><%=product.productName%></h2 <div class="product-detail-rating">
                                 <div class="pro-details-brand">
                                     <span> Brands: <a href="#"><%=product.brand%></a></span>
                                 </div>
@@ -120,32 +128,26 @@ body {
                             </div>
                             <div class="clearfix product-price-cover">
                                 <div class="product-price primary-color float-left">
-
                                     <div>
-                                        <span class="old-price font-md ml-15" >Regular Price : <%=product.regularPrice%></span>
+                                        <span class="old-price font-md ml-15">Regular Price : <%=product.regularPrice%></span>
                                     </div>
-
                                     <br>
-                                    
-
                                     <div>
                                         <span class="text-brand" style="font-weight: 1000;"><h4>Special Price : <%=product.salePrice%></h4></span>
                                     </div>
- <br><br>
+                                    <br><br>
                                     <span class="save-price font-md color3 ml-15">
-
                                         <% if (!totalOffer) { %>
                                             No Offers
                                         <% } else { %>
                                             <%= totalOffer %> % Offer
                                         <% } %>
-
-                                        </span>
+                                    </span>
                                 </div>
                             </div>
                             <div class="bt-1 border-color-1 mt-15 mb-15"></div>
                             <div class="short-desc mb-30">
-                                <p><%product.description%></p>
+                                <p><%=product.description%></p>
                             </div>
                             <div class="product_sort_info font-xs mb-30">
                                 <ul>
@@ -160,7 +162,6 @@ body {
                                     <a href="#" class="qty-down" onclick="">
                                         <i class="fi-rs-angle-small-down"></i>
                                     </a>
-                                   
                                 </div>
                                 <br><br>
                                 <div class="product-extra-link2">
@@ -175,7 +176,7 @@ body {
                             <br>
                             <ul class="product-meta font-xs color-grey mt-50">
                                 <li class="mb-5">Stock Code: <a href="#">FWM15VKT</a></li>
-                                <li class="mb-5">Tags: <a href="#" rel="tag">Fashion</a> <a href="#" rel="tag"><%=category.name%></a> <a href="#" rel="tag ">Accessories</a></li>
+                                <li class="mb-5">Tags: <a href="#" rel="tag">Fashion</a> <a href="#" rel="tag"><%=category.name%></a> <a href="#" rel="tag">Accessories</a></li>
                                 <li>Availability:<span class="in-stock text-success ml-5"><%=product.quantity%> Items in stock</span></li>
                             </ul>
                         </div>
@@ -208,9 +209,42 @@ body {
 <%- include("../../views/partials/user/footer") %>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/ 5.3.2/js/bootstrap.bundle.min.js"></script>
 <script>
 function changeMainImage(imageSrc) {
     document.getElementById('mainImage').src = imageSrc;
 }
+
+$(document).ready(function () {
+    // Thumbnail click event
+    $('.thumbnail').on('click', function () {
+        const imageSrc = $(this).attr('src');
+        $('#mainImage').attr('src', imageSrc);
+        $('.thumbnail').removeClass('active');
+        $(this).addClass('active');
+    });
+
+    // Zoom effect for main image
+    $('.image-container').on('mousemove', function (e) {
+        const offsetX = e.offsetX;
+        const offsetY = e.offsetY;
+        const width = $(this).width();
+        const height = $(this).height();
+
+        const xPercent = (offsetX / width) * 100;
+        const yPercent = (offsetY / height) * 100;
+
+        $('#mainImage').css({
+            'transform-origin': `${xPercent}% ${yPercent}%`,
+            'transform': 'scale(1.5)' // Adjust scale for zoom effect
+        });
+    });
+
+    $('.image-container').on('mouseleave', function () {
+        $('#mainImage').css({
+            'transform-origin': 'center center',
+            'transform': 'scale(1)' // Reset scale on mouse leave
+        });
+    });
+});
 </script>
