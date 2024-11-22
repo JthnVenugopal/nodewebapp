@@ -49,24 +49,22 @@ const userCheck = async (req, res, next) => {
 }
 }
 
-const userIsAuthenticated = (req, res, next) => {
-    if (req.session.user) {
-        // User is authenticated, redirect to home
-        return res.redirect('/');
-    } else {
-        // User is not authenticated, set cache control headers
-        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-        res.set('Pragma', 'no-cache');
-        res.set('Expires', '0');
-        return res.render('login');
-    }
-}
-
-
+// const userIsAuthenticated = (req, res, next) => {
+//     if (req.session.user) {
+//         // User is authenticated, allow the request to proceed
+//         return next(); // Call next() to proceed to the next middleware/route
+//     } else {
+//         // User is not authenticated, set cache control headers
+//         res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+//         res.set('Pragma', 'no-cache');
+//         res.set('Expires', '0');
+//         return res.render('login'); // Render the login page
+//     }
+// }
 
 module.exports = {
     userAuth,
     adminAuth,
     userCheck,
-    userIsAuthenticated
+    // userIsAuthenticated
 }

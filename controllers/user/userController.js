@@ -289,118 +289,118 @@ const loadLogin = async (req,res) => {
   }
 }
 //--------------------------------------------------------
-// const login = async (req,res)=>{
-//   try {
-//       const {email,password,googleId} = req.body;
-//       const findUser = await User.findOne({isAdmin:0,email:email});
-//       if(!findUser){
-//           return res.render("login",{message:"User not found"});
-//       }
-//       if(findUser.isBlocked){
-//           res.render("login",{message:"User is blocked by admin"})
-//       }
-
-//       const passwordMatch = await bcrypt.compare(password,findUser.password);
-//       if(!passwordMatch){
-//           return res.render("login",{message:"Incorrect Password"})
-//       }
-
-//       req.session.user = findUser;
-//       res.redirect("/");
-//   } catch (error) {
-//       console.error("login error",error);
-//       res.render("login",{message:"Login failed. Please try again."})
-//   }
-// }
-
-
-const login = async (req, res, next) => {
+const login = async (req,res)=>{
   try {
-    const { email, password, googleId } = req.body;
+      const {email,password,googleId} = req.body;
+      const findUser = await User.findOne({isAdmin:0,email:email});
+      if(!findUser){
+          return res.render("login",{message:"User not found"});
+      }
+      if(findUser.isBlocked){
+          res.render("login",{message:"User is blocked by admin"})
+      }
 
-    // If the user is logging in via Google
-    if (googleId) {
-      let findUser = await User.findOne({ email: email });
+      const passwordMatch = await bcrypt.compare(password,findUser.password);
+      if(!passwordMatch){
+          return res.render("login",{message:"Incorrect Password"})
+      }
 
-      if (!findUser) {
-        // If the user does not exist in the database, create a new user
-        findUser = new User({
-          email: email,
-          googleId: googleId,
-          role: "user",
-          isVerified: true
-        });
-        await findUser.save();
+      req.session.user = findUser;
+      res.redirect("/");
+  } catch (error) {
+      console.error("login error",error);
+      res.render("login",{message:"Login failed. Please try again."})
+  }
+}
+
+
+// const login = async (req, res, next) => {
+//   try {
+//     const { email, password, googleId } = req.body;
+
+//     // If the user is logging in via Google
+//     if (googleId) {
+//       let findUser = await User.findOne({ email: email });
+
+//       if (!findUser) {
+//         // If the user does not exist in the database, create a new user
+//         findUser = new User({
+//           email: email,
+//           googleId: googleId,
+//           role: "user",
+//           isVerified: true
+//         });
+//         await findUser.save();
 
        
-        const newWallet = new Wallet({ user: findUser._id, balance: 0 });
-        await newWallet.save();
-        findUser.wallet = newWallet._id;
+//         const newWallet = new Wallet({ user: findUser._id, balance: 0 });
+//         await newWallet.save();
+//         findUser.wallet = newWallet._id;
 
 
-        await findUser.save();
-      } else {
+//         await findUser.save();
+//       } else {
         
-        if (!findUser.googleId) {
-          findUser.googleId = googleId; // Add Google ID to existing user
-        }
+//         if (!findUser.googleId) {
+//           findUser.googleId = googleId; // Add Google ID to existing user
+//         }
 
-        if (!findUser.wallet) {
-          const newWallet = new Wallet({ user: findUser._id, balance: 0 });
-          await newWallet.save();
-          findUser.wallet = newWallet._id;
-        }
+//         if (!findUser.wallet) {
+//           const newWallet = new Wallet({ user: findUser._id, balance: 0 });
+//           await newWallet.save();
+//           findUser.wallet = newWallet._id;
+//         }
 
 
-        await findUser.save();
-      }
+//         await findUser.save();
+//       }
 
-      // Check if the user is blocked after the Google login process
-      if (findUser.isBlocked) {
-        // If the user is blocked, show an error message and prevent further login
-        return res.render("login", { message: "Your account has been blocked by the admin." });
-      }
+//       // Check if the user is blocked after the Google login process
+//       if (findUser.isBlocked) {
+//         // If the user is blocked, show an error message and prevent further login
+//         return res.render("login", { message: "Your account has been blocked by the admin." });
+//       }
 
-      // If not blocked, proceed to log the user in
-      req.session.user = findUser.toObject(); // Store user data in session
-      sessionActive = true;
+//       // If not blocked, proceed to log the user in
+//       req.session.user = findUser.toObject(); // Store user data in session
+//       sessionActive = true;
 
-      // Redirect to the homepage or dashboard
-      return res.redirect("/");
+//       // Redirect to the homepage or dashboard
+//       return res.redirect("/");
 
-    }
+//     }
 
-    // If it's not a Google login, proceed with normal login (email/password)
-    let findUser = await User.findOne({ email: email });
+//     // If it's not a Google login, proceed with normal login (email/password)
+//     let findUser = await User.findOne({ email: email });
 
-    if (!findUser) {
-      return res.render("login", { message: "User not found" });
-    }
+//     if (!findUser) {
+//       return res.render("login", { message: "User not found" });
+//     }
 
-    if (findUser.isBlocked) {
-      return res.render("login", { message: "User is blocked by admin" });
-    }
+//     if (findUser.isBlocked) {
+//       return res.render("login", { message: "User is blocked by admin" });
+//     }
 
-    if (!findUser.password) {
-      return res.render("login", { message: "Please use Google Sign-In for this account" });
-    }
+//     if (!findUser.password) {
+//       return res.render("login", { message: "Please use Google Sign-In for this account" });
+//     }
 
-    const passwordMatch = await bcrypt.compare(password, findUser.password);
+//     const passwordMatch = await bcrypt.compare(password, findUser.password);
 
-    if (!passwordMatch) {
-      return res.render("login", { message: "Incorrect password" });
-    }
+//     if (!passwordMatch) {
+//       return res.render("login", { message: "Incorrect password" });
+//     }
 
-    req.session.user = findUser._id;
-    sessionActive = true;
+//     req.session.user = findUser._id;
+//     sessionActive = true;
 
-    res.redirect("/");
+//     res.redirect("/");
 
-  } catch (error) {
-    console.error("Login error:", error);
-    next(error);
-  }
-};
+//   } catch (error) {
+//     console.error("Login error:", error);
+//     next(error);
+//   }
+// };
 //--------------------------------------------------
 
 const logout = async (req,res)=>{

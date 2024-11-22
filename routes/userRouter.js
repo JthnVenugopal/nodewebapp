@@ -22,8 +22,8 @@ router.get("/google/callback", passport.authenticate("google", { failureRedirect
 });
 
 // Login
-router.get("/login",userIsAuthenticated,userController.loadLogin);
-router.post("/login",userIsAuthenticated,userController.login); 
+router.get("/login",userController.loadLogin);
+router.post("/login",userController.login); 
 
 // Logout
 router.get("/logout", userController.logout);
