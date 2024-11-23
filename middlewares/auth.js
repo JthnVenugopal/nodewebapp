@@ -19,7 +19,7 @@ const userAuth = (req,res,next)=>{
     }
 }
 
-
+//-----------------------------------------------------------
 
 const adminAuth = (req,res,next)=>{
     User.findOne({isAdmin:true})
@@ -36,7 +36,7 @@ const adminAuth = (req,res,next)=>{
     })
 }
 
-
+//-----------------------------------------------------------
 
 
 // const userIsAuthenticated = (req, res, next) => {
@@ -62,23 +62,31 @@ const adminAuth = (req,res,next)=>{
 // }
 
 const userIsAuthenticated = (req, res, next) => {
-    console.log('Session:', req.session);
-    const isAuthenticated = req.isAuthenticated();
-    const userCheck = req.session.user;
+    try {
+        // Avoid logging sensitive information
+        // console.log('Session:', req.session); // Remove or limit what you log
 
-    if (isAuthenticated) {
-        return next(); 
-    } 
-    if (userCheck) {
-        return next(); 
+        const isAuthenticated = req.isAuthenticated();
+        const userCheck = req.session.user;
+
+        if (isAuthenticated || userCheck) {
+            return next(); 
+        }
+
+        // Set headers to prevent caching
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+        
+        return res.render('login'); // Render the login page
+    } catch (error) {
+        console.error("Error during authentication check:", error);
+        res.status(500).send("Internal Server Error");
     }
-
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.set('Pragma', 'no-cache');
-    res.set('Expires', '0');
-    return res.render('login'); // Render the login page
 };
 
+
+//-----------------------------------------------------------
 // const adminAuthenticated = (req,res,next) => {
 //     try {
         
@@ -87,6 +95,8 @@ const userIsAuthenticated = (req, res, next) => {
 //     }
 // }
 
+
+//-----------------------------------------------------------
 module.exports = {
     userAuth,
     adminAuth,
