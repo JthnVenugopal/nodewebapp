@@ -419,7 +419,34 @@ const logout = async (req,res)=>{
 }
 
 
-//--------------------------------------------------
+//----------------------------------------------------------
+
+const loadShoppingPage = async (req,res) => {
+
+  try {
+    
+     res.render("shop");
+
+  } catch (error) {
+    
+       res.redirect("/pagerror")
+
+  }
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+//-----------------------------------------------------------
 module.exports = {
   loadHomepage, 
   pageNotFound, 
@@ -430,5 +457,6 @@ module.exports = {
   resendOtp,
   loadLogin,
   login,
-  logout
+  logout,
+  loadShoppingPage
 }

@@ -8,6 +8,7 @@ const { userAuth, adminAuth,userIsAuthenticated,  } = require("../middlewares/au
 // Path to join home page 
 router.get("/",userIsAuthenticated, userController.loadHomepage);
 router.get("/pageNotFound",userController.pageNotFound);
+router.get("/shop",userAuth,userController.loadShoppingPage)
 
 router.get("/signup", userController.loadSignup);
 router.post("/signup", userController.signup);
