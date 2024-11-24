@@ -491,7 +491,9 @@ const loadShoppingPage = async (req, res) => {
     })
       .sort({ createdOn: -1 })
       .skip(skip)
-      .limit(limit); // Corrected from lmit to limit
+      .limit(limit); 
+
+      // console.log(products)
 
     const totalProducts = await Product.countDocuments({
       isBlocked: false,
@@ -519,6 +521,82 @@ const loadShoppingPage = async (req, res) => {
 };
 
 //-----------------------------------------------------------
+
+const filterProduct = async (req,res) => {
+  try {
+    
+     const user = req.session.user;
+     const category = req.query.category;
+     const brand = req.query.brand;
+     const findCategory = category ? await Category.findOne({_id:category}) : null ;
+     const findBrand = brand ? await Brand.findOne({_id:brand}) : null ;
+     const brands = await Brand.find({}).lean();
+
+     const query = {
+      isBlocked: false,
+      quantity: {$gt:0}
+     }
+
+     if(findCategory){
+      query.category = findCategory._id
+     }
+
+     if(findBrand){
+      query.brand = findBrand.brandName;
+     }
+
+     let findProducts = await Product.find(query).lean();
+     findProducts.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
+
+     const categories = await Category.find({isListed:true});
+     
+     let itemsPerPage = 6;
+
+     let currentPage = parseInt(req.query.page) || 1;
+     let startIndex = (currentPage-1) *  itemsPerPage;
+     let endIndex = startIndex+itemsPerPage;
+     let totalProducts = Math.ceil(findProducts.length/itemsPerPage);
+
+     const currentProduct = findProducts.slice(startIndex.endIndex);
+     let userData = null;
+
+     if(user) {
+      userData = await User.findOne({_id:user._id}).lean();
+      if(userData){
+        const searchEntry = {
+          category:findCategory ? findCategory._id:null,
+          brand:findBrand ? findBrand.brandName:null,
+          searchedOn : new Date()
+
+        }
+            userData.searchHistory.push(searchEntry); //saved user activity saved on DB
+            await userData.save();
+      }
+     }
+
+      req.session.filteredProducts = currentProduct;
+
+      res.render("shop",{
+
+          user : userData,
+          products:currentProduct,
+          category : categories,
+          brand : brands ,
+          totalPages,
+          currentPage,
+          selectedCategory : category || null ,
+          selectedBrand : brand || null ,
+      })
+     
+  } catch (error) {
+    
+     res.redirect("/pageNotFound")
+
+  }
+}
+
+
+//-----------------------------------------------------------
 module.exports = {
   loadHomepage, 
   pageNotFound, 
@@ -530,5 +608,6 @@ module.exports = {
   loadLogin,
   login,
   logout,
-  loadShoppingPage
+  loadShoppingPage,
+  filterProduct
 }

@@ -24,6 +24,15 @@ fetch('/upload', {
 
 -------------------------------------------------------------------
 
+lean() method is used to optimize queries when you do not need Mongoose's full document functionality. When you call lean() on a query, Mongoose returns plain JavaScript objects instead of Mongoose documents.Since plain JavaScript objects are simpler and faster to create and manipulate than Mongoose documents, using lean() can result in faster query execution.
 
+. This can lead to performance improvements
+
+When to Use lean()
+You should use lean() when:
+
+You are performing read-only operations and do not need to modify the documents.
+You want to improve performance for large datasets.
+You want to reduce memory usage.
 
     

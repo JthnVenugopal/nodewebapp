@@ -39,27 +39,6 @@ const adminAuth = (req,res,next)=>{
 //-----------------------------------------------------------
 
 
-// const userIsAuthenticated = (req, res, next) => {
-
-
-//     // console.log('Session:', req.session);
-//     const isAuthenticated =req.isAuthenticated()  ;
-//     const userCheck = req.session.user;
-//     if (isAuthenticated ) {
-     
-//         return next(); 
-//     } 
-//     else if(userCheck){
-//         return next(); 
-//     }
-//     else {
-       
-//         res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-//         res.set('Pragma', 'no-cache');
-//         res.set('Expires', '0');
-//         return res.render('login'); // Render the login page
-//     }
-// }
 
 const userIsAuthenticated = (req, res, next) => {
     try {
@@ -86,14 +65,6 @@ const userIsAuthenticated = (req, res, next) => {
 };
 
 
-//-----------------------------------------------------------
-// const adminAuthenticated = (req,res,next) => {
-//     try {
-        
-//     } catch (error) {
-        
-//     }
-// }
 
 
 //-----------------------------------------------------------

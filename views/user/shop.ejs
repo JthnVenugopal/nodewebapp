@@ -234,7 +234,7 @@
            <ul>
             <%for(let i=0; i<categories.length; i++){%>
                <li class="filter-item" style="list-style-type: none;">
-                 <a href=""><%=categories[i].name%></a>
+                 <a href="/filter?categories=<%=categories[i]._id%>"><%=categories[i].name%></a>
                </li>
                <%}%>
            </ul>
@@ -247,7 +247,7 @@
            <ul>
             <%for(let i=0; i<brand.length; i++){%>
                <li class="filter-item" style="list-style-type: none;">
-                 <a href=""><%=brand[i].brandName%></a>
+                 <a href="/filter?brand=<%=brand[i]._id%>"><%=brand[i].brandName%></a>
                </li>
                <%}%>
            </ul>
@@ -271,17 +271,18 @@
 
      <main class="product-grid">
       <% for (let i = 0; i < products.length; i++) { %>
-        <div class="product-card  " style="height: 40vh; display: flex;flex-direction: column; align-items: center;justify-content: center; font-size: 15px;">
+        <div class="product-card  " style="height: 50vh; display: flex;flex-direction: column; align-items: center;justify-content: center; font-size: 15px;">
           <span class="wishlist-btn" onclick="">❤️</span>
           <a href="">
-            <% if (products[i].productImage && products[i].productImage.length > 0) { %>
-              <% console.log(products[i].productImage); %>
-              <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%= products[i].productName %>" />
+            <% if (products[i].productImages && products[i].productImages.length > 0) { %>
+              
+
+              <img style="height: 60%; " src="/uploads/re-image/<%=products[i].productImages[0]%>" alt="<%= products[i].productName %>" />
             <% } else { %>
               <img src="/path/to/default/image.jpg" alt="Default Image" /> 
             <% } %>
       
-            <h6><%= products[i].productName %></h6>
+            <h6 style="margin-top: 10px;"><%= products[i].productName %></h6>
             <p>Brand: <%= products[i].brand %></p>
             <p>Price: ₹<%= products[i].salePrice.toLocaleString('en-IN') %> <span class="text-muted"><strike>₹<%= products[i].regularPrice.toLocaleString('en-IN') %></strike></span></p>
           </a>
