@@ -12,7 +12,7 @@ const userSchema = new Schema ({
     unique: true,
   },
   phone: {
-    type: String,
+    type: Number,
     required: false,
     unique: true,
     sparse: true,// to avoid multiple null

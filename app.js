@@ -21,9 +21,9 @@ app.use(session({
   cookie:{
     secure:false,
     httpOnly:true,
-    maxAge:72*60*60*1000
+    maxAge: 5 * 24 * 60 * 60 * 1000 // 5 days in milliseconds
   }
-}))
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());

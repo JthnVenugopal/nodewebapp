@@ -1,6 +1,7 @@
 const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/ProductSchema");
+const Brand =  require("../../models/brandSchema");
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
@@ -407,9 +408,12 @@ const logout = async (req,res)=>{
   try {
       req.session.destroy((err)=>{ //destroying session 
           if(err){
-              console.log("Session destruction error",err.message)
-              return res.redirect("/PageNotFound")
+              console.log("Session destruction error",err.message);
+              return res.redirect("/PageNotFound");
           }
+
+          
+
           return res.redirect("/login")
       })
   } catch (error) {
@@ -424,27 +428,50 @@ const logout = async (req,res)=>{
 const loadShoppingPage = async (req,res) => {
 
   try {
-    
-     res.render("shop");
 
+    const user =  req.session.user;
+    const userData = await User.findOne({_id:user});
+    const categories = await Category.find({isListed:true});
+    const categoryIds = categories.map((category)=>category._id.toString());
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    const products = await Product.find({
+      isBlocked:false,
+      category:{$in:categoryIds},
+      quantity:{$gt:0},
+
+    }).sort({createdOn:-1}).skip(skip).limit(lmit);
+
+    const totalProducts = await Product.countDocuments({
+      isBlocked:false,
+      category:{$in:categoryIds},
+      quantity:{$gt:0}
+    });
+    const totalPages = Math.ceil(totalProducts/limit);
+
+    const brands = await Brand.find({isBlocked:false});
+    const categoriesWithIds = categories.map(category => ({_id:category._id,name:category.name}));
+
+     res.render("shop", {
+      user : userData,
+      products:products,
+      categories:categoriesWithIds,
+      brand : brands,
+      totalProducts : totalProducts,
+      currentPage: page,
+      totalPages: totalPages,
+     });
+
+     
   } catch (error) {
-    
+    debugger
        res.redirect("/pagerror")
 
   }
 
 
-
-
-
 }
-
-
-
-
-
-
-
 
 //-----------------------------------------------------------
 module.exports = {

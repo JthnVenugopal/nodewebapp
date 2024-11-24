@@ -5,10 +5,10 @@ const passport = require("passport");
 const productController = require("../controllers/user/productController");
 const { userAuth, adminAuth,userIsAuthenticated,  } = require("../middlewares/auth");
 
-// Path to join home page 
+// Path to join home page & shopping page
 router.get("/",userIsAuthenticated, userController.loadHomepage);
-router.get("/pageNotFound",userController.pageNotFound);
-router.get("/shop",userAuth,userController.loadShoppingPage)
+router.get("/shop",userIsAuthenticated,userController.loadShoppingPage);
+
 
 router.get("/signup", userController.loadSignup);
 router.post("/signup", userController.signup);
@@ -30,6 +30,6 @@ router.post("/login",userController.login);
 router.get("/logout", userController.logout);
 
 // Product management
-router.get("/productDetails", productController.productDetails);
+router.get("/productDetails",userIsAuthenticated, productController.productDetails);
 
 module.exports = router;
