@@ -425,53 +425,98 @@ const logout = async (req,res)=>{
 
 //----------------------------------------------------------
 
-const loadShoppingPage = async (req,res) => {
+// const loadShoppingPage = async (req,res) => {
 
-  try {
+//   try {
 
-    const user =  req.session.user;
-    const userData = await User.findOne({_id:user});
-    const categories = await Category.find({isListed:true});
-    const categoryIds = categories.map((category)=>category._id.toString());
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
-    const products = await Product.find({
-      isBlocked:false,
-      category:{$in:categoryIds},
-      quantity:{$gt:0},
+//     const user =  req.session.user;
+//     console.log(user)
+//     const userData = await User.findOne({_id:user});
+//     const category = await Category.find({isListed:true});
+//     const categoryIds = categories.map((category)=>category._id.toString());
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = 10;
+//     const skip = (page - 1) * limit;
+//     const products = await Product.find({
+//       isBlocked:false,
+//       category:{$in:categoryIds},
+//       quantity:{$gt:0},
 
-    }).sort({createdOn:-1}).skip(skip).limit(lmit);
+//     }).sort({createdOn:-1}).skip(skip).limit(lmit);
 
-    const totalProducts = await Product.countDocuments({
-      isBlocked:false,
-      category:{$in:categoryIds},
-      quantity:{$gt:0}
-    });
-    const totalPages = Math.ceil(totalProducts/limit);
+//     const totalProducts = await Product.countDocuments({
+//       isBlocked:false,
+//       category:{$in:categoryIds},
+//       quantity:{$gt:0}
+//     });
+//     const totalPages = Math.ceil(totalProducts/limit);
 
-    const brands = await Brand.find({isBlocked:false});
-    const categoriesWithIds = categories.map(category => ({_id:category._id,name:category.name}));
+//     const brands = await Brand.find({isBlocked:false});
+//     const categoriesWithIds = category.map(category => ({_id:category._id,name:category.name}));
 
-     res.render("shop", {
-      user : userData,
-      products:products,
-      categories:categoriesWithIds,
-      brand : brands,
-      totalProducts : totalProducts,
-      currentPage: page,
-      totalPages: totalPages,
-     });
+//      res.render("shop",
+//       {
+//       user : userData,
+//       products:products,
+//       category:categoriesWithIds,
+//       brand : brands,
+//       totalProducts : totalProducts,
+//       currentPage: page,
+//       totalPages: totalPages,
+//      }
+//     );
 
      
+//   } catch (error) {
+  
+//        res.redirect("/pagerror")
+
+//   }
+// }
+
+const loadShoppingPage = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const userData = await User.findOne({ _id: user });
+    const categories = await Category.find({ isListed: true });
+    const categoryIds = categories.map((category) => category._id.toString());
+    const page = parseInt(req.query.page) || 1;
+    const limit = 9;
+    const skip = (page - 1) * limit;
+
+    const products = await Product.find({
+      isBlocked: false,
+      category: { $in: categoryIds },
+      quantity: { $gt: 0 },
+    })
+      .sort({ createdOn: -1 })
+      .skip(skip)
+      .limit(limit); // Corrected from lmit to limit
+
+    const totalProducts = await Product.countDocuments({
+      isBlocked: false,
+      category: { $in: categoryIds },
+      quantity: { $gt: 0 },
+    });
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    const brands = await Brand.find({ isBlocked: false });
+    const categoriesWithIds = categories.map(category => ({ _id: category._id, name: category.name }));
+
+    res.render("shop", {
+      user: userData,
+      products: products,
+      categories: categoriesWithIds, // Ensure this matches the EJS variable
+      brand: brands,
+      totalProducts: totalProducts,
+      currentPage: page,
+      totalPages: totalPages,
+    });
   } catch (error) {
-    debugger
-       res.redirect("/pagerror")
-
+    console.error("Error loading shopping page:", error);
+    res.redirect("/pagerror");
   }
-
-
-}
+};
 
 //-----------------------------------------------------------
 module.exports = {

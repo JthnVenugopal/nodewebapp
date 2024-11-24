@@ -215,7 +215,7 @@
 </style>
 
 
-<div class="main-container">
+<div class="main-container " style=" margin-bottom: 10%;">
  <section class="shop-page container">
    <div class="shop-topbar">
      <div class="search-bar">
@@ -226,26 +226,26 @@
      </div>
    </div>
   
-   <div class="product-list-container" >
+   <div class="product-list-container" style="font-size: 15px;" >
      <aside class="sidebar">
        <div class="filter-section">
-         <div class="filter-title">Categories</div>
+         <div class="filter-title" style="font-size: 20px;">Categories</div>
          <div class="category-brand-container">
            <ul>
-            <%for(let i=0; i<category.length; i++){%>
+            <%for(let i=0; i<categories.length; i++){%>
                <li class="filter-item" style="list-style-type: none;">
-                 <a href=""><%=category[i].name%></a>
+                 <a href=""><%=categories[i].name%></a>
                </li>
                <%}%>
            </ul>
          </div>
        </div>
 
-       <div class="filter-section">
-         <div class="filter-title">Brands</div>
+       <div class="filter-section" style="font-size: 15px;">
+         <div class="filter-title" style="font-size: 20px;"><u>Brands</u></div>
          <div class="category-brand-container">
            <ul>
-            <%for(let i=0; i<brand.lenth; i++){%>
+            <%for(let i=0; i<brand.length; i++){%>
                <li class="filter-item" style="list-style-type: none;">
                  <a href=""><%=brand[i].brandName%></a>
                </li>
@@ -270,28 +270,31 @@
 
 
      <main class="product-grid">
-      <%for(let i=0; i<products.length; i++){%>
-         <div class="product-card">
-           <span class="wishlist-btn" onclick="">❤️</span>
-           <a href="">
-             <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%=products[i].productName%>" />
-
-             <h4><%=products[i].productName%></h4>
-
-             <p>Brand: <%=products[i].brand%></p>
-
-             <p>Price:₹<%=products[i].salePrice.toLocaleString('en-IN')%>  <span class="text-muted"><strike>₹<%=products[i].regularPrice.toLocaleString('en-IN')%></strike></span></p>
-           </a>
-           <button class="add-to-cart-btn" onclick="">Add to Cart</button>
-         </div>
-         <%}%>
-     </main>
+      <% for (let i = 0; i < products.length; i++) { %>
+        <div class="product-card  " style="height: 40vh; display: flex;flex-direction: column; align-items: center;justify-content: center; font-size: 15px;">
+          <span class="wishlist-btn" onclick="">❤️</span>
+          <a href="">
+            <% if (products[i].productImage && products[i].productImage.length > 0) { %>
+              <% console.log(products[i].productImage); %>
+              <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%= products[i].productName %>" />
+            <% } else { %>
+              <img src="/path/to/default/image.jpg" alt="Default Image" /> 
+            <% } %>
+      
+            <h6><%= products[i].productName %></h6>
+            <p>Brand: <%= products[i].brand %></p>
+            <p>Price: ₹<%= products[i].salePrice.toLocaleString('en-IN') %> <span class="text-muted"><strike>₹<%= products[i].regularPrice.toLocaleString('en-IN') %></strike></span></p>
+          </a>
+          <button class="add-to-cart-btn " onclick="">Add to Cart</button>
+        </div>
+      <% } %>
+    </main>
    </div>
 
 
 <!-- Pagination -->
    
-   <div class="pagination">
+   <div class="pagination" >
     <% if (currentPage > 1) { %>
       <a class="btn" href="/shop?page=<%= currentPage - 1 %>">Prev</a>
     <% } %>
