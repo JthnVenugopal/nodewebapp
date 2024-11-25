@@ -227,9 +227,11 @@
    </div>
   
    <div class="product-list-container" style="font-size: 15px;" >
-     <aside class="sidebar">
-       <div class="filter-section">
-         <div class="filter-title" style="font-size: 20px;">
+
+
+     <aside class="sidebar " style="height: fit-content;">
+       <div class="filter-section ">
+         <div class="filter-title " style="font-size: 20px;">
           Categories
          </div>
       <div class="category-brand-container">
@@ -260,10 +262,10 @@
          <div class="filter-title">Filter by Price</div>
          <form id="price-filter-form">
            <div class="price-options">
-             <a href=""><button type="button" class="price-button">Under ₹500</button></a>
-             <a href=""><button type="button" class="price-button">₹500 - ₹1000</button></a>
-             <a href=""><button type="button" class="price-button">₹1000- ₹1500</button></a>
-             <a href=""><button type="button" class="price-button">Above ₹1500</button></a>
+             <a href="/filterByPrice?gt=0&lt=500"><button type="button" class="price-button">Under ₹500</button></a>
+             <a href="/filterByPrice?gt=500&lt=1000"><button type="button" class="price-button">₹500 - ₹1000</button></a>
+             <a href="/filterByPrice?gt=1000&lt=1500"><button type="button" class="price-button">₹1000- ₹1500</button></a>
+             <a href="/filterByPrice?gt=1500&lt=1000000"><button type="button" class="price-button">Above ₹1500</button></a>
            </div>
          </form>
        </div>
@@ -287,7 +289,7 @@
             <p>Brand: <%= products[i].brand %></p>
             <p>Price: ₹<%= products[i].salePrice.toLocaleString('en-IN') %> <span class="text-muted"><strike>₹<%= products[i].regularPrice.toLocaleString('en-IN') %></strike></span></p>
           </a>
-          <button class="add-to-cart-btn " onclick="">Add to Cart</button>
+          <button class="add-to-cart-btn " onclick="" style="margin-top: 5%;">Add to Cart</button>
         </div>
       <% } %>
     </main>

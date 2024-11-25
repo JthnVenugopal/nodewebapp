@@ -17,33 +17,6 @@ const pageNotFound = async (req,res) => {
 }
 
 //-------------------------------------------------------
-// const loadHomepage = async (req, res) => {
-//   try {
-//       const user = req.session.user;
-//       const  categories = await Category.find({isListed:true});
-//       let productData = await Product.find(
-//           {isBlocked:false,
-//               category:{$in:categories.map(category=>category._id)},quantity:{$gt:0}
-//           }
-//       )
-
-//       productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));// need products added newly
-//       productData = productData.slice(0,4);// shows pdt from 0 to 4
-
-
-
-//       if (user) {
-//           const userData = await User.findOne({ _id: user._id });
-//           return res.render("home", { user: userData ,products:productData});
-//       } else {
-//           return res.render("home", {products:productData}); 
-//       }
-//   } catch (error) {
-//       console.log("Home page not found");
-//       return res.status(500).send("Server error");
-//   }
-// };
-
 
 const loadHomepage = async (req, res, next) => {
   try {
@@ -105,7 +78,7 @@ const loadSignup = async (req,res) => {
 
   }
 }
-
+//------------------------------------------------------
 const loadShopping = async (req,res) => {
   try  {
     return res.render('shop');
@@ -114,7 +87,6 @@ const loadShopping = async (req,res) => {
     res.status(500).send("Server error")
   }
 }
-
 //------------------------------------------------------------
 function generateOtp(){
   return Math.floor(100000 + Math.random()*900000).toString();
@@ -565,6 +537,48 @@ const filterProduct = async (req, res) => {
   }
 };
 
+//-----------------------------------------------------------
+
+const filterByPrice = async (req,res) => {
+  try {
+    
+      const user = req.session.user;
+      const userData = await User.findOne({_id:user});
+      const brands = await Brand.findOne({}).lean();
+      const categories = await Category.find({isListed:true}).lean();
+
+      let findProducts = await product.find({
+        salePrice: {$gt:req.query.gt, $lt: req.query.lt},
+        isBlocked:false,
+        quantity:{$gt:0},
+      }).lean();
+
+      findProducts.sort((a,b)=> new Date(b,createdOn) - new Date(a,createdOn));
+
+      let itemsPerPage = 9;
+      let currentPage = parseInt(req.query.page) || 1;
+      let startIndex = (currentPage - 1)*itemsPerPage;
+      let endIndex = startIndex + itemsPerPage;
+      let totalPages = Math.ceil(findProducts.length/itemsPerPage);
+      const currentProduct = findProduct.slice(startIndex,endIndex);
+
+      req.session.filteredProducts = findProducts;
+
+      res.render("shop" , {
+        user:userData,
+        products:currentProduct,
+        categories: categories,
+        brand : brands,
+        totalPages,
+        currentPage,
+
+      })
+
+  } catch (error) {
+      console.error(error);
+      res.redirect("/pageNotFound")    
+  }
+}
 
 //-----------------------------------------------------------
 
@@ -580,5 +594,6 @@ module.exports = {
   login,
   logout,
   loadShoppingPage,
-  filterProduct
+  filterProduct,
+  filterByPrice
 }

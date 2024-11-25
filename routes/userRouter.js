@@ -7,8 +7,9 @@ const { userAuth, adminAuth,userIsAuthenticated,  } = require("../middlewares/au
 
 // Path to join home page & shopping page
 router.get("/",userIsAuthenticated, userController.loadHomepage);
-router.get("/shop",userController.loadShoppingPage);
-router.get("/filter",userController.filterProduct);
+router.get("/shop",userIsAuthenticated,userController.loadShoppingPage);
+router.get("/filter",userIsAuthenticated,userController.filterProduct);
+router.get("filterByPrice",userIsAuthenticated,userController.filterByPrice );
 
 
 router.get("/signup", userController.loadSignup);
