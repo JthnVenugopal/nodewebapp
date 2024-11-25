@@ -24,7 +24,7 @@ const categorySchema =  new mongoose.Schema({
     default:Date.now
   }
 
-})
+}, { timestamps: true });
 
 const Category = mongoose.model("Category",categorySchema);
 

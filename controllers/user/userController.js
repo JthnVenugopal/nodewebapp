@@ -425,54 +425,6 @@ const logout = async (req,res)=>{
 
 //----------------------------------------------------------
 
-// const loadShoppingPage = async (req,res) => {
-
-//   try {
-
-//     const user =  req.session.user;
-//     console.log(user)
-//     const userData = await User.findOne({_id:user});
-//     const category = await Category.find({isListed:true});
-//     const categoryIds = categories.map((category)=>category._id.toString());
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = 10;
-//     const skip = (page - 1) * limit;
-//     const products = await Product.find({
-//       isBlocked:false,
-//       category:{$in:categoryIds},
-//       quantity:{$gt:0},
-
-//     }).sort({createdOn:-1}).skip(skip).limit(lmit);
-
-//     const totalProducts = await Product.countDocuments({
-//       isBlocked:false,
-//       category:{$in:categoryIds},
-//       quantity:{$gt:0}
-//     });
-//     const totalPages = Math.ceil(totalProducts/limit);
-
-//     const brands = await Brand.find({isBlocked:false});
-//     const categoriesWithIds = category.map(category => ({_id:category._id,name:category.name}));
-
-//      res.render("shop",
-//       {
-//       user : userData,
-//       products:products,
-//       category:categoriesWithIds,
-//       brand : brands,
-//       totalProducts : totalProducts,
-//       currentPage: page,
-//       totalPages: totalPages,
-//      }
-//     );
-
-     
-//   } catch (error) {
-  
-//        res.redirect("/pagerror")
-
-//   }
-// }
 
 const loadShoppingPage = async (req, res) => {
   try {
@@ -481,7 +433,7 @@ const loadShoppingPage = async (req, res) => {
     const categories = await Category.find({ isListed: true });
     const categoryIds = categories.map((category) => category._id.toString());
     const page = parseInt(req.query.page) || 1;
-    const limit = 9;
+    const limit = 30;
     const skip = (page - 1) * limit;
 
     const products = await Product.find({
@@ -522,43 +474,48 @@ const loadShoppingPage = async (req, res) => {
 
 //-----------------------------------------------------------
 
-
-
 const filterProduct = async (req, res) => {
   try {
+    
     const user = req.session.user;
-    const category = req.query.category;
+    const category = req.query.categories;
     const brand = req.query.brand;
+    
 
-    // Fetch the selected category and brand
-    const findCategory = category ? await Category.findOne({ _id: category }) : null;
-    const findBrand = brand ? await Brand.findOne({ _id: brand }) : null;
-    const brands = await Brand.find({}).lean();
-
+    // Initialize the query object
     const query = {
       isBlocked: false,
       quantity: { $gt: 0 }
     };
 
-    // Add filters to the query if they exist
-    if (findCategory) {
-      query.category = findCategory._id; // Use the category ID
+    // Fetch the selected category and brand
+    if (category) {
+      const findCategory = await Category.findOne({ _id: category });
+      if (findCategory) {
+        query.category = findCategory._id; // Use the category ID
+      } else {
+        console.log("Category not found:", category); // Log if category not found
+      }
     }
 
-    if (findBrand) {
-      query.brand = findBrand.brandName; // Use the brand name
+    if (brand) {
+      const findBrand = await Brand.findOne({ _id: brand });
+      if (findBrand) {
+        // Use a case-insensitive regex for brand name
+        query.brand = { $regex: new RegExp(findBrand.brandName, 'i') }; // Case-insensitive
+      } else {
+        console.log("Brand not found:", brand); // Log if brand not found
+      }
     }
 
     // Fetch products based on the constructed query
     let findProducts = await Product.find(query).lean();
     findProducts.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
 
-    // Debugging: Log the query and the number of products found
-    console.log("Query:", query);
-    console.log("Number of products found:", findProducts.length);
 
     // Fetch categories for the sidebar
-    const categories = await Category.find({ isListed: true });
+    const categories = await Category.find({ isListed: true }).lean();
+  
 
     // Pagination setup
     let itemsPerPage = 6;
@@ -580,8 +537,8 @@ const filterProduct = async (req, res) => {
       userData = await User.findOne({ _id: user._id }).lean();
       if (userData) {
         const searchEntry = {
-          category: findCategory ? findCategory._id : null,
-          brand: findBrand ? findBrand.brandName : null,
+          category: category ? category : null,
+          brand: brand ? findBrand.brandName : null,
           searchedOn: new Date()
         };
         userData.searchHistory.push(searchEntry); // Save user activity
@@ -593,8 +550,8 @@ const filterProduct = async (req, res) => {
     res.render("shop", {
       user: userData,
       products: currentProduct,
-      categories: categories,
-      brand: brands,
+      categories: categories, // Ensure categories are passed correctly
+      brand: await Brand.find({}).lean(), // Fetch all brands for rendering
       totalProducts: totalProducts,
       currentPage: currentPage,
       totalPages: totalPages,
@@ -610,6 +567,7 @@ const filterProduct = async (req, res) => {
 
 
 //-----------------------------------------------------------
+
 module.exports = {
   loadHomepage, 
   pageNotFound, 
