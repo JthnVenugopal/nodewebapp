@@ -522,78 +522,91 @@ const loadShoppingPage = async (req, res) => {
 
 //-----------------------------------------------------------
 
-const filterProduct = async (req,res) => {
+
+
+const filterProduct = async (req, res) => {
   try {
-    
-     const user = req.session.user;
-     const category = req.query.category;
-     const brand = req.query.brand;
-     const findCategory = category ? await Category.findOne({_id:category}) : null ;
-     const findBrand = brand ? await Brand.findOne({_id:brand}) : null ;
-     const brands = await Brand.find({}).lean();
+    const user = req.session.user;
+    const category = req.query.category;
+    const brand = req.query.brand;
 
-     const query = {
+    // Fetch the selected category and brand
+    const findCategory = category ? await Category.findOne({ _id: category }) : null;
+    const findBrand = brand ? await Brand.findOne({ _id: brand }) : null;
+    const brands = await Brand.find({}).lean();
+
+    const query = {
       isBlocked: false,
-      quantity: {$gt:0}
-     }
+      quantity: { $gt: 0 }
+    };
 
-     if(findCategory){
-      query.category = findCategory._id
-     }
+    // Add filters to the query if they exist
+    if (findCategory) {
+      query.category = findCategory._id; // Use the category ID
+    }
 
-     if(findBrand){
-      query.brand = findBrand.brandName;
-     }
+    if (findBrand) {
+      query.brand = findBrand.brandName; // Use the brand name
+    }
 
-     let findProducts = await Product.find(query).lean();
-     findProducts.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
+    // Fetch products based on the constructed query
+    let findProducts = await Product.find(query).lean();
+    findProducts.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
 
-     const categories = await Category.find({isListed:true});
-     
-     let itemsPerPage = 6;
+    // Debugging: Log the query and the number of products found
+    console.log("Query:", query);
+    console.log("Number of products found:", findProducts.length);
 
-     let currentPage = parseInt(req.query.page) || 1;
-     let startIndex = (currentPage-1) *  itemsPerPage;
-     let endIndex = startIndex+itemsPerPage;
-     let totalProducts = Math.ceil(findProducts.length/itemsPerPage);
+    // Fetch categories for the sidebar
+    const categories = await Category.find({ isListed: true });
 
-     const currentProduct = findProducts.slice(startIndex.endIndex);
-     let userData = null;
+    // Pagination setup
+    let itemsPerPage = 6;
+    let currentPage = parseInt(req.query.page) || 1;
+    let startIndex = (currentPage - 1) * itemsPerPage;
+    let endIndex = startIndex + itemsPerPage;
 
-     if(user) {
-      userData = await User.findOne({_id:user._id}).lean();
-      if(userData){
+    // Calculate total pages
+    let totalProducts = findProducts.length; // Total products found
+    let totalPages = Math.ceil(totalProducts / itemsPerPage); // Calculate total pages
+
+    // Slice products for the current page
+    const currentProduct = findProducts.slice(startIndex, endIndex);
+
+    let userData = null;
+
+    // If user is logged in, update search history
+    if (user) {
+      userData = await User.findOne({ _id: user._id }).lean();
+      if (userData) {
         const searchEntry = {
-          category:findCategory ? findCategory._id:null,
-          brand:findBrand ? findBrand.brandName:null,
-          searchedOn : new Date()
-
-        }
-            userData.searchHistory.push(searchEntry); //saved user activity saved on DB
-            await userData.save();
+          category: findCategory ? findCategory._id : null,
+          brand: findBrand ? findBrand.brandName : null,
+          searchedOn: new Date()
+        };
+        userData.searchHistory.push(searchEntry); // Save user activity
+        await userData.save();
       }
-     }
+    }
 
-      req.session.filteredProducts = currentProduct;
+    // Render the shop view with filtered products
+    res.render("shop", {
+      user: userData,
+      products: currentProduct,
+      categories: categories,
+      brand: brands,
+      totalProducts: totalProducts,
+      currentPage: currentPage,
+      totalPages: totalPages,
+      selectedCategory: category || null,
+      selectedBrand: brand || null,
+    });
 
-      res.render("shop",{
-
-          user : userData,
-          products:currentProduct,
-          category : categories,
-          brand : brands ,
-          totalPages,
-          currentPage,
-          selectedCategory : category || null ,
-          selectedBrand : brand || null ,
-      })
-     
   } catch (error) {
-    
-     res.redirect("/pageNotFound")
-
+    console.error("Error filtering products:", error);
+    res.redirect("/pageNotFound");
   }
-}
+};
 
 
 //-----------------------------------------------------------

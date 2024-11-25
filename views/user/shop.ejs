@@ -229,17 +229,20 @@
    <div class="product-list-container" style="font-size: 15px;" >
      <aside class="sidebar">
        <div class="filter-section">
-         <div class="filter-title" style="font-size: 20px;">Categories</div>
-         <div class="category-brand-container">
-           <ul>
-            <%for(let i=0; i<categories.length; i++){%>
-               <li class="filter-item" style="list-style-type: none;">
-                 <a href="/filter?categories=<%=categories[i]._id%>"><%=categories[i].name%></a>
-               </li>
-               <%}%>
-           </ul>
+         <div class="filter-title" style="font-size: 20px;">
+          Categories
          </div>
-       </div>
+
+
+       <div class="category-brand-container">
+        <ul>
+          <% for (let i = 0; i < categories.length; i++) { %>
+            <li class="filter-item" style="list-style-type: none;">
+              <a href="/filter?categories=<%= categories[i]._id %>"><%= categories[i].name %></a>
+            </li>
+          <% } %>
+        </ul>
+      </div>
 
        <div class="filter-section" style="font-size: 15px;">
          <div class="filter-title" style="font-size: 20px;"><u>Brands</u></div>
