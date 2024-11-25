@@ -287,93 +287,7 @@ const login = async (req,res)=>{
 }
 
 
-// const login = async (req, res, next) => {
-//   try {
-//     const { email, password, googleId } = req.body;
 
-//     // If the user is logging in via Google
-//     if (googleId) {
-//       let findUser = await User.findOne({ email: email });
-
-//       if (!findUser) {
-//         // If the user does not exist in the database, create a new user
-//         findUser = new User({
-//           email: email,
-//           googleId: googleId,
-//           role: "user",
-//           isVerified: true
-//         });
-//         await findUser.save();
-
-       
-//         const newWallet = new Wallet({ user: findUser._id, balance: 0 });
-//         await newWallet.save();
-//         findUser.wallet = newWallet._id;
-
-
-//         await findUser.save();
-//       } else {
-        
-//         if (!findUser.googleId) {
-//           findUser.googleId = googleId; // Add Google ID to existing user
-//         }
-
-//         if (!findUser.wallet) {
-//           const newWallet = new Wallet({ user: findUser._id, balance: 0 });
-//           await newWallet.save();
-//           findUser.wallet = newWallet._id;
-//         }
-
-
-//         await findUser.save();
-//       }
-
-//       // Check if the user is blocked after the Google login process
-//       if (findUser.isBlocked) {
-//         // If the user is blocked, show an error message and prevent further login
-//         return res.render("login", { message: "Your account has been blocked by the admin." });
-//       }
-
-//       // If not blocked, proceed to log the user in
-//       req.session.user = findUser.toObject(); // Store user data in session
-//       sessionActive = true;
-
-//       // Redirect to the homepage or dashboard
-//       return res.redirect("/");
-
-//     }
-
-//     // If it's not a Google login, proceed with normal login (email/password)
-//     let findUser = await User.findOne({ email: email });
-
-//     if (!findUser) {
-//       return res.render("login", { message: "User not found" });
-//     }
-
-//     if (findUser.isBlocked) {
-//       return res.render("login", { message: "User is blocked by admin" });
-//     }
-
-//     if (!findUser.password) {
-//       return res.render("login", { message: "Please use Google Sign-In for this account" });
-//     }
-
-//     const passwordMatch = await bcrypt.compare(password, findUser.password);
-
-//     if (!passwordMatch) {
-//       return res.render("login", { message: "Incorrect password" });
-//     }
-
-//     req.session.user = findUser._id;
-//     sessionActive = true;
-
-//     res.redirect("/");
-
-//   } catch (error) {
-//     console.error("Login error:", error);
-//     next(error);
-//   }
-// };
 
 //-------------------------------------------------
 const logout = async (req,res)=>{
@@ -426,14 +340,14 @@ const loadShoppingPage = async (req, res) => {
     });
     const totalPages = Math.ceil(totalProducts / limit);
 
-    const brands = await Brand.find({ isBlocked: false });
+    const brand = await Brand.find({ isBlocked: false });
     const categoriesWithIds = categories.map(category => ({ _id: category._id, name: category.name }));
 
     res.render("shop", {
       user: userData,
       products: products,
       categories: categoriesWithIds, // Ensure this matches the EJS variable
-      brand: brands,
+      brand: brand,
       totalProducts: totalProducts,
       currentPage: page,
       totalPages: totalPages,
@@ -544,7 +458,7 @@ const filterByPrice = async (req,res) => {
     
       const user = req.session.user;
       const userData = await User.findOne({_id:user});
-      const brands = await Brand.find({}).lean();
+      const brand = await Brand.find({}).lean();
       const categories = await Category.find({isListed:true}).lean();
 
       let findProducts = await Product.find({
@@ -568,7 +482,7 @@ const filterByPrice = async (req,res) => {
         user:userData,
         products:currentProduct,
         categories: categories,
-        brand : brands,
+        brand : brand,
         totalPages,
         currentPage,
 
@@ -581,60 +495,59 @@ const filterByPrice = async (req,res) => {
 }
 
 //-----------------------------------------------------------
-const searchProducts = async (req,res) => {
-  try {
-    const user = req.session.user;
-    const userData = await User.findOne({_id:user});
-    let search = req.body.query;
-    
-    const brands = await Brand.find({}).lean();
-    const categories = await Category.find({isListed:true}).lean();
-    const categoryIds = categories.map(category => category._id.toString());
+// const searchProducts = async (req, res) => {
+//   try {
+//     const user = req.session.user;
+//     const userData = await User.findOne({ _id: user });
+//     let search = req.body.query;
 
-    let searchResult = [];
+//     // Fetch brands and categories
+//     const brand = await Brand.find({ isBlocked: false }).lean();
+//     const categories = await Category.find({ isListed: true }).lean();
+//     const categoryIds = categories.map(category => category._id.toString());
 
-    if(req.session.filteredProducts && req.session.filteredProducts.length>0){
-      searchResult = req.session.filteredProducts.filter(product => product.productName.toLowerCase().includes(search.toLowerCase()));
-    }else{
-      searchResult = await Product.find({
-        productName : {$regex: ".*"+search+".*",$options:"i"},
-        isBlocked:false,
-        quantity: {$gt:0},
-        category:{$in:categoryIds},
+//     let searchResult = [];
 
-      });
-    }
-    
-    searchResult.sort((a,b)=>new Date(b.createdOn) - new Date(a.createdOn));
+//     // Check if there are filtered products in the session
+//     if (req.session.filteredProducts && req.session.filteredProducts.length > 0) {
+//       searchResult = req.session.filteredProducts.filter(product => product.productName.toLowerCase().includes(search.toLowerCase()));
+//     } else {
+//       // Search for products based on the query
+//       searchResult = await Product.find({
+//         productName: { $regex: ".*" + search + ".*", $options: "i" },
+//         isBlocked: false,
+//         quantity: { $gt: 0 },
+//         category: { $in: categoryIds },
+//       });
+//     }
 
-    let itemsPerPage = 6;
-    let currentPage = parseInt(req.query.page) || 1;
-    let startIndex = (currentPage-1)*itemsPerPage;
-    let endIndex = startIndex + itemsPerPage;
-    let totalPages = Math.ceil(searchResult.length/itemsPerPage);
-    let currentProduct = searchResult.slice(startIndex,endIndex);
+//     // Sort search results by creation date
+//     searchResult.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
 
-    res.render("shop",{
+//     // Pagination setup
+//     let itemsPerPage = 6;
+//     let currentPage = parseInt(req.query.page) || 1;
+//     let startIndex = (currentPage - 1) * itemsPerPage;
+//     let endIndex = startIndex + itemsPerPage;
+//     let totalPages = Math.ceil(searchResult.length / itemsPerPage);
+//     let currentProduct = searchResult.slice(startIndex, endIndex);
 
-      user : userData,
-      products : currentProduct,
-      categories : categories,
-      brands : brands,
-      totalPages ,
-      currentPage ,
-      count : searchResult.length,
+//     // Render the shop view with the search results
+//     res.render("shop", {
+//       user: userData,
+//       products: currentProduct,
+//       categories: categories,
+//       brand: brand, 
+//       totalPages,
+//       currentPage,
+//       count: searchResult.length,
+//     });
 
-    })
-
-  } catch (error) {
-      
-     console.log("Error:",error);
-     res.redirect("/pageNotFound")
-
-
-  }
-}
-
+//   } catch (error) {
+//     console.log("Error:", error);
+//     res.redirect("/pageerror");
+//   }
+// }
 
 //-----------------------------------------------------------
 
@@ -662,5 +575,6 @@ module.exports = {
   loadShoppingPage,
   filterProduct,
   filterByPrice,
-  searchProducts
+  // searchProducts,
+  
 }

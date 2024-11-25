@@ -10,7 +10,7 @@ router.get("/",userIsAuthenticated, userController.loadHomepage);
 router.get("/shop",userIsAuthenticated,userController.loadShoppingPage);
 router.get("/filter",userIsAuthenticated,userController.filterProduct);
 router.get("/filterByPrice",userIsAuthenticated,userController.filterByPrice );
-router.post("/search",userIsAuthenticated,userController.searchProducts);
+// router.post("/search",userIsAuthenticated,userController.searchProducts);
 
 
 router.get("/signup", userController.loadSignup);
