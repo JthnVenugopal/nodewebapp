@@ -2,15 +2,16 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user/userController");
 const passport = require("passport");
+const shopPageController = require("../controllers/user/shopPageController")
 const productController = require("../controllers/user/productController");
 const profileController = require("../controllers/user/profileController")
-const { userAuth, adminAuth,userIsAuthenticated,  } = require("../middlewares/auth");
+const { userIsAuthenticated  } = require("../middlewares/auth");
 
 // Path to join home page & shopping page
 router.get("/",userIsAuthenticated, userController.loadHomepage);
-router.get("/shop",userIsAuthenticated,userController.loadShoppingPage);
-router.get("/filter",userIsAuthenticated,userController.filterProduct);
-router.get("/filterByPrice",userIsAuthenticated,userController.filterByPrice );
+router.get("/shop",shopPageController.loadShoppingPage);
+router.get("/filter",shopPageController.filterProduct);
+router.get("/filterByPrice",shopPageController.filterByPrice );
 // router.post("/search",userIsAuthenticated,userController.searchProducts);
 
 
@@ -34,10 +35,10 @@ router.post("/login",userController.login);
 router.get("/logout", userController.logout);
 
 // Product management
-router.get("/productDetails",userIsAuthenticated, productController.productDetails);
+router.get("/productDetails", productController.productDetails);
 
 //profile management
-router.get("/userProfile",userIsAuthenticated,profileController.userProfile);
+router.get("/userProfile",profileController.userProfile);
 
 
 module.exports = router;
