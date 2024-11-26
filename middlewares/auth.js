@@ -50,14 +50,16 @@ const userIsAuthenticated = (req, res, next) => {
 
         if (isAuthenticated || userCheck) {
             return next(); 
-        }
-
+        }else{
         // Set headers to prevent caching
         res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         res.set('Pragma', 'no-cache');
         res.set('Expires', '0');
         
         return res.render('login'); // Render the login page
+        }
+
+       
     } catch (error) {
         console.error("Error during authentication check:", error);
         res.status(500).send("Internal Server Error");
