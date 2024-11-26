@@ -1,42 +1,43 @@
 const express = require("express");
 const router = express.Router();
-const passport = require("passport");
 const userController = require("../controllers/user/userController");
-const profileController = require("../controllers/user/profileController");
+const passport = require("passport");
 const productController = require("../controllers/user/productController");
-const { userAuth, adminAuth } = require("../middlewares/auth");
+const profileController = require("../controllers/user/profileController")
+const { userAuth, adminAuth,userIsAuthenticated,  } = require("../middlewares/auth");
 
-//Error management
-router.get("/pageNotFound",userController.pageNotFound);
+// Path to join home page & shopping page
+router.get("/",userIsAuthenticated, userController.loadHomepage);
+router.get("/shop",userIsAuthenticated,userController.loadShoppingPage);
+router.get("/filter",userIsAuthenticated,userController.filterProduct);
+router.get("/filterByPrice",userIsAuthenticated,userController.filterByPrice );
+// router.post("/search",userIsAuthenticated,userController.searchProducts);
 
-//signup
+
 router.get("/signup", userController.loadSignup);
 router.post("/signup", userController.signup);
+
 router.post("/verify-otp", userController.verifyOtp);
 router.post("/resend-otp", userController.resendOtp);
+
 // Google authentication routes
 router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 router.get("/google/callback", passport.authenticate("google", { failureRedirect: "/signup" }), (req, res) => {
     res.redirect("/");
 });
 
-// Login/logout
+// Login
 router.get("/login",userController.loadLogin);
 router.post("/login",userController.login); 
+
+// Logout
 router.get("/logout", userController.logout);
 
-// Path to join home page & shopping page
-router.get("/",userAuth, userController.loadHomepage);
-router.get("/shop",userController.loadShoppingPage);
-router.get("/filter",userController.filterProduct);
-router.get("/filterByPrice",userController.filterByPrice );
-// router.post("/search",userController.searchProducts);
-
 // Product management
-router.get("/productDetails", productController.productDetails);
+router.get("/productDetails",userIsAuthenticated, productController.productDetails);
 
 //profile management
-router.get("/userProfile",userAuth,profileController.userProfile);
+router.get("/userProfile",userIsAuthenticated,profileController.userProfile);
 
 
 module.exports = router;
