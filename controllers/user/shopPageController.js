@@ -11,7 +11,7 @@ const loadShoppingPage = async (req, res) => {
     const categories = await Category.find({ isListed: true });
     const categoryIds = categories.map((category) => category._id.toString());
     const page = parseInt(req.query.page) || 1;
-    const limit = 30;
+    const limit = 50;
     const skip = (page - 1) * limit;
 
     const products = await Product.find({
@@ -153,8 +153,68 @@ const filterProduct = async (req,res) => {
 
 
 
+const searchProducts = async (req, res) => {
+    try {
+      // let search = req.body.query;
+  
+      // // Fetch brands and categories
+      // const brand = await Brand.find({ isBlocked: false });
+      // const categories = await Category.find({ isListed: true });
+      // const categoryIds = categories.map(category => category._id.toString());
+  
+      // let searchResult = [];
+  
+      // // Check if there are filtered products in the session
+      // if (req.session.filteredProducts && req.session.filteredProducts.length > 0) {
+      //   searchResult = req.session.filteredProducts.filter(product => product.productName.toLowerCase().includes(search.toLowerCase()));
+      // } else {
+      //   // Search for products based on the query
+      //   searchResult = await Product.find({
+      //     productName: { $regex: ".*" + search + ".*", $options: "i" },
+      //     isBlocked: false,
+      //     quantity: { $gt: 0 },
+      //     category: { $in: categoryIds },
+      //   });
+      // }
+  
+      // // Sort search results by creation date
+      // searchResult.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+  
+      // // Pagination setup
+      // let itemsPerPage = 6;
+      // let currentPage = parseInt(req.query.page) || 1;
+      // let startIndex = (currentPage - 1) * itemsPerPage;
+      // let endIndex = startIndex + itemsPerPage;
+      // let totalPages = Math.ceil(searchResult.length / itemsPerPage);
+      // let currentProduct = searchResult.slice(startIndex, endIndex);
+  
+      // // Render the shop view with the search results
+      // res.render("shop", {
+      //   user: userData,
+      //   products: currentProduct,
+      //   categories: categories,
+      //   brand: brand, 
+      //   totalPages,
+      //   currentPage,
+      //   count: searchResult.length,
+      // });
+  
+      let search = req.body.query;
+      
+
+
+    } catch (error) {
+      console.log("Error:", error);
+      res.redirect("/pageerror");
+    }
+  }
+  
+
+
+
 module.exports = {
   loadShoppingPage,
   filterByPrice,
-  filterProduct
+  filterProduct,
+  searchProducts
 }

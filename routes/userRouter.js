@@ -12,7 +12,7 @@ router.get("/",userIsAuthenticated, userController.loadHomepage);
 router.get("/shop",shopPageController.loadShoppingPage);
 router.get("/filter",shopPageController.filterProduct);
 router.get("/filterByPrice",shopPageController.filterByPrice );
-// router.post("/search",userIsAuthenticated,userController.searchProducts);
+router.post("/search",shopPageController.searchProducts);
 
 
 router.get("/signup", userController.loadSignup);
