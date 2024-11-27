@@ -14,7 +14,6 @@ router.get("/filter",shopPageController.filterProduct);
 router.get("/filterByPrice",shopPageController.filterByPrice );
 router.post("/search",shopPageController.searchProducts);
 
-
 router.get("/signup", userController.loadSignup);
 router.post("/signup", userController.signup);
 
@@ -39,14 +38,19 @@ router.get("/productDetails", productController.productDetails);
 
 //profile management
 router.get("/userProfile",userIsAuthenticated,profileController.userProfile);
-router.get("/change-email", userIsAuthenticated,profileController.changeEmail);
-router.post("/change-email",userIsAuthenticated,profileController.changeEmailValid);
-router.post("/verify-email-otp",userIsAuthenticated,profileController.verifyEmailOtp);
-router.post("/update-email",userIsAuthenticated,profileController.updateEmail);
-router.get("/change-password",userIsAuthenticated,profileController.changePassword);
-router.post("/change-password",userIsAuthenticated,profileController.changePasswordValid);
-router.post("/verify-changePassword-otp",userIsAuthenticated,profileController.verifyChangePasswordOtp);
-router.post("/reset-password",profileController.postNewPassword);
+// router.get("/change-email", userIsAuthenticated,profileController.changeEmail);
+// router.post("/change-email",userIsAuthenticated,profileController.changeEmailValid);
+// router.post("/verify-email-otp",userIsAuthenticated,profileController.verifyEmailOtp);
+// router.post("/update-email",userIsAuthenticated,profileController.updateEmail);
 
+router.get("/editProfile",userIsAuthenticated,profileController.getEditProfile);
+router.post("/updateProfile",userIsAuthenticated,profileController.UpdateProfile);
+router.get("/changePassword",userIsAuthenticated,profileController.changePassword);
+router.post("/changePassword",userIsAuthenticated,profileController.changePasswordValid);
+router.post("/verify-changepassword-otp",userIsAuthenticated,profileController.verifyChangePassOtp);
+router.get("/reset-password",profileController.getResetPassPage);
+router.post("/reset-password",profileController.postNewPassword);
+router.post("/resend-forgot-otp",profileController.resendOtp);
+router.post("/reset-password",profileController.postNewPassword);
 
 module.exports = router;

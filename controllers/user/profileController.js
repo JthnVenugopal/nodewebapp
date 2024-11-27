@@ -1,34 +1,3 @@
-// const User = require("../../models/userSchema");
-// const Address = require("../../models/addressSchema");
-// // const Order = require("../../models/orderSchema");
-// // const Wallet = require("../../models/walletSchema");
-// // const nodemailer = require("nodemailer");
-// // const bcrypt = require("bcrypt");
-// // const env = require("dotenv").config();
-// const session = require("express-session");
-
-// const userProfile = async (req,res) => {
-//   try {
-    
-//       const userId = req.session.user;
-//       const userData = await User.findById(userId);
-      
-//       res.render("profile", { 
-//         user: userData ,
-        
-//       });
-
-//   } catch (error) {
-//     console.error("Error for retrieve profile data",error);
-//     res.redirect("pageNotFound")
-//   }
-// }
-
-// module.exports = {
-//   userProfile
-// }
-
-
 const User = require("../../models/userSchema");
 // const Address = require("../../models/addressSchema");
 // const Order = require("../../models/orderSchema");
@@ -37,6 +6,8 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const env = require("dotenv").config();
 const session = require("express-session");
+
+//------------------------------------------------------------
 
 function generateOtp(){
   return Math.floor(100000 + Math.random()*900000).toString();
@@ -176,104 +147,105 @@ const updateEmail = async (req,res) => {
   }
 }
 
+const getEditProfile = async (req,res) => {
+  try {
+      const user = req.session.user;
+      res.render("edit-profile",{
+        user : user
+      });
+  } catch (error) {
+      res.redirect("/userProfile",{message:"Errror editing user profile"})
+  }
+}
+
+const UpdateProfile = async (req, res) => {
+  try {
+      const data = req.body; 
+      const user = req.session.user; 
+      
+      
+      const findUser = await User.findById(user._id);
+      if (!findUser) {
+          return res.redirect("/pageNotFound");
+      }
+
+      await User.updateOne(
+          { _id: user._id },
+          {
+              $set: {
+                  name: data.name,
+                  email: data.email,
+                  phone: data.phone,
+              }
+          }
+      );
+
+      res.redirect("/userProfile");
+  } catch (error) {
+      console.error("Error in updating profile:", error);
+      res.redirect("/pageNotFound");
+  }
+};
+
 const changePassword = async (req,res) => {
   try {
-    
-    const user = req.session.user;
-    res.render("change-password",{
-      user
-    });
-
+      res.render("change-password")
   } catch (error) {
-    res.redirect("/pageNotFound");
+      res.redirect("/pageNotFound")
   }
 }
 
 const changePasswordValid = async (req,res) => {
   try {
-    
-      const user = req.session.user;
-      const email = req.body.email;
-
-      const userExist = await User.findOne({email});
-
-      if(userExist.email===email){
-        
-        const otp = generateOtp();
-        const emailSent = await sendVerificationEmail(email, otp);
-
-        if(emailSent){
-          req.session.userOtp = otp;
-          req.session.userData = req.body;
-          req.session.email = email;
-
-          res.render("change-password-otp",{
-            email,
-            user
-          });
-          console.log('OTP : ', otp);
-          
-              }else{
-                res.json({
-                  success:false,
-                  message:"OTP not sent, Please try again!",
-
-                })
-              }
-
+      const {email} = req.body;
+      const userExists = await User.findOne({email});
+      if(userExists){
+          const otp = generateOtp();
+          const emailSent = await sendVerificationEmail(email,otp);
+          if(emailSent){
+              req.session.userOtp = otp;
+              req.session.userData = req.body;
+              req.session.email = email;
+              res.render("change-password-otp");
+              console.log("OTP:",otp);
+          }else{
+              res.json({success:false,message:"Failed to send OTP. Please try again"})
+          }
       }else{
-        res.render("change-password",{
-          message:"User not found",
-        })
+          res.render("change-password",{message:"User with this email does not exists"})
       }
-
   } catch (error) {
-    res.redirect("/pageNotFound");
-    console.log("Error in change password validation", error);
-    
+      console.log("Error in change password validation",error);
+      res.redirect("/pageNotFound")
   }
 }
 
-// const verifyChangePasswordOtp = async (req,res) => {
-//   try {
-    
-//     const enteredOtp = req.body.otp;
-//     if(enteredOtp === req.session.userOtp){
-
-//       res.json({success:true, redirectUrl:"/reset-password"});
-
-//     }else{
-//       res.json({success:false, message: "OTP not matching"})
-//     }
-     
-//   } catch (error) {
-     
-//      res.status(500).json({success:false,message:"An error occured Please try again!"})
-//      res.redirect("/pageNotFound")
-
-//   }
-// }
-
-const verifyChangePasswordOtp = async (req, res) => {
+const verifyChangePassOtp = async (req,res) => {
   try {
-    const enteredOtp = req.body.otp;
+      
+      const enteredOtp = req.body.otp;
+      if(enteredOtp === req.session.userOtp){
+          res.json({success:true,redirectUrl:"/reset-password"});
+      }else{
+          res.json({success:false,message:"OTP not matching"});
+      }
 
-    // Compare the entered OTP with the one stored in the session
-    if (enteredOtp === req.session.userOtp) {
-      // return res.json({ success: true, redirectUrl: "/reset-password" });
-      res.render("reset-password")
-    } else {
-      return res.json({ success: false, message: "OTP not matching" });
-    }
   } catch (error) {
-    // Handle server errors gracefully
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred. Please try again!",
-    });
+      res.status(500).json({success:false,message:"An error occured. Please try again later"})
   }
-};
+}
 
+const getResetPassPage = async (req,res) => {
+  try {
+      const user = req.session.user;
+
+      res.render("reset-password",{
+        user
+      })
+  } catch (error) {
+      res.redirect("/pageNotFound")
+  }
+}
 
 const postNewPassword = async (req,res) => {
   try {
@@ -294,6 +266,24 @@ const postNewPassword = async (req,res) => {
   }
 }
 
+const resendOtp = async (req,res) => {
+  try {
+      const otp = generateOtp();
+      req.session.userOtp = otp;
+      const email = req.session.email;
+      console.log("Resending OTP to email:",email);
+      const emailSent = await sendVerificationEmail(email,otp);
+      if(emailSent){
+          console.log("Resend OTP:",otp);
+          res.status(200).json({success:true,message:"Resend OTP Successful"})
+      }
+  } catch (error) {
+      console.error("Error in resending OTP",error);
+      res.status(500).json({success:false,message:"Inernal Sever Error"})
+  }
+}
+
+
 
 module.exports = {
   userProfile,
@@ -301,8 +291,13 @@ module.exports = {
   changeEmailValid,
   verifyEmailOtp,
   updateEmail,
+  getEditProfile,
+  UpdateProfile,
   changePassword,
   changePasswordValid,
-  verifyChangePasswordOtp,
-  postNewPassword
+  verifyChangePassOtp,
+  postNewPassword,
+  getResetPassPage,
+  resendOtp,
+
 }

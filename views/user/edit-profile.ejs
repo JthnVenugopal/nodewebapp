@@ -1,0 +1,132 @@
+<%-include("../partials/user/header")%>
+
+<style>
+    h5 {
+        color: white;
+    }
+
+    .card-green {
+        border-color: #424874;
+        max-width: 500px;
+        margin: 2rem auto;
+    }
+
+    .card-green .card-header {
+        background-color: #424874;
+        color: white;
+        padding: 0.75rem;
+    }
+
+    .form-group {
+        margin-bottom: 0.75rem;
+    }
+
+    .form-control {
+        font-size: 0.9rem;
+        padding: 0.375rem 0.75rem;
+    }
+
+    .btn-container {
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .btn {
+        padding: 0.375rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+    }
+</style>
+
+<div class="container">
+    <div class="card card-green">
+        <div class="card-header">
+            <h5 class="mb-0 text-center">Edit Profile</h5>
+        </div>
+        <div class="card-body">
+            <form id="profileForm" action="/updateProfile" method="POST">
+                <div class="form-group">
+                    <label for="name" class="form-label">Name</label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="name" 
+                        name="name" 
+                        value="<%=user.name%>"
+                        required
+                    >
+                    <div id="nameError" class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" class="form-label">Phone</label>
+                    <input 
+                        type="tel" 
+                        class="form-control" 
+                        id="phone" 
+                        name="phone" 
+                        value="<%= user.phone %>"
+                        required
+                    >
+                    <div id="phoneError" class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input 
+                        type="email" 
+                        class="form-control" 
+                        id="email" 
+                        name="email" 
+                        value="<%= user.email %>"
+                        required
+                        readonly
+                    >
+                </div>
+
+                <div class="btn-container">
+                    <button type="submit" class="btn btn-primary me-2">Save</button>
+                    <a href="/userProfile" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('profileForm').addEventListener('submit', function (e) {
+        let isValid = true;
+
+        const nameField = document.getElementById('name');
+        const nameError = document.getElementById('nameError');
+        const nameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)*$/; 
+        if (!nameRegex.test(nameField.value.trim())) {
+            isValid = false;
+            nameError.textContent = 'Name must contain only letters and cannot have numbers or special characters.';
+        } else {
+            nameError.textContent = '';
+        }
+
+        
+        const phoneField = document.getElementById('phone');
+        const phoneError = document.getElementById('phoneError');
+        if (!/^\d{10}$/.test(phoneField.value.trim())) {
+            isValid = false;
+            phoneError.textContent = 'Phone number must be exactly 10 digits.';
+        } else {
+            phoneError.textContent = '';
+        }
+
+        
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+</script>
+
+<%-include("../partials/user/footer")%>
