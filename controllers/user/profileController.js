@@ -176,11 +176,90 @@ const updateEmail = async (req,res) => {
   }
 }
 
+const changePassword = async (req,res) => {
+  try {
+    
+    const user = req.session.user;
+    res.render("change-password",{
+      user
+    });
+
+  } catch (error) {
+    res.redirect("/pageNotFound");
+  }
+}
+
+const changePasswordValid = async (req,res) => {
+  try {
+    
+      const user = req.session.user;
+      const email = req.body.email;
+
+      const userExist = await User.findOne({email});
+
+      if(userExist.email===email){
+        
+        const otp = generateOtp();
+        const emailSent = await sendVerificationEmail(email, otp);
+
+        if(emailSent){
+          req.session.userOtp = otp;
+          req.session.userData = req.body;
+          req.session.email = email;
+
+          res.render("change-password-otp",{
+            email,
+            user
+          });
+          console.log('OTP : ', otp);
+          
+              }else{
+                res.json({
+                  success:false,
+                  message:"OTP not sent, Please try again!",
+
+                })
+              }
+
+      }else{
+        res.render("change-password",{
+          message:"User not found",
+        })
+      }
+
+  } catch (error) {
+    res.redirect("/pageNotFound");
+    console.log("Error in change password validation", error);
+    
+  }
+}
+
+const verifyChangePasswordOtp = async (req,res) => {
+  try {
+    
+    const enteredOtp = req.body.otp;
+    if(enteredOtp === req.session.userOtp){
+      
+      res.json({success:true, redirectUrl:"/reset-password"});
+
+    }
+     
+
+  } catch (error) {
+     
+     
+
+  }
+}
+
 
 module.exports = {
   userProfile,
   changeEmail,
   changeEmailValid,
   verifyEmailOtp,
-  updateEmail
+  updateEmail,
+  changePassword,
+  changePasswordValid,
+  verifyChangePasswordOtp
 }
