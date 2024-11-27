@@ -234,21 +234,63 @@ const changePasswordValid = async (req,res) => {
   }
 }
 
-const verifyChangePasswordOtp = async (req,res) => {
-  try {
+// const verifyChangePasswordOtp = async (req,res) => {
+//   try {
     
+//     const enteredOtp = req.body.otp;
+//     if(enteredOtp === req.session.userOtp){
+
+//       res.json({success:true, redirectUrl:"/reset-password"});
+
+//     }else{
+//       res.json({success:false, message: "OTP not matching"})
+//     }
+     
+//   } catch (error) {
+     
+//      res.status(500).json({success:false,message:"An error occured Please try again!"})
+//      res.redirect("/pageNotFound")
+
+//   }
+// }
+
+const verifyChangePasswordOtp = async (req, res) => {
+  try {
     const enteredOtp = req.body.otp;
-    if(enteredOtp === req.session.userOtp){
-      
-      res.json({success:true, redirectUrl:"/reset-password"});
 
+    // Compare the entered OTP with the one stored in the session
+    if (enteredOtp === req.session.userOtp) {
+      // return res.json({ success: true, redirectUrl: "/reset-password" });
+      res.render("reset-password")
+    } else {
+      return res.json({ success: false, message: "OTP not matching" });
     }
-     
-
   } catch (error) {
-     
-     
+    // Handle server errors gracefully
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred. Please try again!",
+    });
+  }
+};
 
+
+const postNewPassword = async (req,res) => {
+  try {
+      const {newPass1, newPass2} = req.body;
+      const email = req.session.email;
+      if(newPass1 === newPass2){
+          const passwordHash = await securePassword(newPass1);
+          await User.updateOne(
+              {email:email},
+              {$set:{password:passwordHash}}
+          )
+          res.redirect("/login");
+      }else{
+          res.render("reset-password",{message:"Password do not match"})
+      }
+  } catch (error) {
+      res.redirect("/pageNotFound")
   }
 }
 
@@ -261,5 +303,6 @@ module.exports = {
   updateEmail,
   changePassword,
   changePasswordValid,
-  verifyChangePasswordOtp
+  verifyChangePasswordOtp,
+  postNewPassword
 }

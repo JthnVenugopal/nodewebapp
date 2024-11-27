@@ -46,7 +46,7 @@ router.post("/update-email",userIsAuthenticated,profileController.updateEmail);
 router.get("/change-password",userIsAuthenticated,profileController.changePassword);
 router.post("/change-password",userIsAuthenticated,profileController.changePasswordValid);
 router.post("/verify-changePassword-otp",userIsAuthenticated,profileController.verifyChangePasswordOtp);
-router.post("/reset-password",profileController.posNewPassword);
+router.post("/reset-password",profileController.postNewPassword);
 
 
 module.exports = router;
