@@ -38,7 +38,10 @@ router.get("/logout", userController.logout);
 router.get("/productDetails", productController.productDetails);
 
 //profile management
-router.get("/userProfile",profileController.userProfile);
-
+router.get("/userProfile",userIsAuthenticated,profileController.userProfile);
+router.get("/change-email", userIsAuthenticated,profileController.changeEmail);
+router.post("/change-email",userIsAuthenticated,profileController.changeEmailValid);
+router.post("/verify-email-otp",userIsAuthenticated,profileController.verifyEmailOtp);
+router.post("/update-email",userIsAuthenticated,profileController.updateEmail);
 
 module.exports = router;
