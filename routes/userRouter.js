@@ -38,19 +38,22 @@ router.get("/productDetails", productController.productDetails);
 
 //profile management
 router.get("/userProfile",userIsAuthenticated,profileController.userProfile);
-// router.get("/change-email", userIsAuthenticated,profileController.changeEmail);
-// router.post("/change-email",userIsAuthenticated,profileController.changeEmailValid);
-// router.post("/verify-email-otp",userIsAuthenticated,profileController.verifyEmailOtp);
-// router.post("/update-email",userIsAuthenticated,profileController.updateEmail);
-
 router.get("/editProfile",userIsAuthenticated,profileController.getEditProfile);
 router.post("/updateProfile",userIsAuthenticated,profileController.UpdateProfile);
 router.get("/changePassword",userIsAuthenticated,profileController.changePassword);
+router.post("/resend-forgot-otp",profileController.resendOtp);
 router.post("/changePassword",userIsAuthenticated,profileController.changePasswordValid);
 router.post("/verify-changepassword-otp",userIsAuthenticated,profileController.verifyChangePassOtp);
 router.get("/reset-password",profileController.getResetPassPage);
 router.post("/reset-password",profileController.postNewPassword);
-router.post("/resend-forgot-otp",profileController.resendOtp);
-router.post("/reset-password",profileController.postNewPassword);
+router.get("/forgot-password",profileController.getForgotPassPage);
+router.post("/forgot-email-valid",profileController.forgotEmailValid);
+router.post("/verify-passForgot-otp",profileController.verifyForgotPassOtp);
+
+//address management
+router.get("/addAddress",userIsAuthenticated,profileController.addAddress);
+
+
+
 
 module.exports = router;
