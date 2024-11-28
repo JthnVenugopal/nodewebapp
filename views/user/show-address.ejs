@@ -3,25 +3,23 @@
 <style>
   .address-container {
     display: flex; 
-    flex-direction: column;
+    flex-direction: row; /* Change to row for horizontal alignment */
     flex-wrap: wrap; 
     gap: 20px;
     justify-content: center;
     padding: 20px;
     max-width: 1200px;
-    min-width: 800px;
+    margin: 0 auto; /* Center the container */
   }
 
   .address-box {
-   
     color: white; 
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    flex: 1 1 calc(33.33% - 40px); 
+    flex: 1 1 calc(33.33% - 40px); /* Responsive width */
     box-sizing: border-box; 
-  
-
+   
   }
 
   .address-box h3 {
@@ -29,9 +27,8 @@
   }
 
   .address-box p {
-    font-size: 20px; 
+    font-size: 16px; /* Adjust font size for better readability */
     margin: 5px 0; 
-   
   }
 
   .btn-container {
@@ -48,33 +45,53 @@
     padding: 10px 20px;
     border-radius: 5px;
     font-size: 18px;
+    background-color: #28a745; /* Button background color */
+    border: none; /* Remove border */
+    cursor: pointer; /* Change cursor to pointer */
   }
 
- 
+  .btn-container .btn-success:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+
+  .btn-small {
+    display: inline-block; /* Make sure delete button is inline */
+    margin-top: 10px; /* Add some space above the delete button */
+    color: white; /* Button text color */
+    text-decoration: none; /* Remove underline */
+    padding: 5px 10px; /* Button padding */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #dc3545; /* Red background for delete */
+  }
+
+  .btn-small:hover {
+    background-color: #c82333; /* Darker red on hover */
+  }
 </style>
+
 <div style="display: flex; align-items: center; flex-direction: column;">
   <div class="address-container">
-  <% for (let address of userAddress) { %>
-    <div class="address-box">
-      <h3>Name: <%= address.name %></h3>
-      <p>Address Type: <%= address.addressType %></p>
-      <p>City: <%= address.city %></p>
-      <p>Landmark: <%= address.landmark %></p>
-      <p>State: <%= address.state %></p>
-      <p>Pincode: <%= address.pincode %></p>
-      <p>Phone Number: <%= address.phone %></p>
-      <p>Alternate Phone Number: <%= address.altPhone %></p>
-      <br>
-      <button class="btn btn-success"><a href="">Edit</a></button>
-      <button class="btn btn-danger"><a href="">Remove</a></button>
-    </div>
-    
-  <% } %>
+    <% for (let address of userAddress) { %>
+      <div class="address-box">
+        <h3>Name: <%= address.name %></h3>
+        <p>Address Type: <%= address.addressType %></p>
+        <p>City: <%= address.city %></p>
+        <p>Landmark: <%= address.landMark %></p>
+        <p>State: <%= address.state %></p>
+        <p>Pincode: <%= address.pincode %></p>
+        <p>Phone Number: <%= address.phone %></p>
+        <p>Alternate Phone Number: <%= address.altPhone %></p>
+        <br>
+        <a href="/editAddress?id=<%=address._id %>"
+          class="btn-small">Edit</a>
 
- 
+        <a href="/deleteAddress?id=<%=address._id %>"
+          class="btn-small"
+          onclick="return confirm('Are you sure you want to delete this address?')">Delete</a>
+      </div>
+    <% } %>
+  </div>
 </div>
-</div>
-
 
 <div class="btn-container">
   <button class="btn btn-success">

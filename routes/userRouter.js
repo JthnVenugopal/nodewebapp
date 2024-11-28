@@ -54,7 +54,9 @@ router.post("/verify-passForgot-otp",profileController.verifyForgotPassOtp);
 router.get("/add-address",userIsAuthenticated,profileController.addAddress);
 router.get("/show-address",userIsAuthenticated,profileController.showAddress)
 router.post("/addAddress",userIsAuthenticated,profileController.postAddAddress);
-
+router.get("/editAddress",userIsAuthenticated,profileController.editAddress);
+router.post("/editAddress",userIsAuthenticated,profileController.postEditAddress);
+router.get("/deleteAddress",userIsAuthenticated,profileController.deleteAddress);
 
 
 
