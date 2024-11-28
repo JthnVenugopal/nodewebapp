@@ -161,10 +161,13 @@ const getEditProfile = async (req,res) => {
   try {
       const user = req.session.user;
       res.render("edit-profile",{
-        user : user
+        user : user,
+        name : user.name,
+        phone : user.phone,
+        email : user.email
       });
   } catch (error) {
-      res.redirect("/userProfile",{message:"Errror editing user profile"})
+      res.redirect("/userProfile",{message:"Error while editing user profile"})
   }
 }
 
@@ -172,7 +175,6 @@ const UpdateProfile = async (req, res) => {
   try {
       const data = req.body; 
       const user = req.session.user; 
-      
       
       const findUser = await User.findById(user._id);
       if (!findUser) {
@@ -353,6 +355,68 @@ const addAddress = async (req,res) => {
   }
 }
 
+const showAddress = async (req,res) => {
+  try {
+    const user = req.session.user;
+
+    const userAddress = await Address.findOne({
+      userId:user._id,
+
+    });
+
+    if(!userAddress){
+      res.render("add-address");
+    }
+
+    // console.log(userAddress.address)
+
+    res.render("show-address",{
+      user:user,
+      userAddress:userAddress.address
+    })
+  } catch (error) {
+    console.error(error);
+    res.redirect("/pageNotFound");
+  }
+}
+
+const postAddAddress = async (req, res) => {
+  try {
+      const userId = req.session.user;
+      if (!userId) {
+          return res.redirect("/login");
+      }
+
+      const userData = await User.findOne({ _id: userId });
+      if (!userData) {
+          return res.redirect("/pageNotFound");
+      }
+
+      const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body;
+      if (!addressType || !name || !city || !state || !pincode || !phone) {
+          return res.status(400).send("Missing required fields");
+      }
+
+      const userAddress = await Address.findOne({ userId: userData._id });
+      if (!userAddress) {
+          const newAddress = new Address({
+              userId: userData._id,
+              address: [{ addressType, name, city, landMark, state, pincode, phone, altPhone }],
+          });
+          await newAddress.save();
+      } else {
+          userAddress.address.push({ addressType, name, city, landMark, state, pincode, phone, altPhone });
+          await userAddress.save();
+      }
+
+      res.render("profile",{
+        user : userId
+      });
+  } catch (error) {
+      console.error("Error adding address", error);
+      res.status(500).send("Internal Server Error");
+  }
+}
 
 
 module.exports = {
@@ -373,5 +437,7 @@ module.exports = {
   forgotEmailValid,
   verifyForgotPassOtp,
   addAddress,
+  showAddress,
+  postAddAddress
 
 }

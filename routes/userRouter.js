@@ -51,7 +51,9 @@ router.post("/forgot-email-valid",profileController.forgotEmailValid);
 router.post("/verify-passForgot-otp",profileController.verifyForgotPassOtp);
 
 //address management
-router.get("/addAddress",userIsAuthenticated,profileController.addAddress);
+router.get("/add-address",userIsAuthenticated,profileController.addAddress);
+router.get("/show-address",userIsAuthenticated,profileController.showAddress)
+router.post("/addAddress",userIsAuthenticated,profileController.postAddAddress);
 
 
 

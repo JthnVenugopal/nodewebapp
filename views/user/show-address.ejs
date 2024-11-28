@@ -1,0 +1,85 @@
+<%- include("../partials/user/header") %>
+
+<style>
+  .address-container {
+    display: flex; 
+    flex-direction: column;
+    flex-wrap: wrap; 
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    max-width: 1200px;
+    min-width: 800px;
+  }
+
+  .address-box {
+   
+    color: white; 
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    flex: 1 1 calc(33.33% - 40px); 
+    box-sizing: border-box; 
+  
+
+  }
+
+  .address-box h3 {
+    margin-bottom: 10px;
+  }
+
+  .address-box p {
+    font-size: 20px; 
+    margin: 5px 0; 
+   
+  }
+
+  .btn-container {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .btn-container .btn-success a {
+    color: white; 
+    text-decoration: none;
+  }
+
+  .btn-container .btn-success {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 18px;
+  }
+
+ 
+</style>
+<div style="display: flex; align-items: center; flex-direction: column;">
+  <div class="address-container">
+  <% for (let address of userAddress) { %>
+    <div class="address-box">
+      <h3>Name: <%= address.name %></h3>
+      <p>Address Type: <%= address.addressType %></p>
+      <p>City: <%= address.city %></p>
+      <p>Landmark: <%= address.landmark %></p>
+      <p>State: <%= address.state %></p>
+      <p>Pincode: <%= address.pincode %></p>
+      <p>Phone Number: <%= address.phone %></p>
+      <p>Alternate Phone Number: <%= address.altPhone %></p>
+      <br>
+      <button class="btn btn-success"><a href="">Edit</a></button>
+      <button class="btn btn-danger"><a href="">Remove</a></button>
+    </div>
+    
+  <% } %>
+
+ 
+</div>
+</div>
+
+
+<div class="btn-container">
+  <button class="btn btn-success">
+    <a href="/add-address">Add Address</a>
+  </button>
+</div>
+
+<%- include("../partials/user/footer") %>
