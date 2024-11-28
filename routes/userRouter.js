@@ -9,11 +9,11 @@ const { userIsAuthenticated  } = require("../middlewares/auth");
 
 // Path to join home page & shopping page
 router.get("/",userIsAuthenticated, userController.loadHomepage);
-router.get("/shop",shopPageController.loadShoppingPage);
-router.get("/filter",shopPageController.filterProduct);
-router.get("/filterByPrice",shopPageController.filterByPrice );
-router.post("/search",shopPageController.searchProducts);
-router.get('/filterAlphabets',userIsAuthenticated,shopPageController.filterByAlphabets)
+router.get("/shop",userIsAuthenticated,shopPageController.loadShoppingPage);
+router.get("/filter",userIsAuthenticated,shopPageController.filterProduct);
+router.get("/filterByPrice",userIsAuthenticated,shopPageController.filterByPrice );
+// router.post("/search",userIsAuthenticated,shopPageController.searchProducts);
+// router.get('/filterAlphabets',userIsAuthenticated,shopPageController.filterByAlphabets)
 
 router.get("/signup", userController.loadSignup);
 router.post("/signup", userController.signup);
