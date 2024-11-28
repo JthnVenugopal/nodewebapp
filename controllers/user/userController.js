@@ -5,6 +5,8 @@ const Brand =  require("../../models/brandSchema");
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
+const passport = require("passport")
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 //-------------------------------------------------------
 
@@ -44,9 +46,10 @@ const loadHomepage = async (req, res, next) => {
     // Slice the product data to only include the products for the current page
     const startIndex = (currentPage - 1) * productsPerPage;
     productData = productData.slice(startIndex, startIndex + productsPerPage);
-    // console.log("Product Images:", productData.map(product => product.productImage));
-    let userId = req.user || req.session.user;
-  let userData = userId
+
+    let user = req.session.user;
+    let googleUser = req.user;
+    let userData = user || googleUser
    
 
   res.locals.user = userData;
@@ -57,7 +60,6 @@ const loadHomepage = async (req, res, next) => {
       // Render homepage with user, product data
       return res.render("home", {
         user: userData,
-       
         products: productData,
         currentPage,
         totalPages,
@@ -286,9 +288,6 @@ const login = async (req,res)=>{
   }
 }
 
-
-
-
 //-------------------------------------------------
 const logout = async (req,res)=>{
   try {
@@ -307,8 +306,6 @@ const logout = async (req,res)=>{
       res.redirect("/PageNotFound");  
   }
 }
-
-
 
 //-----------------------------------------------------------
 

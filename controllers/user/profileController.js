@@ -6,6 +6,8 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const env = require("dotenv").config();
 const session = require("express-session");
+const passport = require("passport")
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 //------------------------------------------------------------
 
@@ -55,111 +57,40 @@ async function sendVerificationEmail(email,otp){
   }
 }
 
-const userProfile = async (req,res) => {
+
+const userProfile = async (req, res) => {
   try {
-    
-      const userId = req.session.user;
-      const userData = await User.findById(userId);
-      
-      res.render("profile", { 
-        user: userData ,
-        
-      });
-  } catch (error) {
-    console.error("Error for retrieve profile data",error);
-    res.redirect("pageNotFound")
-  }
-}
+   
+    const googleUser  = req.user; 
+    const sessionUser  = req.session.user; 
+   
+    const user = sessionUser  || googleUser ;
 
-const changeEmail = async (req,res) => {
-  try {
-    const user = req.session.user;
-    res.render("change-email", {
-      user,
-    })
-
-  } catch (error) {
-    
-     res.redirect("/pageNotFound")
-
-  }
-}
-
-const changeEmailValid = async (req,res) => {
-  try {
-    const email = req.body.email;
-
-    const userExists = await User.findOne({email});
-
-    if(userExists){
-      const otp = generateOtp();
-      const emailSent = await sendVerificationEmail(email,otp);
-      if(emailSent){
-        
-        req.session.userOtp = otp;
-        req.session.userData = req.body;
-        req.session.email = email;
-
-        res.render("change-email-otp");
-        console.log("Email sent : ", email);
-        console.log("OTP : ", otp);
-
-      }else{
-        res.json("email-error")
-      }
-    }else{
-      res.render("change-email", {
-        message : "User with this email not exist!"
-      })
+    // If user is not found, handle the error
+    if (!user) {
+      return res.redirect("pageNotFound");
     }
 
+    // Optionally, you can fetch additional user data from the database if needed
+    const userId = user._id; // Assuming user has an _id field
+    const userData = await User.findById(userId);
+
+    // Render the profile page with user data
+    res.render("profile", { 
+      user: userData || user // Pass the user data to the template
+    });
   } catch (error) {
-    
-     res.redirect("/pageNotFound")
-
+    console.error("Error retrieving profile data", error);
+    res.redirect("pageNotFound");
   }
-}
-
-const verifyEmailOtp = async (req,res) => {
-  try {
-    
-     const enteredOtp = req.body.otp;
-     if(enteredOtp === req.session.userOtp){
-        req.session.userData = req.body.userData;
-        res.render("new-email", {
-          userData : req.session.userData,
-        })
-     }else{
-      res.render("change-email-otp",{
-        message : "Invalid OTP",
-        userData : req.session.userData
-      })
-     }
-
-  } catch (error) {
-    res.redirect("/pageNotFound")
-  }
-}
-
-const updateEmail = async (req,res) => {
-  try {
-    
-     const newEmail = req.body.newEmail;
-     const userId = req.session.user;
-
-     await User.findByIdAndUpdate(userId,{email:newEmail});
-
-     res.redirect("/userProfile");
-
-
-  } catch (error) {
-    res.redirect("/pageNotFound")
-  }
-}
+};
 
 const getEditProfile = async (req,res) => {
   try {
-      const user = req.session.user;
+      const sessionUser = req.session.user;
+      const googleUser  = req.user;
+      const user = sessionUser || googleUser;
+
       res.render("edit-profile",{
         user : user,
         name : user.name,
@@ -201,7 +132,16 @@ const UpdateProfile = async (req, res) => {
 
 const changePassword = async (req,res) => {
   try {
-      res.render("change-password")
+
+    const googleUser  = req.user; 
+    const sessionUser  = req.session.user; 
+
+    if(googleUser){
+      res.json({message: "since you login using google id , You can't change password"})
+    }else{
+      res.render("change-password");
+    }
+    
   } catch (error) {
       res.redirect("/pageNotFound")
   }
@@ -298,7 +238,15 @@ const postNewPassword = async (req,res) => {
 
 const getForgotPassPage = async (req,res) => {
   try {
-      res.render("forgot-password");
+      const googleUser  = req.user; 
+      const sessionUser  = req.session.user; 
+  
+      if(googleUser){
+        res.json({message: "since you login using google id , You can't change password"})
+      }else{
+        res.render("forgot-password");
+      }
+
   } catch (error) {
       console.error(error)
       res.redirect("/pageNotfound");
@@ -348,7 +296,11 @@ const verifyForgotPassOtp = async (req,res) => {
 
 const addAddress = async (req,res) => {
   try {
-      const user = req.session.user;
+      
+    const sessionUser = req.session.user;
+    const googleUser  = req.user;
+    const user = sessionUser || googleUser;
+
       res.render("add-address",{user:user})
   } catch (error) {
       res.redirect("/pageNotFound")
@@ -357,17 +309,15 @@ const addAddress = async (req,res) => {
 
 const showAddress = async (req,res) => {
   try {
-    const user = req.session.user;
+     const sessionUser = req.session.user;
+     const googleUser  = req.user;
+     const user = sessionUser || googleUser;
 
     const userAddress = await Address.findOne({
       userId:user._id,
 
     });
-
-    if(!userAddress){
-      res.render("add-address");
-    }
-
+    // console.log(user._id)
     // console.log(userAddress.address)
 
     res.render("show-address",{
@@ -382,7 +332,11 @@ const showAddress = async (req,res) => {
 
 const postAddAddress = async (req, res) => {
   try {
-      const userId = req.session.user;
+
+      const sessionUser = req.session.user;
+      const googleUser  = req.user;
+      const userId = sessionUser || googleUser;
+      
       if (!userId) {
           return res.redirect("/login");
       }
@@ -510,10 +464,6 @@ const postEditAddress = async (req,res) => {
 
 module.exports = {
   userProfile,
-  changeEmail,
-  changeEmailValid,
-  verifyEmailOtp,
-  updateEmail,
   getEditProfile,
   UpdateProfile,
   changePassword,

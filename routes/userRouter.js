@@ -13,6 +13,7 @@ router.get("/shop",shopPageController.loadShoppingPage);
 router.get("/filter",shopPageController.filterProduct);
 router.get("/filterByPrice",shopPageController.filterByPrice );
 router.post("/search",shopPageController.searchProducts);
+router.get('/filterAlphabets',userIsAuthenticated,shopPageController.filterByAlphabets)
 
 router.get("/signup", userController.loadSignup);
 router.post("/signup", userController.signup);

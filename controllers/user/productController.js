@@ -1,10 +1,15 @@
 const Product = require("../../models/ProductSchema");
 const Category = require("../../models/categorySchema");
 const User = require("../../models/userSchema");
+const passport = require("passport")
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 const productDetails = async (req, res) => {
   try {
-    const userId = req.session.user;
+
+    let user = req.session.user;
+    let googleUser = req.user;
+    let userId = user || googleUser
     const userData = await User.findById(userId);
 
     const productId = req.query.id;
