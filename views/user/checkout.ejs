@@ -179,56 +179,56 @@
                 <div class="row">
 
 
-                    <div class="col-md-6">
-                        <div class="mb-4">
-                            <h5 class="fw-bold">Select Your Address</h5>
-                        </div>
-                        <div class="form-group">
-                            <div class="shipping-address-selection">
-                                <% addresses.forEach((address, index)=> { %>
-                                    <% address.address.forEach((addr, addrIndex)=> { %>
-                                        <div class="address-box mb-3">
-                                            <input type="radio" name="selectedAddress"
-                                                id="address-<%= index %>-<%= addrIndex %>"
-                                                value="<%= addr._id %>" class="address-radio" required>
-                                            <label class="address-label" for="address-<%= index %>-<%= addrIndex %>">
-                                                <div class="address-type-badge <%= addr.addressType.toLowerCase() %>">
-                                                    <%= addr.addressType %>
-                                                </div>
-                                                <div class="address-content">
-                                                    <div class="name-section">
-                                                        <h6 class="mb-2">
-                                                            <%= addr.name %>
-                                                        </h6>
-                                                    </div>
-                                                    <div class="address-details">
-                                                        <% if (addr.landMark) { %>
-                                                            <p class="landmark"><i class="fi-rs-marker me-2"></i>
-                                                                <%= addr.landMark %>
-                                                            </p>
-                                                            <% } %>
-                                                                <p class="location">
-                                                                    <%= addr.city %>, <%= addr.state %>
-                                                                            <%= addr.pincode %>
-                                                                </p>
-                                                                <div class="contact-info">
-                                                                    <p class="phone">
-                                                                        <i class="fi-rs-phone-call me-2"></i>
-                                                                        <%= addr.phone %>
-                                                                            <% if (addr.altPhone) { %>
-                                                                                <span class="alt-phone">/ <%=
-                                                                                        addr.altPhone %></span>
-                                                                                <% } %>
-                                                                    </p>
-                                                                </div>
-                                                    </div>
-                                                </div>
-                                            </label>
-                                        </div>
-                                        <% }); %>
-                                            <% }); %>
-
+<div class="col-md-6">
+    <div class="mb-4">
+        <h5 class="fw-bold">Select Your Address</h5>
+    </div>
+    <div class="form-group">
+        <div class="shipping-address-selection">
+            <% addresses.forEach((address, index)=> { %>
+                <% address.address.forEach((addr, addrIndex)=> { %>
+                    <div class="address-box mb-3">
+                        <input type="radio" name="selectedAddress"
+                            id="address-<%= index %>-<%= addrIndex %>"
+                            value="<%= addr._id %>" class="address-radio" required>
+                        <label class="address-label" for="address-<%= index %>-<%= addrIndex %>">
+                            <div class="address-type-badge <%= addr.addressType.toLowerCase() %>">
+                                <%= addr.addressType %>
                             </div>
+                            <div class="address-content">
+                                <div class="name-section">
+                                    <h6 class="mb-2">
+                                        <%= addr.name %>
+                                    </h6>
+                                </div>
+                                <div class="address-details">
+                                    <% if (addr.landMark) { %>
+                                        <p class="landmark"><i class="fi-rs-marker me-2"></i>
+                                            <%= addr.landMark %>
+                                        </p>
+                                        <% } %>
+                                            <p class="location">
+                                                <%= addr.city %>, <%= addr.state %>
+                                                        <%= addr.pincode %>
+                                            </p>
+                                            <div class="contact-info">
+                                                <p class="phone">
+                                                    <i class="fi-rs-phone-call me-2"></i>
+                                                    <%= addr.phone %>
+                                                        <% if (addr.altPhone) { %>
+                                                            <span class="alt-phone">/ <%=
+                                                                    addr.altPhone %></span>
+                                                            <% } %>
+                                                </p>
+                                            </div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <% }); %>
+                        <% }); %>
+
+        </div>
 
                             <div class="add-address-section mt-4">
                                 <a href="/addAddress" class="btn btn-add-address">
@@ -240,144 +240,144 @@
 
 
 
-                    <div class="col-md-6">
-                        <div class="order_review">
-                            <div class="mb-20">
-                                <h4>Your Orders</h4>
-                            </div>
-                            <div class="table-responsive order_table text-center">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th colspan="2">Product</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% if(cart && cart.items.length> 0) { %>
-                                            <% cart.items.forEach(item=> { %>
-                                                <tr>
-                                                    <td class="image product-thumbnail">
-                                                        <img src="/uploads/re-image/<%= item.productId.productImages[0] %>"
-                                                            alt="#">
-                                                    </td>
-                                                    <td>
-                                                        <h5><a href="shop-product-full.html">
-                                                                <%= item.productId.productName %>
-                                                            </a></h5>
-                                                        <span class="product-qty">x <%= item.quantity %></span>
-                                                    </td>
-                                                    <td>₹<%= item.totalPrice %>
-                                                    </td>
-                                                </tr>
-                                                <% }); %>
-                                                    <tr>
-                                                        <th>SubTotal</th>
-                                                        <td class="product-subtotal" colspan="2">₹<%=
-                                                                totalAmount.toLocaleString() %>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Coupon Discount</th>
-                                                        <td colspan="2" id="discount"><em>₹ 0</em></td>
+<div class="col-md-6">
+<div class="order_review">
+    <div class="mb-20">
+        <h4>Your Orders</h4>
+    </div>
+    <div class="table-responsive order_table text-center">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan="2">Product</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+<% if(cart && cart.items.length> 0) { %>
+<% cart.items.forEach(item=> { %>
+<tr>
+    <td class="image product-thumbnail">
+        <img src="/uploads/re-image/<%= item.productId.productImages[0] %>"
+            alt="#">
+    </td>
+    <td>
+        <h5><a href="shop-product-full.html">
+                <%= item.productId.productName %>
+            </a></h5>
+        <span class="product-qty">x <%= item.quantity %></span>
+    </td>
+    <td>₹<%= item.totalPrice %>
+    </td>
+</tr>
+<% }); %>
+    <tr>
+        <th>SubTotal</th>
+        <td class="product-subtotal" colspan="2">₹<%=
+                totalAmount.toLocaleString() %>
+        </td>
+    </tr>
+    <tr>
+        <th>Coupon Discount</th>
+        <td colspan="2" id="discount"><em>₹ 0</em></td>
 
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Total</th>
-                                                        <td colspan="2" class="product-subtotal" id="finalAmount">
-                                                            <span class="font-xl text-brand fw-900">₹<%=
-                                                                    totalAmount.toLocaleString() %></span>
-                                                        </td>
-                                                    </tr>
-                                                    <% } else { %>
-                                                        <% if (product) { %>
-                                                            <tr>
-                                                                <td class="image product-thumbnail">
-                                                                    <img src="/uploads/re-image/<%= product.productImages[0] %>"
-                                                                        alt="<%= product.productName %>">
-                                                                </td>
-                                                                <td>
-                                                                    <h5>
-                                                                        <a href="shop-product-full.html">
-                                                                            <%= product.productName %>
-                                                                        </a>
-                                                                    </h5>
-                                                                    <span class="product-qty">x 1</span>
-                                                                </td>
-                                                                <td>
-                                                                    ₹<%= product.salePrice.toLocaleString() %>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>SubTotal</th>
-                                                                <td class="product-subtotal" colspan="2">₹<%=
-                                                                        totalAmount.toLocaleString() %>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Coupon Discount</th>
-                                                                <td colspan="2" id="discount"><em>₹ 0</em></td>
+    </tr>
+    <tr>
+        <th>Total</th>
+        <td colspan="2" class="product-subtotal" id="finalAmount">
+            <span class="font-xl text-brand fw-900">₹<%=
+                    totalAmount.toLocaleString() %></span>
+        </td>
+    </tr>
+    <% } else { %>
+        <% if (product) { %>
+            <tr>
+                <td class="image product-thumbnail">
+                    <img src="/uploads/re-image/<%= product.productImages[0] %>"
+                        alt="<%= product.productName %>">
+                </td>
+                <td>
+                    <h5>
+                        <a href="shop-product-full.html">
+                            <%= product.productName %>
+                        </a>
+                    </h5>
+                    <span class="product-qty">x 1</span>
+                </td>
+                <td>
+                    ₹<%= product.salePrice.toLocaleString() %>
+                </td>
+            </tr>
+            <tr>
+                <th>SubTotal</th>
+                <td class="product-subtotal" colspan="2">₹<%=
+                        totalAmount.toLocaleString() %>
+                </td>
+            </tr>
+            <tr>
+                <th>Coupon Discount</th>
+                <td colspan="2" id="discount"><em>₹ 0</em></td>
 
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Total</th>
-                                                                <td colspan="2" class="product-subtotal"
-                                                                    id="finalAmount">
-                                                                    <span class="font-xl text-brand fw-900">₹<%=
-                                                                            totalAmount.toLocaleString() %></span>
-                                                                </td>
-                                                            </tr>
-                                                            <% } %>
+            </tr>
+            <tr>
+                <th>Total</th>
+                <td colspan="2" class="product-subtotal"
+                    id="finalAmount">
+                    <span class="font-xl text-brand fw-900">₹<%=
+                            totalAmount.toLocaleString() %></span>
+                </td>
+            </tr>
+            <% } %>
 
-                                                                <% } %>
+            <% } %>
 
-                                    </tbody>
-                                </table>
-                            </div>
-
-
-
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="divider mt-50 mb-50"></div>
-                                </div>
-                            </div>
+            </tbody>
+        </table>
+    </div>
 
 
-                           
+
+    <div class="row">
+        <div class="col-12">
+            <div class="divider mt-50 mb-50"></div>
+        </div>
+    </div>
 
 
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="divider mt-50 mb-50"></div>
-                                </div>
-                            </div>
-                            <div class="row">
+    
 
-                                <form id="orderForm" method="POST" action="/placeOrder"
-                                    onsubmit="return validateAddress()">
-                                    <div class="payment_option">
-                                        <h4>Select Payment Method</h4>
-                                        <div class="custome-radio">
-                                            <input class="form-check-input" required type="radio" value="COD"
-                                                name="payment_option" id="exampleRadios3" checked>
-                                            <label class="form-check-label" for="exampleRadios3">Cash on
-                                                Delivery</label>
-                                        </div>
-                                        <div class="custome-radio">
-                                            <input class="form-check-input" required type="radio" value="online"
-                                                name="payment_option" id="exampleRadios5">
-                                            <label class="form-check-label" for="exampleRadios5">Online Payment</label>
-                                        </div>
-                                    </div>
 
-                                    <!-- Hidden fields to store cart and totals -->
-                                    <input type="hidden" name="cart" value='<%= JSON.stringify(cart) %>'>
-                                    <input type="hidden" id="totalamount" name="totalPrice"
-                                        value="<%= totalAmount.toLocaleString() %>">
-                                    <input type="hidden" id="selectedAddressId" name="addressId">
-                                    <input type="hidden" id="discountInput" name="discountInput">
-                                   
+    <div class="row">
+        <div class="col-12">
+            <div class="divider mt-50 mb-50"></div>
+        </div>
+    </div>
+    <div class="row">
+
+        <form id="orderForm" method="POST" action="/placeOrder"
+            onsubmit="return validateAddress()">
+            <div class="payment_option">
+                <h4>Select Payment Method</h4>
+                <div class="custome-radio">
+                    <input class="form-check-input" required type="radio" value="COD"
+                        name="payment_option" id="exampleRadios3" checked>
+                    <label class="form-check-label" for="exampleRadios3">Cash on
+                        Delivery</label>
+                </div>
+                <div class="custome-radio">
+                    <input class="form-check-input" required type="radio" value="online"
+                        name="payment_option" id="exampleRadios5">
+                    <label class="form-check-label" for="exampleRadios5">Online Payment</label>
+                </div>
+            </div>
+
+            <!-- Hidden fields to store cart and totals -->
+            <input type="hidden" name="cart" value='<%= JSON.stringify(cart) %>'>
+            <input type="hidden" id="totalamount" name="totalPrice"
+                value="<%= totalAmount.toLocaleString() %>">
+            <input type="hidden" id="selectedAddressId" name="addressId">
+            <input type="hidden" id="discountInput" name="discountInput">
+            
 
                                     <% if (product) { %>
                                         <input type="hidden" name="singleProduct"

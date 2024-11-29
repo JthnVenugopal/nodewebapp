@@ -137,6 +137,7 @@ const placeOrder = async (req, res) => {
           discount:discountInput,
           couponApplied: Boolean(couponCodeInput && discountInput),
           paymentStatus: "Pending",
+          status: "Pending",
       });
 
      

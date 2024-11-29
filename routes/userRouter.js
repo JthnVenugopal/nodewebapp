@@ -6,7 +6,8 @@ const shopController = require("../controllers/user/shopController")
 const productController = require("../controllers/user/productController");
 const profileController = require("../controllers/user/profileController")
 const cartController=require("../controllers/user/cartController");
-const checkoutController = require("../controllers/user/checkoutController")
+const checkoutController = require("../controllers/user/checkoutController");
+const orderController = require("../controllers/user/orderController");
 const { userIsAuthenticated  } = require("../middlewares/auth");
 
 // Path to join home page
@@ -67,6 +68,10 @@ router.post('/updateQuantity', cartController.updateCartQuantity);
 //checkout management
 router.get("/checkout",userIsAuthenticated,checkoutController.getCheckout);
 router.post("/placeOrder",checkoutController.placeOrder);
+
+//order management
+router.get("/orderDetails",orderController.getOrderDetails)
+router.post("/cancelOrder",orderController.cancelOrder);
 
 
 module.exports = router;
