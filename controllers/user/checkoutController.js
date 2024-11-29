@@ -147,7 +147,7 @@ const placeOrder = async (req, res) => {
       await cart.save();
 
       
-      res.render("orderConfirmation",{orderId:newOrder._id});
+      res.render("orderConfirmation",{orderId:newOrder._id,user});
   } catch (error) {
       console.error("Error placing order:", error);
       res.status(500).send("Internal Server Error");

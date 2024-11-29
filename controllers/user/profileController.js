@@ -1,7 +1,6 @@
 const User = require("../../models/userSchema");
 const Address = require("../../models/addressSchema");
-// const Order = require("../../models/orderSchema");
-// const Wallet = require("../../models/walletSchema");
+const Order = require("../../models/orderSchema");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const env = require("dotenv").config();
@@ -74,10 +73,12 @@ const userProfile = async (req, res) => {
     // Optionally, you can fetch additional user data from the database if needed
     const userId = user._id; // Assuming user has an _id field
     const userData = await User.findById(userId);
-
+    const order = await Order.find({ user: userId }); // Assuming the order schema has a user field
+    console.log(order);
     // Render the profile page with user data
     res.render("profile", { 
-      user: userData || user // Pass the user data to the template
+      user: userData || user,// Pass the user data to the template
+      order,
     });
   } catch (error) {
     console.error("Error retrieving profile data", error);
@@ -259,6 +260,8 @@ const forgotEmailValid = async (req,res) => {
       const findUser = await User.findOne({email:email});
       if(findUser){
           const otp = generateOtp();
+          console.log("Forgot password OTP : "+otp);
+          
           const emailSent = await sendVerificationEmail(email,otp);
           if(emailSent){
               req.session.userOtp = otp;

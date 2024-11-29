@@ -3,58 +3,127 @@ const Order = require("../../models/orderSchema");
 const Product = require("../../models/ProductSchema");
 
 
-const getOrderDetails = async (req, res) => {
-  try {
-      const orderId = req.query.id; 
-      const sessionUser  = req.session.user;
-      const googleUser   = req.user;
-      const user = sessionUser  || googleUser ;
+// const getOrderDetails = async (req, res) => {
+//   try {
+//       const orderId = req.query.id; 
+//       const sessionUser  = req.session.user;
+//       const googleUser   = req.user;
+//       const user = sessionUser  || googleUser ;
 
-      if (!user) {
-          return res.redirect('/login');
-      }
+//       if (!user) {
+//           return res.redirect('/login');
+//       }
 
-      // Extract userId from the user object
-      const userId = user._id; // Assuming user has an _id field
+//       // Extract userId from the user object
+//       const userId = user._id; // Assuming user has an _id field
 
-      const order = await Order.findById(orderId)
-          .populate({
-              path: 'orderedItems.product', 
-          });
+//       const order = await Order.findById(orderId)
+//           .populate({
+//               path: 'orderedItems.product', 
+//           });
       
-      const addressData = await Address.findOne({ userId }); 
+//       const addressData = await Address.findOne({ userId }); 
 
-      console.log(addressData);
+//       console.log(addressData);
+//       console.log(order)
 
       
-      if (!addressData) {
-          console.error("Address not found for user:", userId);
-          return res.status(404).send("Address not found.");
-      }
+//       if (!addressData) {
+//           console.error("Address not found for user:", userId);
+//           return res.status(404).send("Address not found.");
+//       }
 
-      if (!order) {
-        return res.status(404).send("Order not found.");
-    }
+//       if (!order) {
+//         return res.status(404).send("Order not found.");
+//     }
 
-         // Filter the address based on the order's address
-      const address = addressData.address.filter(addr => addr._id.toString() === order.address.toString());
+//          // Filter the address based on the order's address
+//       const address = addressData.address.filter(addr => addr._id.toString() === order.address.toString());
 
-      res.render('orderDetails', { 
-        order: order, 
-        address: address 
-        });
+//       res.render('orderDetails', { 
+//         order: order, 
+//         address: address 
+//         });
 
     
 
      
 
-  } catch (error) {
-      console.error("Error fetching order details:", error);
-      res.redirect('/pageNotFound');
-  }
+//   } catch (error) {
+//       console.error("Error fetching order details:", error);
+//       res.redirect('/pageNotFound');
+//   }
+// };
+
+// const getOrderDetails = async (req, res) => {
+//     try {
+//         // Extract order ID from request parameters
+//         const { orderId } = req.params;
+
+//         // Fetch order details from the database
+//         const order = await Order.findById(orderId).populate('products');
+
+//         console.log(order);
+//         console.log("Order ID:", orderId);
+//         // Check if order was found
+//         if (!order) {
+//             return res.status(404).json({ message: 'Order not found' });
+//         }
+
+//         // Optionally fetch associated address and products if needed
+//         const address = await Address.findById(order.shippingAddress);
+//         const products = await Product.find({ _id: { $in: order.products } });
+
+//         // Send the order details in the response
+//         res.status(200).json({
+//             order,
+//             address,
+            
+//         });
+
+//         res.render('orderDetails', { 
+//                     order: order, 
+//                     address: address,
+//                     products,
+//                     });
+        
+//     } catch (error) {
+//         console.error('Error fetching order details:', error);
+//         res.status(500).json({ message: 'Internal server error' });
+//     }
+// };
+
+const getOrderDetails = async (req, res) => {
+    try {
+        const googleUser  = req.user; 
+        const sessionUser  = req.session.user; 
+        const userId = sessionUser  || googleUser ;
+
+        if (!userId) {
+            return res.redirect('/login');
+        }
+
+        const order = await Order.findById(orderId)
+            .populate({
+                path: 'orderedItems.product', 
+            })
+        
+            const addressData = await Address.findOne({userId}); 
+
+            const address = addressData.address.filter(addr => addr._id.toString() === order.address.toString());
+            
+
+        if (!order) {
+            return res.status(404).send("Order not found.");
+        }
+
+        res.render('orderDetails', { order: order,address:address });
+    } catch (error) {
+        console.error("Error fetching order details:", error);
+        res.redirect('/pageNotFound');
+    }
 };
-
-
+  
 
 
 const cancelOrder = async (req, res) => {

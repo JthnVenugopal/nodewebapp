@@ -26,11 +26,11 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.breadcrumb {
+/* .breadcrumb {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     color: var(--text-color);
-}
+} */
 
 .breadcrumb a {
     color: var(--accent-color);
@@ -209,14 +209,20 @@
 
 
 <main class="main">
-<div class="page-header breadcrumb-wrap mb-3">
-    <div class="container">
-        <div class="breadcrumb">
-            <a href="#" rel="nofollow">Home</a>
-            <span></span> Profile <span></span> Account
+    <div class="page-header breadcrumb-wrap mb-3">
+        <div class="container">
+            <nav aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="#" rel="nofollow">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Profile</li>
+                    <li class="breadcrumb-item active" aria-current="page">Account</li>
+                </ol>
+            </nav>
         </div>
     </div>
-</div>
+
 <section class="pt-10 pb-10">
 <div class="container">
 <div class="row">
@@ -245,7 +251,7 @@
                           </a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="/orderDetails"
+                          <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="/orderDetails?id=<%= order._id %>"
                               role="tab" aria-controls="orders" aria-selected="false">
                               <i class="fi-rs-shopping-bag mr-10"></i>Orders
                           </a>
@@ -255,7 +261,7 @@
                           <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab"
                               href="#referal" role="tab" aria-controls="track-orders"
                               aria-selected="false">
-                              <i class="fi-rs-shopping-cart-check mr-10"></i>Referals
+                              <i class="fi-rs-shopping-cart-check mr-10"></i>Refferals
                           </a>
                       </li>
                       <li class="nav-item">
