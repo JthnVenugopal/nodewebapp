@@ -2,49 +2,6 @@ const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
 const Product = require("../../models/ProductSchema");
 
-// const getOrderDetails = async (req, res) => {
-//   try {
-//       const orderId = req.query.id; 
-//       const sessionUser = req.session.user;
-//       const googleUser  = req.user;
-//       const user = sessionUser || googleUser;
-      
-
-//       if (!user) {
-//           return res.redirect('/login');
-//       }
-
-//       const userId = await Address.findById(userId)
-//       const order = await Order.findById(orderId)
-//           .populate({
-//               path: 'orderedItems.product', 
-//           })
-      
-//       const addressdoc = await Address.findOne({userId}); 
-
-//           // const address = addressdoc.address.filter(addr => addr._id.toString() === order.address.toString());
-
-          
-//       //       // Check if addressdoc is found
-//       // if (!addressdoc) {
-//       // console.error("Address not found for user:", userId);
-//       // return res.status(404).send("Address not found.");
-//       // }
-
-//     // Filter the address based on the order's address
-//     const address = addressdoc.address.filter(addr => addr._id.toString() === order.address.toString());
-          
-
-//       if (!order) {
-//           return res.status(404).send("Order not found.");
-//       }
-
-//       res.render('orderDetails', { order: order,address:address });
-//   } catch (error) {
-//       console.error("Error fetching order details:", error);
-//       res.redirect('/pageNotFound');
-//   }
-// };
 
 const getOrderDetails = async (req, res) => {
   try {
@@ -65,22 +22,32 @@ const getOrderDetails = async (req, res) => {
               path: 'orderedItems.product', 
           });
       
-      const addressdoc = await Address.findOne({ userId }); 
+      const addressData = await Address.findOne({ userId }); 
 
-      // Check if addressdoc is found
-      if (!addressdoc) {
+      console.log(addressData);
+
+      
+      if (!addressData) {
           console.error("Address not found for user:", userId);
           return res.status(404).send("Address not found.");
       }
 
-      // Filter the address based on the order's address
-      const address = addressdoc.address.filter(addr => addr._id.toString() === order.address.toString());
-
       if (!order) {
-          return res.status(404).send("Order not found.");
-      }
+        return res.status(404).send("Order not found.");
+    }
 
-      res.render('orderDetails', { order: order, address: address });
+         // Filter the address based on the order's address
+      const address = addressData.address.filter(addr => addr._id.toString() === order.address.toString());
+
+      res.render('orderDetails', { 
+        order: order, 
+        address: address 
+        });
+
+    
+
+     
+
   } catch (error) {
       console.error("Error fetching order details:", error);
       res.redirect('/pageNotFound');

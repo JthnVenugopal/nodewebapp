@@ -29,14 +29,14 @@ const getCheckout = async (req, res) => {
             return res.redirect('/pageNotFound');
           }
           totalAmount = product.salePrice;
-          return res.render('checkout', { cart: null, product, addresses, totalAmount });
+          return res.render('checkout', { cart: null, product, addresses, totalAmount,user });
         } else {
           const cartItems = await Cart.findOne({ userId: user }).populate('items.productId');
           if (!cartItems) {
-            return res.render('checkout', { cart: null, products: [], addresses, totalAmount, product: null });
+            return res.render('checkout', { cart: null, products: [], addresses, totalAmount, product: null ,user});
           }
           totalAmount = cartItems.items.reduce((sum, item) => sum + item.totalPrice, 0);
-          return res.render('checkout', { cart: cartItems, products: cartItems.items, addresses, totalAmount, product: null });
+          return res.render('checkout', { cart: cartItems, products: cartItems.items, addresses, totalAmount, product: null ,user});
         }
      
   } catch (error) {

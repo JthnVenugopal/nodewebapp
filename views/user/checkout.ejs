@@ -158,14 +158,21 @@
         }
     </style>
 
-    <main class="main">
-        <div class="page-header breadcrumb-wrap">
+    <main class="main">.
+        
+        <div class="page-header breadcrumb-wrap my-2">
             <div class="container">
-                <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Shop
-                    <span></span> Checkout
-                </div>
+                <nav aria-label="Breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="index.html" rel="nofollow">Home</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="shop.html">Shop</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                    </ol>
+                </nav>
             </div>
         </div>
         <section class="mt-50 mb-50">
@@ -231,7 +238,7 @@
         </div>
 
                             <div class="add-address-section mt-4">
-                                <a href="/addAddress" class="btn btn-add-address">
+                                <a href="/add-address" class="btn btn-add-address">
                                     <i class="fi-rs-plus me-2"></i>Add New Address
                                 </a>
                             </div>
@@ -355,7 +362,7 @@
     <div class="row">
 
         <form id="orderForm" method="POST" action="/placeOrder"
-            onsubmit="return validateAddress()">
+            onsubmit="return validateAddress()" class="my-5">
             <div class="payment_option">
                 <h4>Select Payment Method</h4>
                 <div class="custome-radio">
@@ -385,8 +392,8 @@
                                         <% } %>
 
                                     <!-- Single Payment Button -->
-                                    <div id="paymentButtons" class="mt-4">
-                                        <button type="submit" class="btn btn-fill-out btn-block"
+                                    <div id="paymentButtons" class="my-5">
+                                        <button type="submit" class="btn btn-fill-out btn-success btn-block"
                                             id="submitButton" onclick="syncDiscount()">Place Order</button>
                                     </div>
                                 </form>
