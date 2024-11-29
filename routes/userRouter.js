@@ -2,22 +2,23 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user/userController");
 const passport = require("passport");
-const shopPageController = require("../controllers/user/shopPageController")
+const shopController = require("../controllers/user/shopController")
 const productController = require("../controllers/user/productController");
 const profileController = require("../controllers/user/profileController")
+const cartController=require("../controllers/user/cartController");
+const checkoutController = require("../controllers/user/checkoutController")
 const { userIsAuthenticated  } = require("../middlewares/auth");
 
-// Path to join home page & shopping page
+// Path to join home page
 router.get("/",userIsAuthenticated, userController.loadHomepage);
-router.get("/shop",userIsAuthenticated,shopPageController.loadShoppingPage);
-router.get("/filter",userIsAuthenticated,shopPageController.filterProduct);
-router.get("/filterByPrice",userIsAuthenticated,shopPageController.filterByPrice );
-// router.post("/search",userIsAuthenticated,shopPageController.searchProducts);
-// router.get('/filterAlphabets',userIsAuthenticated,shopPageController.filterByAlphabets)
 
+//shop management
+router.get("/shop",shopController.getShop);
+router.get("/sort",shopController.sortProducts);
+
+//signup
 router.get("/signup", userController.loadSignup);
 router.post("/signup", userController.signup);
-
 router.post("/verify-otp", userController.verifyOtp);
 router.post("/resend-otp", userController.resendOtp);
 
@@ -27,11 +28,9 @@ router.get("/google/callback", passport.authenticate("google", { failureRedirect
     res.redirect("/");
 });
 
-// Login
+// Login-Logout
 router.get("/login",userController.loadLogin);
 router.post("/login",userController.login); 
-
-// Logout
 router.get("/logout", userController.logout);
 
 // Product management
@@ -59,6 +58,15 @@ router.get("/editAddress",userIsAuthenticated,profileController.editAddress);
 router.post("/editAddress",userIsAuthenticated,profileController.postEditAddress);
 router.get("/deleteAddress",userIsAuthenticated,profileController.deleteAddress);
 
+//cart management
+router.get("/cart",userIsAuthenticated,cartController.getCart);
+router.get("/addToCart",userIsAuthenticated,cartController.addToCart);
+router.get('/removeFromCart', cartController.removeFromCart);
+router.post('/updateQuantity', cartController.updateCartQuantity);
+
+//checkout management
+router.get("/checkout",userIsAuthenticated,checkoutController.getCheckout);
+router.post("/placeOrder",checkoutController.placeOrder);
 
 
 module.exports = router;

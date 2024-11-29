@@ -107,7 +107,7 @@
     <!-- Offcanvas Menu End -->
 
     <!-- Header Section Begin -->
-    <header class="header">
+    <header class="header" style="background-color: rgb(243, 241, 241);">
        
         </div>
         <div class="container">
@@ -121,8 +121,11 @@
                 <div class="col-lg-6 col-md-6">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <li class="active"><a href="/">Home</a></li>
-                            <li><a href="/shop">Shop</a></li>
+                            <li class="active"><a href="/" style="color: #000000;">Home</a></li>
+                            <li><a href="/shop" style="color: #000000;">Shop</a></li>
+                            <li><a href="#" style="color: #000000;">About</a></li>
+                            <li><a href="#" style="color: #000000;">Contact</a></li>
+                            <li><a href="#" style="color: #000000;"></a></li>
                            
 
                             <ul class="dropdown">
@@ -139,7 +142,7 @@
                                 <div class="user-info">
                                     <i class="fa-solid fa-circle-user"></i>
                                     <span class="username"><a href="#" class="sign-in-link">
-                                     <p>Welcome, <%= locals.user.name %> </p>       
+                                     <p style="color: #000000;">Welcome, <%= locals.user.name %> </p>       
                                         </a></span>
                                 </div>
                                 <div class="dropdown-content">
@@ -152,12 +155,18 @@
                         <a href="/login" class="sign-in-link" style="text-decoration: none; font-size: 18px; color: black;">Log in</a>
 
                                 <% } %>
-
+                     <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
                         
-                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
-                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
-                        <a href="#"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
-                        <div class="price">$0.00</div>
+                                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                                    <br>
+                                    <a href="#"><img src="img/icon/heart.png" alt="" style="width: 25px"></a>
+            
+                                    <a href="/cart"><img src="img/icon/cart.png" alt="cart-icon" style="width: 25px;"> <span>0</span></a>
+            
+                                    <div class="price" style="margin-top: 8px;">$0.00</div>
+                                </div>
+                       
+
                     </div>
                 </div>
             </div>

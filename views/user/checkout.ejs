@@ -1,0 +1,455 @@
+<%- include('../partials/user/header') %>
+
+    <style>
+        .shipping-address-selection {
+
+            padding-right: 10px;
+        }
+
+        .address-box {
+            position: relative;
+            border: 1px solid #e2e2e2;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .address-box:hover {
+            border-color: #424874;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .address-radio {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .address-label {
+            display: block;
+            padding: 1.25rem;
+            cursor: pointer;
+            margin: 0;
+            width: 100%;
+        }
+
+        .address-radio:checked+.address-label {
+            background-color: #f8fff9;
+            border-color: #424874;
+        }
+
+        .address-radio:checked+.address-label::before {
+            content: '✓';
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            color: #424874;
+            font-weight: bold;
+        }
+
+        .address-type-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .address-type-badge.home {
+            background-color: #e8f6ff;
+            color: #0084ff;
+        }
+
+        .address-type-badge.work {
+            background-color: #fff2e5;
+            color: #ff6b00;
+        }
+
+        .address-type-badge.other {
+            background-color: #f0f0f0;
+            color: #666;
+        }
+
+        .address-content {
+            padding-right: 20px;
+        }
+
+        .name-section h6 {
+            color: #222;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .address-details p {
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .address-details .landmark {
+            color: #666;
+            font-style: italic;
+        }
+
+        .contact-info {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #eee;
+        }
+
+        .contact-info .phone {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .contact-info .alt-phone {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .btn-add-address {
+            background-color: #424874;
+            color: white;
+
+            padding: 8px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add-address:hover {
+            background-color: #ffffff;
+            color: black;
+            border-style: solid;
+        }
+
+        /* Custom scrollbar for address list */
+        .shipping-address-selection::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .shipping-address-selection::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .shipping-address-selection::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .shipping-address-selection::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .shipping-address-selection {
+                max-height: 300px;
+            }
+
+            .address-label {
+                padding: 1rem;
+            }
+
+            .address-type-badge {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+            }
+        }
+    </style>
+
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="index.html" rel="nofollow">Home</a>
+                    <span></span> Shop
+                    <span></span> Checkout
+                </div>
+            </div>
+        </div>
+        <section class="mt-50 mb-50">
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="divider mt-50 mb-50"></div>
+                    </div>
+                </div>
+                <div class="row">
+
+
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h5 class="fw-bold">Select Your Address</h5>
+                        </div>
+                        <div class="form-group">
+                            <div class="shipping-address-selection">
+                                <% addresses.forEach((address, index)=> { %>
+                                    <% address.address.forEach((addr, addrIndex)=> { %>
+                                        <div class="address-box mb-3">
+                                            <input type="radio" name="selectedAddress"
+                                                id="address-<%= index %>-<%= addrIndex %>"
+                                                value="<%= addr._id %>" class="address-radio" required>
+                                            <label class="address-label" for="address-<%= index %>-<%= addrIndex %>">
+                                                <div class="address-type-badge <%= addr.addressType.toLowerCase() %>">
+                                                    <%= addr.addressType %>
+                                                </div>
+                                                <div class="address-content">
+                                                    <div class="name-section">
+                                                        <h6 class="mb-2">
+                                                            <%= addr.name %>
+                                                        </h6>
+                                                    </div>
+                                                    <div class="address-details">
+                                                        <% if (addr.landMark) { %>
+                                                            <p class="landmark"><i class="fi-rs-marker me-2"></i>
+                                                                <%= addr.landMark %>
+                                                            </p>
+                                                            <% } %>
+                                                                <p class="location">
+                                                                    <%= addr.city %>, <%= addr.state %>
+                                                                            <%= addr.pincode %>
+                                                                </p>
+                                                                <div class="contact-info">
+                                                                    <p class="phone">
+                                                                        <i class="fi-rs-phone-call me-2"></i>
+                                                                        <%= addr.phone %>
+                                                                            <% if (addr.altPhone) { %>
+                                                                                <span class="alt-phone">/ <%=
+                                                                                        addr.altPhone %></span>
+                                                                                <% } %>
+                                                                    </p>
+                                                                </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <% }); %>
+                                            <% }); %>
+
+                            </div>
+
+                            <div class="add-address-section mt-4">
+                                <a href="/addAddress" class="btn btn-add-address">
+                                    <i class="fi-rs-plus me-2"></i>Add New Address
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-md-6">
+                        <div class="order_review">
+                            <div class="mb-20">
+                                <h4>Your Orders</h4>
+                            </div>
+                            <div class="table-responsive order_table text-center">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">Product</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if(cart && cart.items.length> 0) { %>
+                                            <% cart.items.forEach(item=> { %>
+                                                <tr>
+                                                    <td class="image product-thumbnail">
+                                                        <img src="/uploads/re-image/<%= item.productId.productImages[0] %>"
+                                                            alt="#">
+                                                    </td>
+                                                    <td>
+                                                        <h5><a href="shop-product-full.html">
+                                                                <%= item.productId.productName %>
+                                                            </a></h5>
+                                                        <span class="product-qty">x <%= item.quantity %></span>
+                                                    </td>
+                                                    <td>₹<%= item.totalPrice %>
+                                                    </td>
+                                                </tr>
+                                                <% }); %>
+                                                    <tr>
+                                                        <th>SubTotal</th>
+                                                        <td class="product-subtotal" colspan="2">₹<%=
+                                                                totalAmount.toLocaleString() %>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Coupon Discount</th>
+                                                        <td colspan="2" id="discount"><em>₹ 0</em></td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Total</th>
+                                                        <td colspan="2" class="product-subtotal" id="finalAmount">
+                                                            <span class="font-xl text-brand fw-900">₹<%=
+                                                                    totalAmount.toLocaleString() %></span>
+                                                        </td>
+                                                    </tr>
+                                                    <% } else { %>
+                                                        <% if (product) { %>
+                                                            <tr>
+                                                                <td class="image product-thumbnail">
+                                                                    <img src="/uploads/re-image/<%= product.productImages[0] %>"
+                                                                        alt="<%= product.productName %>">
+                                                                </td>
+                                                                <td>
+                                                                    <h5>
+                                                                        <a href="shop-product-full.html">
+                                                                            <%= product.productName %>
+                                                                        </a>
+                                                                    </h5>
+                                                                    <span class="product-qty">x 1</span>
+                                                                </td>
+                                                                <td>
+                                                                    ₹<%= product.salePrice.toLocaleString() %>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>SubTotal</th>
+                                                                <td class="product-subtotal" colspan="2">₹<%=
+                                                                        totalAmount.toLocaleString() %>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Coupon Discount</th>
+                                                                <td colspan="2" id="discount"><em>₹ 0</em></td>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Total</th>
+                                                                <td colspan="2" class="product-subtotal"
+                                                                    id="finalAmount">
+                                                                    <span class="font-xl text-brand fw-900">₹<%=
+                                                                            totalAmount.toLocaleString() %></span>
+                                                                </td>
+                                                            </tr>
+                                                            <% } %>
+
+                                                                <% } %>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="divider mt-50 mb-50"></div>
+                                </div>
+                            </div>
+
+
+                           
+
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="divider mt-50 mb-50"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <form id="orderForm" method="POST" action="/placeOrder"
+                                    onsubmit="return validateAddress()">
+                                    <div class="payment_option">
+                                        <h4>Select Payment Method</h4>
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" required type="radio" value="COD"
+                                                name="payment_option" id="exampleRadios3" checked>
+                                            <label class="form-check-label" for="exampleRadios3">Cash on
+                                                Delivery</label>
+                                        </div>
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" required type="radio" value="online"
+                                                name="payment_option" id="exampleRadios5">
+                                            <label class="form-check-label" for="exampleRadios5">Online Payment</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Hidden fields to store cart and totals -->
+                                    <input type="hidden" name="cart" value='<%= JSON.stringify(cart) %>'>
+                                    <input type="hidden" id="totalamount" name="totalPrice"
+                                        value="<%= totalAmount.toLocaleString() %>">
+                                    <input type="hidden" id="selectedAddressId" name="addressId">
+                                    <input type="hidden" id="discountInput" name="discountInput">
+                                   
+
+                                    <% if (product) { %>
+                                        <input type="hidden" name="singleProduct"
+                                            value="<%= JSON.stringify(product) %>">
+                                        <% } %>
+
+                                    <!-- Single Payment Button -->
+                                    <div id="paymentButtons" class="mt-4">
+                                        <button type="submit" class="btn btn-fill-out btn-block"
+                                            id="submitButton" onclick="syncDiscount()">Place Order</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+        document.querySelectorAll('.address-radio').forEach(radio => {
+            radio.addEventListener('change', function () {
+                const selectedAddressField = document.getElementById('selectedAddressId');
+                selectedAddressField.value = this.value || ''; 
+            });
+        });
+
+
+        function validateAddress() {
+            const addressRadioButtons = document.querySelectorAll('input[name="selectedAddress"]');
+            const paymentOption = document.querySelector('input[name="payment_option"]:checked').value;
+            let addressSelected = false;
+
+            addressRadioButtons.forEach((radio) => {
+                if (radio.checked) {
+                    addressSelected = true;
+                }
+            });
+
+            if (!addressSelected) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Address Selected',
+                    text: 'Please select an address before proceeding.',
+                    confirmButtonColor: '#39b4ac',
+                });
+                return false;
+            }
+         
+            return true;
+        }
+
+        function formatPrice(amount) {
+            return '₹ ' + amount.toLocaleString();
+        }
+
+
+
+
+
+
+
+
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <%- include('../partials/user/footer') %></div>
