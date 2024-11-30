@@ -3,9 +3,12 @@ const {Schema} = mongoose;
 const {v4:uuidv4} = require("uuid");//default node id (the last 12 digits in the UUID) is generated once, randomly, on process startup, and then remains unchanged
 
 const orderSchema = new Schema ({
+  
+  user: { type: Schema.Types.ObjectId, ref: 'User ' },
+
   orderId : {
     type: String,
-    default: uuidv4,
+    default: uuidv4,//universally unique identifiers (UUIDs).
     unique: true
   },
   orderedItems:[{
@@ -38,7 +41,7 @@ const orderSchema = new Schema ({
   },
   address:{
     type: Schema.Types.ObjectId,
-    ref:"User",
+    ref:"UserAddress",
     required:true
   },
   invoiceDate:{

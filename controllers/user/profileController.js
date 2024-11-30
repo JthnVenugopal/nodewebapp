@@ -74,7 +74,10 @@ const userProfile = async (req, res) => {
     const userId = user._id; // Assuming user has an _id field
     const userData = await User.findById(userId);
     const order = await Order.find({ user: userId }); // Assuming the order schema has a user field
-    console.log(order);
+    // console.log(order);
+    // console.log("User  ID:", userId);
+    // console.log(userData);
+    
     // Render the profile page with user data
     res.render("profile", { 
       user: userData || user,// Pass the user data to the template

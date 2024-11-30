@@ -1,0 +1,160 @@
+<%- include("../../views/partials/admin/header") %>
+
+<style>
+  body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+  }
+  .container {
+      margin: 20px auto;
+      max-width: 1200px;
+  }
+  .header-search {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+  }
+  .input-group {
+      max-width: 500px;
+      width: 100%;
+  }
+  .input-group input {
+      height: 40px;
+      font-size: 16px;
+  }
+  .input-group button {
+      height: 40px;
+      font-size: 16px;
+  }
+  .form-section {
+      display: flex;
+      justify-content: center;
+      margin: 30px 0;
+  }
+  .form-section form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .form-section label {
+      font-size: 18px;
+      margin-bottom: 10px;
+      display: block;
+  }
+  .form-section input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+  }
+  .form-section input[type="submit"] {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+  .form-section input[type="submit"]:hover {
+      background-color: #0056b3;
+  }
+  table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+  }
+  th, td {
+      border: 1px solid #ddd;
+      padding: 15px;
+      text-align: left;
+  }
+  th {
+      background-color: #f2f2f2;
+      font-size: 18px;
+  }
+  tr:hover {
+      background-color: #f1f1f1;
+  }
+  td button {
+      padding: 8px 15px;
+      font-size: 14px;
+      color: white;
+      background-color: #dc3545;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+  td button:hover {
+      background-color: #c82333;
+  }
+  .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+  }
+  .pagination .page-item .page-link {
+      color: #007bff;
+      padding: 10px 15px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      margin: 0 5px;
+      border-radius: 5px;
+  }
+  .pagination .page-item .page-link:hover {
+      background-color: #f1f1f1;
+  }
+</style>
+
+<header class="header-search">
+    <h2>Add Size</h2>
+</header>
+
+<div class="form-section">
+    <form action="" method="post">
+        <label for="size">Add Size</label>
+        <input type="text" id="size" name="size" placeholder="Enter size">
+        <input type="submit" value="Add Size">
+    </form>
+</div>
+
+<div class="container">
+    <table>
+        <thead>
+            <tr>
+                <th>Available Sizes</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Small</td>
+                <td><button>Remove</button></td>
+            </tr>
+            <tr>
+                <td>Medium</td>
+                <td><button>Remove</button></td>
+            </tr>
+            <tr>
+                <td>Large</td>
+                <td><button>Remove</button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+    </ul>
+</div>
+
+<%- include("../../views/partials/admin/footer") %>

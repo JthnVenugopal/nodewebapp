@@ -20,6 +20,10 @@ const productSchema = new Schema ({
     ref: "Category",
     required: true,
   },
+  size:{
+    type:Schema.Types.ObjectId,
+    ref: "Size", 
+  },
   regularPrice:{
     type:Number,
     required:true,
@@ -47,10 +51,6 @@ const productSchema = new Schema ({
   isBlocked:{
     type:Boolean,
     default:false
-  },
-  size:{
-    type:String,
-    required:true,
   },
   status:{
     type: String,
