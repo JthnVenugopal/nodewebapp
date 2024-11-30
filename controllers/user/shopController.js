@@ -34,7 +34,8 @@ const getShop = async (req,res) => {
             const userData = await User.findOne({ _id: user._id });
             return res.render("shop", { user: userData ,products:productData,categories, selectedCategory});
         } else {
-            return res.render("shop", {products:productData , categories, selectedCategory}); 
+            return res.render("shop", {
+              products:productData , categories, selectedCategory}); 
         }
     } catch (error) {
         console.error("Error loading shop page",error);

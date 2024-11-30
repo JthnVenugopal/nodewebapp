@@ -147,8 +147,8 @@
     <% } %>
 </div>
 
-            <div class="cart-action text-end">
-                <a href="/" class="btn"><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+            <div class="cart-action text-end d-flex justify-content-center my-5">
+                <a href="/" class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
             </div>
 
             <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
@@ -171,11 +171,13 @@
                 </tbody>
             </table>
         </div>
+
         <% if(cart){ %>
         <a href="/checkout" class="btn btn-success"><i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
         <% }else{ %>
         <a href="#" class="btn btn-success"><i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
         <% } %>
+
     </div>
 </div>
 </div>

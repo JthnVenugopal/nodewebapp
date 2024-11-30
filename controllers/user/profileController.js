@@ -62,7 +62,6 @@ const userProfile = async (req, res) => {
    
     const googleUser  = req.user; 
     const sessionUser  = req.session.user; 
-   
     const user = sessionUser  || googleUser ;
 
     // If user is not found, handle the error
@@ -369,9 +368,7 @@ const postAddAddress = async (req, res) => {
           await userAddress.save();
       }
 
-      res.render("profile",{
-        user : userId
-      });
+      res.redirect("/show-address");
   } catch (error) {
       console.error("Error adding address", error);
       res.status(500).send("Internal Server Error");
@@ -399,7 +396,7 @@ const deleteAddress = async (req,res) => {
       }
   )
 
-  res.redirect("/userProfile");
+  res.redirect("/show-address");
   } catch (error) {
       console.error("Error in delete address",error);
       res.redirect("/pageNotFound");
@@ -427,7 +424,9 @@ const editAddress = async (req,res) => {
           return res.redirect("/pageNotFound");
       }
 
-      res.render("edit-address",{address:addressData,user:user})
+      res.render("edit-address",{address:addressData,user:user});
+   
+
   } catch (error) {
       console.error("Error in edit address",error);   
       res.redirect("/pageNotFound");
@@ -460,7 +459,8 @@ const postEditAddress = async (req,res) => {
           }}
       )
 
-      res.redirect("/userProfile")
+      res.redirect("/show-address");
+      
   } catch (error) {
       console.error("Error in edit address",error);
       res.redirect("/pageNotFound");

@@ -10,6 +10,7 @@ const productDetails = async (req, res) => {
     let user = req.session.user;
     let googleUser = req.user;
     let userId = user || googleUser
+    
     const userData = await User.findById(userId);
 
     const productId = req.query.id;

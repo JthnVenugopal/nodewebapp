@@ -18,6 +18,8 @@ const getCheckout = async (req, res) => {
       }
       
       const cart = await Cart.findOne({ userId: user._id }).populate('items.productId');
+      //populate-retrieves the full product documents associated with those IDs
+      
       const addresses = await Address.find({ userId: user._id });
 
       let totalAmount = cart.items.reduce((total, item) => total + item.totalPrice, 0);

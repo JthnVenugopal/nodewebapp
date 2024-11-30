@@ -2,57 +2,76 @@ const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
 const Product = require("../../models/ProductSchema");
 const User = require("../../models/userSchema");
+const mongoose = require('mongoose');
 
 
+
+// const getOrderDetails = async (req, res) => {
+//     try {
+//         const orderId = req.query.id; 
+       
+
+//     const googleUser  = req.user; 
+//     const sessionUser  = req.session.user; 
+//     const userId = sessionUser  || googleUser ;
+
+//         if (!userId) {
+//             return res.redirect('/login');
+//         }
+
+//         const order = await Order.findById(orderId)
+//             .populate({
+//                 path: 'orderedItems.product', 
+//             })
+        
+//             const addressdoc = await Address.findOne({userId}); 
+
+//             const address = addressdoc.address.filter(addr => addr._id.toString() === order.address.toString());
+            
+
+//         if (!order) {
+//             return res.status(404).send("Order not found.");
+//         }
+
+//         res.render('orderDetails', { order: order,address:address });
+//     } catch (error) {
+//         console.error("Error fetching order details:", error);
+//         res.redirect('/pageNotFound');
+//     }
+// };
 
 const getOrderDetails = async (req, res) => {
     try {
-        // Extract orderId from request parameters or query
-        const orderId = req.query.id || req.params.orderId; // Adjust this line based on your routing
-
+        const orderId = req.query.id; 
         const googleUser  = req.user; 
         const sessionUser  = req.session.user; 
-        const user = sessionUser  || googleUser ;
+        const userId = sessionUser  || googleUser ;
 
-        if (!user) {
+        if (!userId) {
             return res.redirect('/login');
         }
 
-        const userId = user._id; // Assuming user has an _id field
-        const userData = await User.findById(userId);
-       
-
-        
-        // Fetch the order using the orderId
         const order = await Order.findById(orderId)
             .populate({
                 path: 'orderedItems.product', 
-            });
+            })
+        
+            const addressdoc = await Address.findOne({userId}); 
 
-        console.log(order,userData)
-        const addressData = await Address.findOne({ userId: user._id });
+            const address = addressdoc.address.filter(addr => addr._id.toString() === order.address.toString());
+            
 
         if (!order) {
             return res.status(404).send("Order not found.");
         }
 
-        if (!addressData) {
-            console.error("Address not found for user:", user._id);
-            return res.status(404).send("Address not found.");
-        }
-
-        // Filter the address based on the order's address
-        const address = addressData.address.filter(addr => addr._id.toString() === order.address.toString());
-
-        res.render('orderDetails', { 
-            order: order, 
-            address: address 
-        });
+        res.render('orderDetails', { order: order,address:address });
     } catch (error) {
         console.error("Error fetching order details:", error);
         res.redirect('/pageNotFound');
     }
 };
+  
 
 
 const cancelOrder = async (req, res) => {
