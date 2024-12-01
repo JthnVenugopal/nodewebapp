@@ -1,168 +1,50 @@
-<%- include('../partials/user/header') %>
+<%- include("../../views/partials/user/header") %>
 
-<style>
-    .order-details-section {
-        padding-top: 50px;
-    }
+<div class="container my-5">
+  <h1 class="text-center">Order Details</h1>
 
-    .store-order-summary h2.store-name {
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
-
-    .order-total h3 {
-        font-size: 1.25rem;
-    }
-
-    .shipment-status .card-body {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .order-products .product-item {
-        border-bottom: 1px solid #eee;
-        padding-bottom: 10px;
-    }
-
-    .product-image {
-        border-radius: 8px;
-    }
-
-    .order-summary .card-body {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-    }
-
-    .shipping-details,
-    .payment-method,
-    .order-summary-details {
-        width: 30%;
-    }
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<main class="main">
-    <!-- Order Details Section -->
-    <section class="order-details-section position-relative pt-50">
-        <div class="container">
-            <!-- Return to Orders Link -->
-            <div class="return-link mb-4">
-                <a href="/order" class="text-muted"><i class="fi-rs-angle-left"></i> Return to Orders</a>
-            </div>
-
-            <!-- Store and Order Summary -->
-            <div class="store-order-summary d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 class="store-name">Order Details</h2>
-                    <br>
-                    <p>Order ID: <%= order.orderId %> <br>Payment Status:
-                        <span class="badge text-dark ms-2 
-                            <% if (order.paymentStatus === 'Pending') { %> bg-secondary 
-                            <% } else if (order.paymentStatus === 'Processing') { %> bg-info 
-                            <% } else if (order.paymentStatus === 'Completed') { %> bg-success 
-                            <% } else if (order.paymentStatus === 'Failed') { %> bg-danger 
-                            <% } %>">
-                            <%= order.paymentStatus %>
-                        </span>&nbsp;&nbsp;&nbsp;
-                        <% if (order.paymentStatus === 'Pending' && order.paymentMethod === 'Online') { %>
-                            <button id="continuePaymentButton" class="btn btn-primary"
-                                onclick="retryPayment('<%= order._id %>')">Continue Payment</button>
-                        <% } %>
-                    </p>
-                    <br>
-                    <p>Placed on: <%= new Date(order.createdOn).toLocaleString() %></p>
-                </div>
-                <div class="order-total">
-                    <h3>Total: <span class="text-primary">₹ <%= order.finalAmount.toLocaleString() %></span></h3>
-                </div>
-            </div>
-
-            <!-- Shipment Status -->
-            <div class="shipment-status card mb-4">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5>Shipment Status: <span class="badge text-dark ms-2 
-                            <% if (order.status === 'Pending') { %> bg-secondary 
-                            <% } else if (order.status === 'Processing') { %> bg-info 
-                            <% } else if (order.status === 'Shipped') { %> bg-primary 
-                            <% } else if (order.status === 'Delivered') { %> bg-success 
-                            <% } else if (order.status === 'Cancelled') { %> bg-danger 
-                            <% } else if (order.status === 'Return Request') { %> bg-warning 
-                            <% } else if (order.status === 'Returned') { %> bg-dark 
-                            <% } %>">
-                            <%= order.status %>
-                        </span>
-                        </h5>
-                    </div>
-                    <a href="#" class="btn btn-outline-success btn-success">Track Order</a>
-                </div>
-            </div>
-
-            <!-- Products in Order -->
-            <div class="order-products card mb-4">
-                <div class="card-body">
-                    <% for (let i = 0; i < order.orderedItems.length; i++) { %>
-                        <div class="product-item d-flex align-items-center mb-4">
-                            <img src="uploads/re-image/<%= order.orderedItems[i].product.productImages[0] %>"
-                                alt="<%= order.orderedItems[i].product.productName %>" class="product-image me-3" width="80">
-                            <div class="product-details">
-                                <h5>
-                                    <%= order.orderedItems[i].product.productName %>
-                                </h5>
-                                <p>Qty: <%= order.orderedItems[i].quantity %></p>
-                            </div>
-                            <div class="product-price ms-auto">
-                                <h5>₹ <%= order.orderedItems[i].price.toLocaleString() %></h5>
-                            </div>
-                        </div>
-                    <% } %>
-                </div>
-            </div>
-
-                <!-- Order Summary and Shipping Details -->
-                <div class="order-summary card">
-                    <div class="card-body d-flex justify-content-between">
-                        <div class="shipping-details">
-                            <h6>Shipping Details</h6>
-                            <% if (address && address.length > 0) { %>
-                                <% address.forEach(function (addr) { %>
-                                    <p><strong>Name:</strong> <%= addr.name %></p>
-                                    <p>
-                                        <%= addr.addressType %>, <%= addr.city %>, <%= addr.state %> - <%= addr.pincode %>
-                                    </p>
-                                    <p><strong>Phone:</strong> <%= addr.phone %></p>
-                                    <% if (addr.altPhone) { %>
-                                        <p><strong>Alt Phone:</strong> <%= addr.altPhone %></p>
-                                    <% } %>
-                                    <hr>
-                                <% }); %>
-                            <% } else { %>
-                                <p>No shipping address available.</p>
-                            <% } %>
-                        </div>
-    
-
-                    <div class="payment-method text-center">
-                        <h6>Payment Method</h6><br>
-                        <p><strong>
-                            <%= order.paymentMethod %>
-                        </strong></p>
-                    </div>
-
-                    <div class="order-summary-details">
-                        <h6>Order Summary</h6>
-                        <p>Subtotal: ₹<%= order.totalPrice.toLocaleString() %></p>
-                        <p>Discount: ₹<%= order.discount %></p>
-                        <hr>
-                        <h5>Total: ₹<%= order.finalAmount.toLocaleString() %></h5>
-                    </div>
-                </div>
-            </div>
+  <% if (orders.length > 0) { %>
+    <% orders.forEach(order => { %>
+      <div class="card my-3">
+        <div class="card-header">
+          <strong>Order ID:</strong> <%= order.orderId %>
+          <span class="float-right">Status: <%= order.status %></span>
         </div>
-    </section>
-</main>
+        <div class="card-body">
+          <p><strong>Total Price:</strong> ₹<%= order.totalPrice %></p>
+          <p><strong>Final Amount:</strong> ₹<%= order.finalAmount %></p>
 
-<%- include('../partials/user/footer') %>
+          <h5>Ordered Items:</h5>
+          <ul class="list-group">
+            <% order.orderedItems.forEach(item => { %>
+              <% if (item.productDetails && item.productDetails.length > 0) { %>
+                <% const product = item.productDetails[0]; %>
+                <li class="list-group-item d-flex align-items-center">
+                  <img 
+                    src="<%= product.image %>" 
+                    alt="<%= product.name %>" 
+                    class="img-thumbnail mr-3" 
+                    style="width: 100px; height: 100px;"
+                  />
+                  <div>
+                    <h6><%= product.name %></h6>
+                    <p>Quantity: <%= item.quantity %></p>
+                    <p>Price: ₹<%= item.price %></p>
+                  </div>
+                </li>
+              <% } else { %>
+                <li class="list-group-item">
+                  <p class="text-muted">Product details are not available for this item.</p>
+                </li>
+              <% } %>
+            <% }); %>
+          </ul>
+        </div>
+      </div>
+    <% }); %>
+  <% } else { %>
+    <p class="text-center">No orders found.</p>
+  <% } %>
+</div>
+
+<%- include("../../views/partials/user/footer") %>

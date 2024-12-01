@@ -5,73 +5,93 @@ const User = require("../../models/userSchema");
 const mongoose = require('mongoose');
 
 
-
-// const getOrderDetails = async (req, res) => {
+// const getOrderDetails = async (req,res) => {
 //     try {
-//         const orderId = req.query.id; 
-       
 
-//     const googleUser  = req.user; 
-//     const sessionUser  = req.session.user; 
-//     const userId = sessionUser  || googleUser ;
+//         const googleUser  = req.user; 
+//         const sessionUser  = req.session.user; 
+//         const userId = sessionUser  || googleUser ;
 
-//         if (!userId) {
-//             return res.redirect('/login');
-//         }
+//         console.log("User : "+userId)
 
-//         const order = await Order.findById(orderId)
-//             .populate({
-//                 path: 'orderedItems.product', 
-//             })
+//         const {orderHistory} = userId;
+
+//         const order = await User.findById(orderHistory);
+         
+//         console.log(order)
+//         console.log(orderHistory);
         
-//             const addressdoc = await Address.findOne({userId}); 
 
-//             const address = addressdoc.address.filter(addr => addr._id.toString() === order.address.toString());
-            
+        
+//         res.render("orderDetails",{
+         
+//         }) 
 
-//         if (!order) {
-//             return res.status(404).send("Order not found.");
-//         }
-
-//         res.render('orderDetails', { order: order,address:address });
 //     } catch (error) {
-//         console.error("Error fetching order details:", error);
-//         res.redirect('/pageNotFound');
+//         console.error(error)
 //     }
-// };
+// }
+
 
 const getOrderDetails = async (req, res) => {
     try {
-        const orderId = req.query.id; 
-        const googleUser  = req.user; 
-        const sessionUser  = req.session.user; 
-        const userId = sessionUser  || googleUser ;
+        const googleUser = req.user;
+        const sessionUser = req.session.user;
 
+        // Ensure user is logged in
+        const userId = sessionUser || googleUser;
         if (!userId) {
-            return res.redirect('/login');
+            throw new Error("User is not logged in.");
         }
 
-        const order = await Order.findById(orderId)
-            .populate({
-                path: 'orderedItems.product', 
-            })
-        
-            const addressdoc = await Address.findOne({userId}); 
+        console.log("User: ", userId);
 
-            const address = addressdoc.address.filter(addr => addr._id.toString() === order.address.toString());
-            
+        // Perform an aggregation to fetch order details
+        const orders = await User.aggregate([
+            {
+                $match: { _id: new mongoose.Types.ObjectId(userId._id) }, // Match the user by ID
 
-        if (!order) {
-            return res.status(404).send("Order not found.");
+            },
+            {
+                $lookup: {
+                    from: "orders", // MongoDB collection for Order
+                    localField: "orderHistory", // Field in User containing order IDs
+                    foreignField: "_id", // Field in Order matching the IDs
+                    as: "orderDetails", // Output array field
+                },
+            },
+            {
+                $project: {
+                    _id: 0, // Exclude the user's _id field
+                    name: 1, // Include user's name
+                    email: 1, // Include user's email
+                    orderDetails: 1, // Include populated order details
+                },
+            },
+        ]);
+
+        // Check if orders exist
+        if (!orders || orders.length === 0) {
+            throw new Error("No orders found for the user.");
         }
 
-        res.render('orderDetails', { order: order,address:address });
+        console.log("Orders fetched:", orders[0]);
+
+        // Render the order details page
+        res.render("orderDetails", {
+            orders: orders[0].orderDetails, // Pass the populated order details to the view
+            user: orders[0].name, // Optionally pass user name
+        });
     } catch (error) {
-        console.error("Error fetching order details:", error);
-        res.redirect('/pageNotFound');
+        console.error("Error fetching order details:", error.message);
+        res.status(500).render("pageNotFound", {
+            message: error.message || "Failed to fetch order details.",
+        });
     }
 };
-  
+
+
+
 
 
 const cancelOrder = async (req, res) => {

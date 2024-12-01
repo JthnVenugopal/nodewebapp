@@ -145,6 +145,9 @@ const placeOrder = async (req, res) => {
      
       await newOrder.save();
      
+
+      await User.findByIdAndUpdate(userId, { $push: { orderHistory: newOrder._id } });
+
       cart.items = [];
       await cart.save();
 

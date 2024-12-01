@@ -57,36 +57,68 @@ async function sendVerificationEmail(email,otp){
 }
 
 
-const userProfile = async (req, res) => {
-  try {
+// const userProfile = async (req, res) => {
+//   try {
    
+//     const googleUser  = req.user; 
+//     const sessionUser  = req.session.user; 
+//     const user = sessionUser  || googleUser ;
+
+//     // If user is not found, handle the error
+//     if (!user) {
+//       return res.redirect("pageNotFound");
+//     }
+
+//     console.log("User Data : "+user)
+
+//     // Optionally, you can fetch additional user data from the database if needed
+//     const userId = user._id; // Assuming user has an _id field
+//     const userData = await User.findById(userId);
+//     const order = await Order.find({ orderId }); // Assuming the order schema has a user field
+//     console.log("Order details userProfile: "+order);
+//     // console.log("User  ID:", userId);
+//     // console.log(userData);
+    
+//     // Render the profile page with user data
+//     res.render("profile", { 
+//       user: userData || user,// Pass the user data to the template
+//       order,
+//     });
+//   } catch (error) {
+//     console.error("Error retrieving profile data", error);
+//     res.redirect("pageNotFound");
+//   }
+// };
+
+const userProfile = async (req,res) => {
+  try {
+
     const googleUser  = req.user; 
     const sessionUser  = req.session.user; 
-    const user = sessionUser  || googleUser ;
+    const userId = sessionUser  || googleUser ;
 
-    // If user is not found, handle the error
-    if (!user) {
-      return res.redirect("pageNotFound");
-    }
+      const page = parseInt(req.query.page) || 1;
+      const limit = 6;
+      const skip = (page - 1)*limit;
+      const count = await Order.countDocuments();
+      const totalPages = Math.ceil(count / limit);
 
-    // Optionally, you can fetch additional user data from the database if needed
-    const userId = user._id; // Assuming user has an _id field
-    const userData = await User.findById(userId);
-    const order = await Order.find({ user: userId }); // Assuming the order schema has a user field
-    // console.log(order);
-    // console.log("User  ID:", userId);
-    // console.log(userData);
-    
-    // Render the profile page with user data
-    res.render("profile", { 
-      user: userData || user,// Pass the user data to the template
-      order,
-    });
+      const userData = await User.findById(userId);
+      const addressData = await Address.findOne({userId : userId});
+      
+      const orders = await Order.find({ user: userId }).sort({ createdOn: -1 }).skip(skip).limit(limit);
+      res.render('profile',{
+          user:userData,
+          userAddress:addressData,
+          orders,
+          currentPage:page,
+          totalPages
+      })
   } catch (error) {
-    console.error("Error retrieving profile data", error);
-    res.redirect("pageNotFound");
+      console.error("Error retreiving profile data",error);
+      res.redirect("/pageNotFound")
   }
-};
+}
 
 const getEditProfile = async (req,res) => {
   try {
