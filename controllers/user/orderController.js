@@ -5,32 +5,239 @@ const User = require("../../models/userSchema");
 const mongoose = require('mongoose');
 
 
-// const getOrderDetails = async (req,res) => {
+// const getOrderDetails = async (req, res) => {
 //     try {
+//         const googleUser = req.user;
+//         const sessionUser = req.session.user;
 
-//         const googleUser  = req.user; 
-//         const sessionUser  = req.session.user; 
-//         const userId = sessionUser  || googleUser ;
+//         // Ensure user is logged in
+//         const userId = sessionUser || googleUser;
 
-//         console.log("User : "+userId)
+//         if (!userId) {
+//             throw new Error("User is not logged in.");
+//         }
 
-//         const {orderHistory} = userId;
+//         // console.log("User: ", userId);
 
-//         const order = await User.findById(orderHistory);
-         
-//         console.log(order)
-//         console.log(orderHistory);
+//         // Perform an aggregation to fetch order details
+    
+//         const orders = await User.aggregate([
+//             {
+//                 $match: { _id: new mongoose.Types.ObjectId(userId) }, // Match user by ID
+//             },
+//             {
+//                 $lookup: {
+//                     from: "orders", // Reference the 'Order' collection
+//                     localField: "orderHistory", // Match user's order IDs
+//                     foreignField: "_id", // Match with orders' _id
+//                     as: "orderDetails", // Output array
+//                 },
+//             },
+//             {
+//                 $unwind: "$orderDetails", // Decompose the orderDetails array
+//             },
+//             {
+//                 $lookup: {
+//                     from: "products", // Reference the 'Product' collection
+//                     localField: "orderDetails.orderedItems.product", // Match order items with products
+//                     foreignField: "_id", // Match with products' _id
+//                     as: "orderDetails.orderedItems.productDetails", // Output detailed product info
+//                 },
+//             },
+//             {
+//                 $group: {
+//                     _id: "$_id", // Group by user ID
+//                     name: { $first: "$name" },
+//                     email: { $first: "$email" },
+//                     orders: { $push: "$orderDetails" }, // Collect all orders with product details
+//                 },
+//             },
+//         ]);
+
+      
+//         console.log("Orders aggregation result:", JSON.stringify(orders, null, 2));
+       
+
+//         // Check if orders exist
+//         if (!orders || orders.length === 0) {
+//             throw new Error("No orders found for the user.");
+//         }
+
+//         console.log("Orders fetched:", orders);
+
+//         const {name,} = orders[0]
+   
+//         res.render("orderDetails", {
+//            name,
+
+//         });
         
-
         
-//         res.render("orderDetails",{
-         
-//         }) 
 
 //     } catch (error) {
-//         console.error(error)
+//         console.error("Error fetching order details:", error.message);
+//         res.status(500).render("pageNotFound", {
+//             message: error.message || "Failed to fetch order details.",
+//         });
 //     }
-// }
+// };
+
+
+
+
+
+
+
+//--------------------------------------------------
+
+
+
+// const getOrderDetails = async (req, res) => {
+//     try {
+//         const googleUser = req.user;
+//         const sessionUser = req.session.user;
+
+//         // Ensure user is logged in
+//         const userId = sessionUser || googleUser;
+
+//         if (!userId) {
+//             throw new Error("User is not logged in.");
+//         }
+
+//         // Perform an aggregation to fetch order details
+//         const orders = await User.aggregate([
+//             {
+//                 $match: { _id: new mongoose.Types.ObjectId(userId) }, // Match user by ID
+//             },
+//             {
+//                 $lookup: {
+//                     from: "orders", // Reference the 'Order' collection
+//                     localField: "orderHistory", // Match user's order IDs
+//                     foreignField: "_id", // Match with orders' _id
+//                     as: "orderDetails", // Output array
+//                 },
+//             },
+//             {
+//                 $unwind: "$orderDetails", // Decompose the orderDetails array
+//             },
+//             {
+//                 $lookup: {
+//                     from: "products", // Reference the 'Product' collection
+//                     localField: "orderDetails.orderedItems.product", // Match order items with products
+//                     foreignField: "_id", // Match with products' _id
+//                     as: "orderDetails.orderedItems.productDetails", // Output detailed product info
+//                 },
+//             },
+//             {
+//                 $group: {
+//                     _id: "$_id", // Group by user ID
+//                     name: { $first: "$name" },
+//                     email: { $first: "$email" },
+//                     orders: { $push: "$orderDetails" }, // Collect all orders with product details
+//                 },
+//             },
+//         ]);
+
+//         // Check if orders exist
+//         if (!orders || orders.length === 0) {
+//             throw new Error("No orders found for the user.");
+//         }
+
+//         // Destructure the first order data
+//         const { name, email, orders: userOrders } = orders[0]; // Destructure name, email, and orders array
+
+//         // Example of further destructuring orders
+//         const orderDetails = userOrders.map(order => {
+//             const {
+//                 _id: orderId,
+//                 orderedItems,
+//                 totalPrice,
+//                 discount,
+//                 finalAmount,
+//                 address,
+//                 status,
+//                 paymentStatus,
+//                 couponApplied,
+//                 paymentMethod,
+//                 createdOn
+//             } = order;
+
+//             // Further destructure orderedItems to extract product details
+//             const productDetails = orderedItems.map(item => {
+//                 const {
+//                     productDetails: products
+//                 } = item;
+
+//                 return products.map(product => {
+//                     const {
+//                         _id: productId,
+//                         productName,
+//                         description,
+//                         brand,
+//                         category,
+//                         regularPrice,
+//                         salePrice,
+//                         productOffer,
+//                         quantity,
+//                         color,
+//                         productImages,
+//                         isBlocked,
+//                         status: productStatus
+//                     } = product;
+
+//                     return {
+//                         productId,
+//                         productName,
+//                         description,
+//                         brand,
+//                         category,
+//                         regularPrice,
+//                         salePrice,
+//                         productOffer,
+//                         quantity,
+//                         color,
+//                         productImages,
+//                         isBlocked,
+//                         productStatus
+//                     };
+//                 });
+//             });
+
+//             return {
+//                 orderId,
+//                 orderedItems: productDetails,
+//                 totalPrice,
+//                 discount,
+//                 finalAmount,
+//                 address,
+//                 status,
+//                 paymentStatus,
+//                 couponApplied,
+//                 paymentMethod,
+//                 createdOn
+//             };
+//         });
+
+//         console.log(ordererdItems)
+
+//         // Render the data to the frontend
+//         res.render("orderDetails", {
+//             name,
+//             email,
+//             orderDetails
+//         });
+
+//     } catch (error) {
+//         console.error("Error fetching order details:", error.message);
+//         res.status(500).render("pageNotFound", {
+//             message: error.message || "Failed to fetch order details.",
+//         });
+//     }
+// };
+
+
+
+//-----------------------------------------------------
 
 
 const getOrderDetails = async (req, res) => {
@@ -40,32 +247,41 @@ const getOrderDetails = async (req, res) => {
 
         // Ensure user is logged in
         const userId = sessionUser || googleUser;
+
         if (!userId) {
             throw new Error("User is not logged in.");
         }
 
-        console.log("User: ", userId);
-
         // Perform an aggregation to fetch order details
         const orders = await User.aggregate([
             {
-                $match: { _id: new mongoose.Types.ObjectId(userId._id) }, // Match the user by ID
-
+                $match: { _id: new mongoose.Types.ObjectId(userId) }, // Match user by ID
             },
             {
                 $lookup: {
-                    from: "orders", // MongoDB collection for Order
-                    localField: "orderHistory", // Field in User containing order IDs
-                    foreignField: "_id", // Field in Order matching the IDs
-                    as: "orderDetails", // Output array field
+                    from: "orders", // Reference the 'Order' collection
+                    localField: "orderHistory", // Match user's order IDs
+                    foreignField: "_id", // Match with orders' _id
+                    as: "orderDetails", // Output array
                 },
             },
             {
-                $project: {
-                    _id: 0, // Exclude the user's _id field
-                    name: 1, // Include user's name
-                    email: 1, // Include user's email
-                    orderDetails: 1, // Include populated order details
+                $unwind: "$orderDetails", // Decompose the orderDetails array
+            },
+            {
+                $lookup: {
+                    from: "products", // Reference the 'Product' collection
+                    localField: "orderDetails.orderedItems.product", // Match order items with products
+                    foreignField: "_id", // Match with products' _id
+                    as: "orderDetails.orderedItems.productDetails", // Output detailed product info
+                },
+            },
+            {
+                $group: {
+                    _id: "$_id", // Group by user ID
+                    name: { $first: "$name" },
+                    email: { $first: "$email" },
+                    orders: { $push: "$orderDetails" }, // Collect all orders with product details
                 },
             },
         ]);
@@ -75,13 +291,82 @@ const getOrderDetails = async (req, res) => {
             throw new Error("No orders found for the user.");
         }
 
-        console.log("Orders fetched:", orders[0]);
+        // Destructure the first order data
+        const { name, email, orders: userOrders } = orders[0]; // Destructure name, email, and orders array
 
-        // Render the order details page
-        res.render("orderDetails", {
-            orders: orders[0].orderDetails, // Pass the populated order details to the view
-            user: orders[0].name, // Optionally pass user name
+        // Example of further destructuring orders
+        const orderDetails = userOrders.map(order => {
+            const {
+                _id: orderId,
+                orderedItems,
+                totalPrice,
+                discount,
+                finalAmount,
+                address,
+                status,
+                paymentStatus,
+                couponApplied,
+                paymentMethod,
+                createdOn
+            } = order;
+
+            // Since orderedItems is an object, we directly access it
+            const productDetails = orderedItems.productDetails.map(product => {
+                const {
+                    _id: productId,
+                    productName,
+                    description,
+                    brand,
+                    category,
+                    regularPrice,
+                    salePrice,
+                    productOffer,
+                    quantity,
+                    color,
+                    productImages,
+                    isBlocked,
+                    status: productStatus
+                } = product;
+
+                return {
+                    productId,
+                    productName,
+                    description,
+                    brand,
+                    category,
+                    regularPrice,
+                    salePrice,
+                    productOffer,
+                    quantity,
+                    color,
+                    productImages,
+                    isBlocked,
+                    productStatus
+                };
+            });
+
+            return {
+                orderId,
+                orderedItems: productDetails,
+                totalPrice,
+                discount,
+                finalAmount,
+                address,
+                status,
+                paymentStatus,
+                couponApplied,
+                paymentMethod,
+                createdOn
+            };
         });
+
+        // Render the data to the frontend
+        res.render("orderDetails", {
+            name,
+            email,
+            orderDetails
+        });
+
     } catch (error) {
         console.error("Error fetching order details:", error.message);
         res.status(500).render("pageNotFound", {
@@ -89,7 +374,6 @@ const getOrderDetails = async (req, res) => {
         });
     }
 };
-
 
 
 
