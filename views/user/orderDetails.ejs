@@ -93,7 +93,12 @@
                                     <p><strong>Brand:</strong> <%= item.brand %></p>
                                     <p><strong>Quantity:</strong> <%= item.quantity %></p>
                                     <p><strong>Price:</strong> ₹<%= item.salePrice %></p>
-                                    <img class="img-fluid rounded" src="/images/<%= item.productImages[0] %>" alt="<%= item.productName %>">
+                                    <img class="img-fluid rounded" src="/uploads/re-image/<%= item.productImages[0] %>" alt="<%= item.productName %>">
+
+                                    <div class="d-flex justify-content-center">
+                                      <a href=""><button class="btn btn-danger my-5">Cancel Order</button></a>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>

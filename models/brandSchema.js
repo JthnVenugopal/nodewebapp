@@ -18,6 +18,13 @@ const brandSchema = new Schema ({
     type: Date,
     default:Date.now
   },
+
+  brandIdId:{
+    type:String,
+    default:()=>uuidv4(),
+    unique:true,
+
+},
   
 }, { timestamps: true });
 

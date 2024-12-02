@@ -56,7 +56,6 @@ async function sendVerificationEmail(email,otp){
   }
 }
 
-
 // const userProfile = async (req, res) => {
 //   try {
    

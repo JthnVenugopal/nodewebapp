@@ -1,6 +1,6 @@
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema");
-const Product = require("../../models/ProductSchema");
+const Product = require("../../models/productSchema");
 const User = require("../../models/userSchema");
 const mongoose = require('mongoose');
 
@@ -248,7 +248,7 @@ const getOrderDetails = async (req, res) => {
         // Ensure user is logged in
         const userId = sessionUser || googleUser;
 
-        if (!userId) {
+        if (!userId ) {
             throw new Error("User is not logged in.");
         }
 
@@ -364,7 +364,8 @@ const getOrderDetails = async (req, res) => {
         res.render("orderDetails", {
             name,
             email,
-            orderDetails
+            orderDetails,
+           
         });
 
     } catch (error) {

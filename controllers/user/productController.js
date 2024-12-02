@@ -1,4 +1,4 @@
-const Product = require("../../models/ProductSchema");
+const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const User = require("../../models/userSchema");
 const passport = require("passport")

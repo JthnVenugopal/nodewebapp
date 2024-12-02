@@ -85,67 +85,130 @@ const getProductAddPage = async (req,res) => {
 //     }
 // }
 
-const addProducts = async (req,res) => {
+// const addProducts = async (req,res) => {
+//     try {
+//         const products = req.body;
+//         const productExists = await Product.findOne({
+//             productName:products.productName
+//         })
+
+//         if(!productExists){
+//             const images = [];
+            
+//             if (req.files && req.files.length > 0) {
+//                 for (let i = 0; i < req.files.length; i++) {
+//                     const originalImagePath = req.files[i].path;
+                    
+//                     const resizedImagePath = path.join("public", "uploads", "re-image", `resized-${req.files[i].filename}`);
+                    
+//                     await sharp(originalImagePath)
+//                         .resize({ width: 440, height: 440 })
+//                         .toFile(resizedImagePath); 
+                    
+//                     images.push(`resized-${req.files[i].filename}`);
+//                 }
+//             }
+            
+
+//             const categoryId = await Category.findOne({name:products.category})
+
+//             if(!categoryId){
+//                 return res.status(400).json("Invalid category name")
+//             }
+
+//             const newProduct = new Product({
+//                 productName:products.productName,
+//                 description:products.description,
+//                 brand:products.brand,
+//                 category:categoryId._id,
+//                 regularPrice:products.regularPrice,
+//                 salePrice:products.salePrice,
+//                 createdAt:new Date(),
+//                 quantity:products.quantity,
+//                 color:products.color,
+//                 productImages:images,
+//                 status:"Available",
+//             })
+
+//             await newProduct.save();
+//             return res.redirect('/admin/addProducts')
+
+//         }else{
+//             return res.status(400).json("Product already exists, please try with another name");
+//         }
+
+//     } catch (error) {
+//         console.error("Error adding product",error)
+//         res.redirect('/admin/pageerror')
+//     }
+// }
+
+
+
+const addProducts = async (req, res) => {
     try {
         const products = req.body;
-        const productExists = await Product.findOne({
-            productName:products.productName
-        })
 
-        if(!productExists){
+        const productExists = await Product.findOne({
+            productName: products.productName,
+        });
+
+        if (!productExists) {
             const images = [];
-            
+
             if (req.files && req.files.length > 0) {
                 for (let i = 0; i < req.files.length; i++) {
                     const originalImagePath = req.files[i].path;
-                    
-                    const resizedImagePath = path.join("public", "uploads", "re-image", `resized-${req.files[i].filename}`);
-                    
+
+                    const resizedImagePath = path.join(
+                        "public",
+                        "uploads",
+                        "re-image",
+                        req.files[i].filename
+                    );
                     await sharp(originalImagePath)
-                        .resize({ width: 440, height: 440 })
-                        .toFile(resizedImagePath); 
-                    
-                    images.push(`resized-${req.files[i].filename}`);
+                        .resize({ width: 500, height: 500 })
+                        .toFile(resizedImagePath);
+                    images.push(req.files[i].filename);
                 }
             }
-            
 
-            const categoryId = await Category.findOne({name:products.category})
-
-            if(!categoryId){
-                return res.status(400).json("Invalid category name")
-            }
+            const categoryId = await Category.findOne({ name: products.category }); // no need to access `.name`
+         
+            if (!categoryId) {
+                       return res.status(400).json("Invalid category name");
+             }
 
             const newProduct = new Product({
-                productName:products.productName,
-                description:products.description,
-                brand:products.brand,
-                category:categoryId._id,
-                regularPrice:products.regularPrice,
-                salePrice:products.salePrice,
-                createdAt:new Date(),
-                quantity:products.quantity,
-                color:products.color,
-                productImages:images,
-                status:"Available",
-            })
+                productName: products.productName,
+                description: products.description,
+                brand: products.brand,
+                category: categoryId,
+                regularPrice: products.regularPrice,
+                salePrice: products.salePrice,
+                createdOn: new Date(),
+                quantity: products.quantity,
+                color: products.color,
+                productImage: images,
+                status: "Available",
+            });
 
             await newProduct.save();
-            return res.redirect('/admin/addProducts')
-
-        }else{
+             res.redirect('/products')
+            
+        } else {
             return res.status(400).json("Product already exists, please try with another name");
         }
-
     } catch (error) {
-        console.error("Error adding product",error)
-        res.redirect('/admin/pageerror')
+        console.error("Error saving product", error);
+        // return res.status(500).json({ message: "Internal server error" });
+        return res.redirect('/admin/pageerror')
     }
-}
+};
 
 
 
-  module.exports = { addProducts };
+ 
   
 
 
@@ -254,7 +317,7 @@ const getAllProducts = async (req, res) => {
 
 
 
-//------------------------------------------------------------
+//-------------------------------------------------------------------------
 
 const addProductOffer = async (req,res) => {
     try {

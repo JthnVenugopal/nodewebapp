@@ -2,7 +2,7 @@ const Cart = require("../../models/cartSchema");
 const Address = require("../../models/addressSchema");
 const User = require("../../models/userSchema");
 const Order = require("../../models/orderSchema");
-const Product = require("../../models/ProductSchema");
+const Product = require("../../models/productSchema");
 const mongoose = require("mongoose");
 
 const getCheckout = async (req, res) => {
