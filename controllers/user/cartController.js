@@ -25,7 +25,15 @@ const getCart = async (req,res) => {
 
       const totalAmount = cartItems.items.reduce((sum, item) => sum + item.totalPrice, 0);
 
-      res.render('cart', { cart: cartItems, products: cartItems.items, totalAmount, user:user});
+      const {items} = cartItems;
+
+      res.render('cart', { 
+        cart: cartItems, 
+        products: cartItems.items,
+        totalAmount,
+        user:user,
+        items,
+        });
   } catch (error) {
       console.error(error);
       res.redirect('/page-not-found');

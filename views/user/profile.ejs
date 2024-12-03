@@ -284,20 +284,43 @@
                     <h5 class="mb-0 text-center">User Profile</h5>
                 </div>
                 <div class="card-body text-center">
-                    <h5 class="card-title">
+                    <h4 class="card-title">
                         <%=user.name %>
-                    </h5>
+                    </h4>
+
+                  
+                   
+
+                    <% if(userDetails.googleId) { %>
+                        <p class="card-text" style="display: none;">
+                           
+                        </p>
+                        <%}else{%>
                     <p class="card-text">
                         <strong>Phone:</strong>
                         <%=user.phone %>
                     </p>
+                     <%}%>
+
                     <p class="card-text">
                         <strong>Email:</strong>
                         <%=user.email %>
                     </p>
                     <div class="btn-group">
                         <a href="/editProfile" class="btn btn-sm btn-primary me-2">Edit Profile</a>
-                        <a href="/changePassword" class="btn btn-sm btn-success">Change Password</a>
+                        
+
+
+                        <% if(userDetails.googleId) { %>
+                            <p class="card-text" style="display: none;">
+                               
+                            </p>
+                            <%}else{%>
+                        <p class="card-text">
+                            <a href="/changePassword" class="btn btn-sm btn-success">Change Password</a>
+                        </p>
+                         <%}%>
+                         
                     </div>
                 </div>
             </div>

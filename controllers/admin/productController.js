@@ -17,6 +17,7 @@ const getProductAddPage = async (req,res) => {
         res.render("product-add",{
             cat:category,
             brand:brand,
+          
 
         });
     } catch (error) {
@@ -122,6 +123,10 @@ const getAllProducts = async (req, res) => {
 
     const category = await Category.find({ isListed: true });
     const brand = await Brand.find({ isBlocked: false });
+
+    // const {brandName , brandImage , } = brand;
+
+    console.log(brandName)
 
     if (category && brand) {
       res.render("products", {

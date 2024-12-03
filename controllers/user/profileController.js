@@ -56,38 +56,6 @@ async function sendVerificationEmail(email,otp){
   }
 }
 
-// const userProfile = async (req, res) => {
-//   try {
-   
-//     const googleUser  = req.user; 
-//     const sessionUser  = req.session.user; 
-//     const user = sessionUser  || googleUser ;
-
-//     // If user is not found, handle the error
-//     if (!user) {
-//       return res.redirect("pageNotFound");
-//     }
-
-//     console.log("User Data : "+user)
-
-//     // Optionally, you can fetch additional user data from the database if needed
-//     const userId = user._id; // Assuming user has an _id field
-//     const userData = await User.findById(userId);
-//     const order = await Order.find({ orderId }); // Assuming the order schema has a user field
-//     console.log("Order details userProfile: "+order);
-//     // console.log("User  ID:", userId);
-//     // console.log(userData);
-    
-//     // Render the profile page with user data
-//     res.render("profile", { 
-//       user: userData || user,// Pass the user data to the template
-//       order,
-//     });
-//   } catch (error) {
-//     console.error("Error retrieving profile data", error);
-//     res.redirect("pageNotFound");
-//   }
-// };
 
 const userProfile = async (req,res) => {
   try {
@@ -111,7 +79,8 @@ const userProfile = async (req,res) => {
           userAddress:addressData,
           orders,
           currentPage:page,
-          totalPages
+          totalPages,
+          userDetails : userId
       })
   } catch (error) {
       console.error("Error retreiving profile data",error);
@@ -138,8 +107,11 @@ const getEditProfile = async (req,res) => {
 
 const UpdateProfile = async (req, res) => {
   try {
-      const data = req.body; 
-      const user = req.session.user; 
+    const sessionUser = req.session.user;
+    const googleUser  = req.user;
+    const user = sessionUser || googleUser;
+
+    const { name, email, phone } = req.body;
       
       const findUser = await User.findById(user._id);
       if (!findUser) {
@@ -150,9 +122,9 @@ const UpdateProfile = async (req, res) => {
           { _id: user._id },
           {
               $set: {
-                  name: data.name,
-                  email: data.email,
-                  phone: data.phone,
+                  name,
+                  email,
+                  phone,
               }
           }
       );
