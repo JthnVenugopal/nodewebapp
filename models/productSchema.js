@@ -20,10 +20,6 @@ const productSchema = new Schema ({
     ref: "Category",
     required: true,
   },
-  size:{
-    type:Schema.Types.ObjectId,
-    ref: "Size", 
-  },
   regularPrice:{
     type:Number,
     required:true,

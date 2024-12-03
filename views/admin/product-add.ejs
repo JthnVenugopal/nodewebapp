@@ -276,12 +276,12 @@
                     await croppedCanvas.toBlob(blob => {
                         let input = document.getElementById("input" + index);
                         let imgFile = new File([blob], fileName, blob);
-                        const filelist = new DataTransfer();
-                        filelist.items.add(imgFile);
-                        input.files = filelist.files;
+                        const fileList = new DataTransfer();
+                        fileList.items.add(imgFile);
+                        input.files = fileList.files;
                     })
 
-                    cropperdContainer.style.display = "none";
+                    croppedContainer.style.display = "none";
                     cropper.destroy();
 
 
