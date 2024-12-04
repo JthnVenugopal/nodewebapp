@@ -142,10 +142,14 @@ const changePassword = async (req,res) => {
     const googleUser  = req.user; 
     const sessionUser  = req.session.user; 
 
+    // console.log(sessionUser)
+
     if(googleUser){
       res.json({message: "since you login using google id , You can't change password"})
     }else{
-      res.render("change-password");
+      res.render("change-password",{
+        user : sessionUser
+      });
     }
     
   } catch (error) {
@@ -155,6 +159,7 @@ const changePassword = async (req,res) => {
 
 const changePasswordValid = async (req,res) => {
   try {
+
       const {email} = req.body;
       const userExists = await User.findOne({email});
       if(userExists){
@@ -178,6 +183,211 @@ const changePasswordValid = async (req,res) => {
   }
 }
 
+//---------------------------------------------------------------------
+// const updatePassword = async (req,res)=> {
+
+// try {
+
+//   const { currentPassword, newPassword, confirmPassword } = req.body;
+
+//   console.log(currentPassword)
+
+//   // Perform server-side validations
+//   if (!currentPassword || !newPassword || !confirmPassword) {
+//       return res.status(400).json({ message: "All fields are required" });
+//   }
+
+//   // Example: validate current password and update new password logic
+//   if (newPassword === currentPassword) {
+//       return res.status(400).json({ message: "New password cannot be the same as the current password" });
+//   }
+
+//   if (newPassword.length < 6) {
+//       return res.status(400).json({ message: "Password must be at least 6 characters" });
+//   }
+
+//   // Mock success response
+//   res.status(200).json({ message: "Password changed successfully" });
+  
+// } catch (error) {
+  
+// }
+
+
+// }
+
+
+
+// const updatePassword = async (req, res) => {
+//   try {
+//       const { currentPassword, newPassword, confirmPassword } = req.body;
+
+//       // Validate inputs
+//       if (!currentPassword || !newPassword || !confirmPassword) {
+//           return res.status(400).json({ message: "All fields are required." });
+//       }
+
+//       if (newPassword === currentPassword) {
+//           return res.status(400).json({ message: "New password cannot be the same as the current password." });
+//       }
+
+//       if (newPassword.length < 6) {
+//           return res.status(400).json({ message: "Password must be at least 6 characters long." });
+//       }
+
+//       if (newPassword !== confirmPassword) {
+//           return res.status(400).json({ message: "Passwords do not match." });
+//       }
+
+//       // Add logic to verify the current password (e.g., database check)
+
+//       // Update the password in the database
+//       // Example (pseudo-code):
+
+//       const user = await User.findById(req.user.id);
+//       if (!user) throw new Error("User not found.");
+//       const isMatch = await bcrypt.compare(currentPassword, user.password);
+//       if (!isMatch) return res.status(400).json({ message: "Current password is incorrect." });
+//       user.password = await bcrypt.hash(newPassword, saltRounds);
+//       await user.save();
+
+//       res.status(200).json({ message: "Password changed successfully." });
+//   } catch (error) {
+//       console.error("Error updating password:", error);
+//       res.status(500).json({ message: "Internal server error." });
+//   }
+// };
+
+
+// const updatePassword = async (req, res) => {
+
+//     try {
+
+//         const user  = req.session.user; 
+
+//         const { currentPassword, newPassword, confirmPassword } = req.body;
+
+//         // console.log(currentPassword);
+//         // console.log(newPassword);
+//         // console.log(confirmPassword);
+        
+        
+        
+
+//         // Validate inputs
+//         if (!currentPassword || !newPassword || !confirmPassword) {
+//             return res.status(400).json({ message: "All fields are required." });
+//         }
+
+//         if (newPassword === currentPassword) {
+//             return res.status(400).json({ message: "New password cannot be the same as the current password." });
+//         }
+
+//         if (newPassword.length < 6) {
+//             return res.status(400).json({ message: "Password must be at least 6 characters long." });
+//         }
+
+//         if (newPassword !== confirmPassword) {
+//             return res.status(400).json({ message: "Passwords do not match." });
+//         }
+
+//         // Fetch the user from the database
+//         // const user = await User.findById(req.user.id);
+//         if (!user) {
+//             return res.status(404).json({ message: "User not found." });
+//         }
+
+//         // Verify the current password
+//         const isMatch = await bcrypt.compare(currentPassword, user.password);
+//         if (!isMatch) {
+//             return res.status(400).json({ message: "Current password is incorrect." });
+//         }
+
+        
+
+//         // Hash the new password
+//         const saltRounds = 10; // Recommended value
+//         const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+//         // Update and save the new password
+//         user.password = hashedPassword;
+//         await user.save();
+
+//         return res.status(200).json({ message: "Password changed successfully." });
+
+//     } catch (error) {
+//         console.error("Error updating password:", error.message);
+//         return res.status(500).json({ message: "Internal server error , update password error" });
+
+//     }
+// };
+
+const updatePassword = async (req, res) => {
+  try {
+     
+      const  userId  = req.session.user; // Assuming session contains user details
+
+      const { currentPassword, newPassword, confirmPassword } = req.body;
+
+      // Validate inputs
+      if (!currentPassword || !newPassword || !confirmPassword) {
+          return res.status(400).json({ message: "All fields are required." });
+      }
+
+      if (newPassword === currentPassword) {
+          return res.status(400).json({ message: "New password cannot be the same as the current password." });
+      }
+
+      if (newPassword.length < 6) {
+          return res.status(400).json({ message: "Password must be at least 6 characters long." });
+      }
+
+      if (newPassword !== confirmPassword) {
+          return res.status(400).json({ message: "Passwords do not match." });
+      }
+
+      const user = await User.findById(userId); 
+
+      console.log(userId);
+      console.log(user);
+      
+      
+      // Ensure the user exists
+      if (!user) {
+          return res.status(404).json({ message: "User not found." });
+      }
+
+      // Verify the current password against the stored hashed password
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+      if (!isMatch) {
+          return res.status(400).json({ message: "Current password is incorrect." });
+      }
+
+      // Hash the new password
+      const saltRounds = 10; // Recommended value
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      // Update the user's password in the database
+      user.password = hashedPassword;
+      await user.save();
+
+      return res.status(200).json({ message: "Password changed successfully." , redirectUrl: '/login'});
+
+  } catch (error) {
+
+      console.error("Error updating password:", error.message);
+      return res.status(500).json({ message: "Internal server error. Please try again." });
+
+  }
+};
+
+
+
+
+
+
+//----------------------------------------------------------------------
 const resendOtp = async (req,res) => {
   try {
       const otp = generateOtp();
@@ -490,4 +700,6 @@ module.exports = {
   deleteAddress,
   editAddress,
   postEditAddress,
+  updatePassword,
+
 }

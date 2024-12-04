@@ -5,238 +5,6 @@ const User = require("../../models/userSchema");
 const mongoose = require('mongoose');
 
 
-// const getOrderDetails = async (req, res) => {
-//     try {
-//         const googleUser = req.user;
-//         const sessionUser = req.session.user;
-
-//         // Ensure user is logged in
-//         const userId = sessionUser || googleUser;
-
-//         if (!userId) {
-//             throw new Error("User is not logged in.");
-//         }
-
-//         // console.log("User: ", userId);
-
-//         // Perform an aggregation to fetch order details
-    
-//         const orders = await User.aggregate([
-//             {
-//                 $match: { _id: new mongoose.Types.ObjectId(userId) }, // Match user by ID
-//             },
-//             {
-//                 $lookup: {
-//                     from: "orders", // Reference the 'Order' collection
-//                     localField: "orderHistory", // Match user's order IDs
-//                     foreignField: "_id", // Match with orders' _id
-//                     as: "orderDetails", // Output array
-//                 },
-//             },
-//             {
-//                 $unwind: "$orderDetails", // Decompose the orderDetails array
-//             },
-//             {
-//                 $lookup: {
-//                     from: "products", // Reference the 'Product' collection
-//                     localField: "orderDetails.orderedItems.product", // Match order items with products
-//                     foreignField: "_id", // Match with products' _id
-//                     as: "orderDetails.orderedItems.productDetails", // Output detailed product info
-//                 },
-//             },
-//             {
-//                 $group: {
-//                     _id: "$_id", // Group by user ID
-//                     name: { $first: "$name" },
-//                     email: { $first: "$email" },
-//                     orders: { $push: "$orderDetails" }, // Collect all orders with product details
-//                 },
-//             },
-//         ]);
-
-      
-//         console.log("Orders aggregation result:", JSON.stringify(orders, null, 2));
-       
-
-//         // Check if orders exist
-//         if (!orders || orders.length === 0) {
-//             throw new Error("No orders found for the user.");
-//         }
-
-//         console.log("Orders fetched:", orders);
-
-//         const {name,} = orders[0]
-   
-//         res.render("orderDetails", {
-//            name,
-
-//         });
-        
-        
-
-//     } catch (error) {
-//         console.error("Error fetching order details:", error.message);
-//         res.status(500).render("pageNotFound", {
-//             message: error.message || "Failed to fetch order details.",
-//         });
-//     }
-// };
-
-
-
-
-
-
-
-//--------------------------------------------------
-
-
-
-// const getOrderDetails = async (req, res) => {
-//     try {
-//         const googleUser = req.user;
-//         const sessionUser = req.session.user;
-
-//         // Ensure user is logged in
-//         const userId = sessionUser || googleUser;
-
-//         if (!userId) {
-//             throw new Error("User is not logged in.");
-//         }
-
-//         // Perform an aggregation to fetch order details
-//         const orders = await User.aggregate([
-//             {
-//                 $match: { _id: new mongoose.Types.ObjectId(userId) }, // Match user by ID
-//             },
-//             {
-//                 $lookup: {
-//                     from: "orders", // Reference the 'Order' collection
-//                     localField: "orderHistory", // Match user's order IDs
-//                     foreignField: "_id", // Match with orders' _id
-//                     as: "orderDetails", // Output array
-//                 },
-//             },
-//             {
-//                 $unwind: "$orderDetails", // Decompose the orderDetails array
-//             },
-//             {
-//                 $lookup: {
-//                     from: "products", // Reference the 'Product' collection
-//                     localField: "orderDetails.orderedItems.product", // Match order items with products
-//                     foreignField: "_id", // Match with products' _id
-//                     as: "orderDetails.orderedItems.productDetails", // Output detailed product info
-//                 },
-//             },
-//             {
-//                 $group: {
-//                     _id: "$_id", // Group by user ID
-//                     name: { $first: "$name" },
-//                     email: { $first: "$email" },
-//                     orders: { $push: "$orderDetails" }, // Collect all orders with product details
-//                 },
-//             },
-//         ]);
-
-//         // Check if orders exist
-//         if (!orders || orders.length === 0) {
-//             throw new Error("No orders found for the user.");
-//         }
-
-//         // Destructure the first order data
-//         const { name, email, orders: userOrders } = orders[0]; // Destructure name, email, and orders array
-
-//         // Example of further destructuring orders
-//         const orderDetails = userOrders.map(order => {
-//             const {
-//                 _id: orderId,
-//                 orderedItems,
-//                 totalPrice,
-//                 discount,
-//                 finalAmount,
-//                 address,
-//                 status,
-//                 paymentStatus,
-//                 couponApplied,
-//                 paymentMethod,
-//                 createdOn
-//             } = order;
-
-//             // Further destructure orderedItems to extract product details
-//             const productDetails = orderedItems.map(item => {
-//                 const {
-//                     productDetails: products
-//                 } = item;
-
-//                 return products.map(product => {
-//                     const {
-//                         _id: productId,
-//                         productName,
-//                         description,
-//                         brand,
-//                         category,
-//                         regularPrice,
-//                         salePrice,
-//                         productOffer,
-//                         quantity,
-//                         color,
-//                         productImages,
-//                         isBlocked,
-//                         status: productStatus
-//                     } = product;
-
-//                     return {
-//                         productId,
-//                         productName,
-//                         description,
-//                         brand,
-//                         category,
-//                         regularPrice,
-//                         salePrice,
-//                         productOffer,
-//                         quantity,
-//                         color,
-//                         productImages,
-//                         isBlocked,
-//                         productStatus
-//                     };
-//                 });
-//             });
-
-//             return {
-//                 orderId,
-//                 orderedItems: productDetails,
-//                 totalPrice,
-//                 discount,
-//                 finalAmount,
-//                 address,
-//                 status,
-//                 paymentStatus,
-//                 couponApplied,
-//                 paymentMethod,
-//                 createdOn
-//             };
-//         });
-
-//         console.log(ordererdItems)
-
-//         // Render the data to the frontend
-//         res.render("orderDetails", {
-//             name,
-//             email,
-//             orderDetails
-//         });
-
-//     } catch (error) {
-//         console.error("Error fetching order details:", error.message);
-//         res.status(500).render("pageNotFound", {
-//             message: error.message || "Failed to fetch order details.",
-//         });
-//     }
-// };
-
-
-
 //-----------------------------------------------------
 
 
@@ -247,6 +15,14 @@ const getOrderDetails = async (req, res) => {
 
         // Ensure user is logged in
         const userId = sessionUser || googleUser;
+
+        console.log("User ID:", userId);
+
+        if (!mongoose.isValidObjectId(userId)) {
+    throw new Error("Invalid User ID.");
+}
+
+
 
         if (!userId ) {
             throw new Error("User is not logged in.");
@@ -377,7 +153,7 @@ const getOrderDetails = async (req, res) => {
 };
 
 
-
+//------------------------------------------------------------------------
 const cancelOrder = async (req, res) => {
   const { id } = req.query;
 

@@ -42,6 +42,7 @@ router.get("/userProfile",userIsAuthenticated,profileController.userProfile);
 router.get("/editProfile",userIsAuthenticated,profileController.getEditProfile);
 router.post("/updateProfile",userIsAuthenticated,profileController.UpdateProfile);
 router.get("/changePassword",userIsAuthenticated,profileController.changePassword);
+router.post('/updatePassword', userIsAuthenticated, profileController.updatePassword);
 router.post("/resend-forgot-otp",profileController.resendOtp);
 router.post("/changePassword",userIsAuthenticated,profileController.changePasswordValid);
 router.post("/verify-changepassword-otp",userIsAuthenticated,profileController.verifyChangePassOtp);
