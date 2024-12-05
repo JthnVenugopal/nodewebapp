@@ -9,14 +9,26 @@ const mongoose = require('mongoose');
 
 const getOrderDetails = async (req, res) => {
     try {
-        const googleUser = req.user;
-        const sessionUserId = req.session.user;
-        const sessionUser = sessionUserId._id
 
-        console.log("Session User ID:", sessionUser);
+        // console.log("Request User:", req.user); // Logs Google user
+        // console.log("Session User:", req.session.user); // Logs Session user
+
+        
+            const user = req.user || req.session.user
+
+            const googleUser = req.user;
+            const  googleUserId = googleUser?._id;//optional chaining
+           
+            const  sessionUser = req.session.user;
+            const  sessionUserId = sessionUser?._id;
+
+            const userId = sessionUserId || googleUserId
+
+            console.log("Session User ID:", userId);
+        
 
         // Ensure user is logged in
-        const userId = sessionUser || googleUser;
+        // const userId = sessionUser || googleUser;
 
         if (!userId ) {
             throw new Error("User is not logged in.");
@@ -135,7 +147,9 @@ const getOrderDetails = async (req, res) => {
             name,
             email,
             orderDetails,
-           user:userId,
+            user:userId,
+            user,
+           
         });
 
     } catch (error) {

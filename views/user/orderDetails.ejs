@@ -153,45 +153,34 @@
 
         
 
-            <ul class="timeline py-5">
+            <ul class="timeline py-5 ">
                 <% order.orderedItems.forEach(item => { %>
-                    <li class="timeline-item">
+                    <li class="timeline-item d-flex">
                         
-                        <div class="timeline-content shadow-sm p-3 rounded">
-                            <img style="width: 30%; " class="img-fluid product-image rounded mb-3" src="/uploads/re-image/<%= item.productImages[0] %>" alt="<%= item.productName %>">
-                            <h5><%= item.productName %></h5>
-                            <p><strong>Brand:</strong> <%= item.brand %></p>
+                        <div class="timeline-content shadow-sm p-3 rounded w-50">
+                            <img style="width: 50%; " class="img-fluid product-image rounded mb-3" src="/uploads/re-image/<%= item.productImages[0] %>" alt="<%= item.productName %>">
+                          
                            
-                            <p><strong>Price:</strong> ₹<%= item.salePrice %></p>
-                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#productModal<%= item._id %>">View Details</button>
+                            
                         </div>
+
+                        <div class="timeline-content shadow-sm p-3 rounded w-50">
+                           
+                          <h6 class="modal-title " style="opacity: 0.7;" ><%= item.productName %></h6>
+
+                            <h5 style="opacity: 0.7;"><strong>Brand:</strong> <%= item.brand %></h5>
+                           
+                            <h3 style="opacity: 0.7;"><strong>Price:</strong> ₹<%= item.salePrice %></h3>
+
+                            <button class="btn btn-danger btn-sm" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
+
+
+                            
+                        </div>
+
                     </li>
 
-                    <!-- Product Modal -->
-                    <div class="modal fade" id="productModal<%= item._id %>" tabindex="-1" aria-labelledby="productModalLabel<%= item._id %>" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="productModalLabel<%= item._id %>"><%= item.productName %> - Details</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body ">
-                                    <img  class="img-fluid rounded mb-3" src="/uploads/re-image/<%= item.productImages[0] %>" alt="<%= item.productName %>">
-                                    <p><strong>Description:</strong> <%= item.description %></p>
-                                    <p><strong>Brand:</strong> <%= item.brand %></p>
-                                    <p><%= %></p>
-                                    <p><strong>Price:</strong> ₹<%= item.salePrice %></p>
-                                    <div class="d-flex justify-content-between mt-4">
-                                        
-                                        <button class="btn btn-danger btn-sm" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
-
-
-                                        <button class="btn btn-primary btn-sm">Track Order</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            
                 <% }) %>
             </ul>
         </div>

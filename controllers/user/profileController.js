@@ -19,11 +19,11 @@ const securePassword = async (password) => {
     throw error; // Re-throw the error to handle it in the calling function
   }
 };
-
+//------------------------------------------------------------
 function generateOtp(){
   return Math.floor(100000 + Math.random()*900000).toString();
 }
-
+//------------------------------------------------------------
 async function sendVerificationEmail(email,otp){
   try{
      
@@ -56,7 +56,7 @@ async function sendVerificationEmail(email,otp){
   }
 }
 
-
+//------------------------------------------------------------
 const userProfile = async (req,res) => {
   try {
 
@@ -87,7 +87,7 @@ const userProfile = async (req,res) => {
       res.redirect("/pageNotFound")
   }
 }
-
+//------------------------------------------------------------
 const getEditProfile = async (req,res) => {
   try {
       const sessionUser = req.session.user;
@@ -104,7 +104,7 @@ const getEditProfile = async (req,res) => {
       res.redirect("/userProfile",{message:"Error while editing user profile"})
   }
 }
-
+//------------------------------------------------------------
 const UpdateProfile = async (req, res) => {
   try {
     const sessionUser = req.session.user;
@@ -135,7 +135,7 @@ const UpdateProfile = async (req, res) => {
       res.redirect("/pageNotFound");
   }
 };
-
+//------------------------------------------------------------
 const changePassword = async (req,res) => {
   try {
 
@@ -156,7 +156,7 @@ const changePassword = async (req,res) => {
       res.redirect("/pageNotFound")
   }
 }
-
+//------------------------------------------------------------
 const changePasswordValid = async (req,res) => {
   try {
 
@@ -183,145 +183,7 @@ const changePasswordValid = async (req,res) => {
   }
 }
 
-//---------------------------------------------------------------------
-// const updatePassword = async (req,res)=> {
-
-// try {
-
-//   const { currentPassword, newPassword, confirmPassword } = req.body;
-
-//   console.log(currentPassword)
-
-//   // Perform server-side validations
-//   if (!currentPassword || !newPassword || !confirmPassword) {
-//       return res.status(400).json({ message: "All fields are required" });
-//   }
-
-//   // Example: validate current password and update new password logic
-//   if (newPassword === currentPassword) {
-//       return res.status(400).json({ message: "New password cannot be the same as the current password" });
-//   }
-
-//   if (newPassword.length < 6) {
-//       return res.status(400).json({ message: "Password must be at least 6 characters" });
-//   }
-
-//   // Mock success response
-//   res.status(200).json({ message: "Password changed successfully" });
-  
-// } catch (error) {
-  
-// }
-
-
-// }
-
-
-
-// const updatePassword = async (req, res) => {
-//   try {
-//       const { currentPassword, newPassword, confirmPassword } = req.body;
-
-//       // Validate inputs
-//       if (!currentPassword || !newPassword || !confirmPassword) {
-//           return res.status(400).json({ message: "All fields are required." });
-//       }
-
-//       if (newPassword === currentPassword) {
-//           return res.status(400).json({ message: "New password cannot be the same as the current password." });
-//       }
-
-//       if (newPassword.length < 6) {
-//           return res.status(400).json({ message: "Password must be at least 6 characters long." });
-//       }
-
-//       if (newPassword !== confirmPassword) {
-//           return res.status(400).json({ message: "Passwords do not match." });
-//       }
-
-//       // Add logic to verify the current password (e.g., database check)
-
-//       // Update the password in the database
-//       // Example (pseudo-code):
-
-//       const user = await User.findById(req.user.id);
-//       if (!user) throw new Error("User not found.");
-//       const isMatch = await bcrypt.compare(currentPassword, user.password);
-//       if (!isMatch) return res.status(400).json({ message: "Current password is incorrect." });
-//       user.password = await bcrypt.hash(newPassword, saltRounds);
-//       await user.save();
-
-//       res.status(200).json({ message: "Password changed successfully." });
-//   } catch (error) {
-//       console.error("Error updating password:", error);
-//       res.status(500).json({ message: "Internal server error." });
-//   }
-// };
-
-
-// const updatePassword = async (req, res) => {
-
-//     try {
-
-//         const user  = req.session.user; 
-
-//         const { currentPassword, newPassword, confirmPassword } = req.body;
-
-//         // console.log(currentPassword);
-//         // console.log(newPassword);
-//         // console.log(confirmPassword);
-        
-        
-        
-
-//         // Validate inputs
-//         if (!currentPassword || !newPassword || !confirmPassword) {
-//             return res.status(400).json({ message: "All fields are required." });
-//         }
-
-//         if (newPassword === currentPassword) {
-//             return res.status(400).json({ message: "New password cannot be the same as the current password." });
-//         }
-
-//         if (newPassword.length < 6) {
-//             return res.status(400).json({ message: "Password must be at least 6 characters long." });
-//         }
-
-//         if (newPassword !== confirmPassword) {
-//             return res.status(400).json({ message: "Passwords do not match." });
-//         }
-
-//         // Fetch the user from the database
-//         // const user = await User.findById(req.user.id);
-//         if (!user) {
-//             return res.status(404).json({ message: "User not found." });
-//         }
-
-//         // Verify the current password
-//         const isMatch = await bcrypt.compare(currentPassword, user.password);
-//         if (!isMatch) {
-//             return res.status(400).json({ message: "Current password is incorrect." });
-//         }
-
-        
-
-//         // Hash the new password
-//         const saltRounds = 10; // Recommended value
-//         const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-
-//         // Update and save the new password
-//         user.password = hashedPassword;
-//         await user.save();
-
-//         return res.status(200).json({ message: "Password changed successfully." });
-
-//     } catch (error) {
-//         console.error("Error updating password:", error.message);
-//         return res.status(500).json({ message: "Internal server error , update password error" });
-
-//     }
-// };
-
+//------------------------------------------------------------
 const updatePassword = async (req, res) => {
   try {
      
@@ -372,7 +234,18 @@ const updatePassword = async (req, res) => {
       user.password = hashedPassword;
       await user.save();
 
-      return res.status(200).json({ message: "Password changed successfully." , redirectUrl: '/login'});
+       // Destroy the session
+    req.session.destroy(err => {
+      if (err) {
+        console.error("Error ending session:", err);
+        return res.status(500).json({ message: "Could not end session." });
+      }
+
+      // Respond with success message and redirect URL
+      return res.status(200).json({ message: "Password changed successfully.", redirectUrl: '/login' });
+    });
+
+    
 
   } catch (error) {
 
@@ -381,11 +254,6 @@ const updatePassword = async (req, res) => {
 
   }
 };
-
-
-
-
-
 
 //----------------------------------------------------------------------
 const resendOtp = async (req,res) => {
@@ -404,7 +272,7 @@ const resendOtp = async (req,res) => {
       res.status(500).json({success:false,message:"Inernal Sever Error"})
   }
 }
-
+//------------------------------------------------------------
 const verifyChangePassOtp = async (req,res) => {
   try {
       
@@ -419,7 +287,7 @@ const verifyChangePassOtp = async (req,res) => {
       res.status(500).json({success:false,message:"An error occured. Please try again later"})
   }
 }
-
+//------------------------------------------------------------
 const getResetPassPage = async (req,res) => {
   try {
       const user = req.session.user;
@@ -432,26 +300,68 @@ const getResetPassPage = async (req,res) => {
   }
 }
 
-const postNewPassword = async (req,res) => {
+//------------------------------------------------------------
+// const postNewPassword = async (req,res) => {
+//   try {
+//       const {newPass1, newPass2} = req.body;
+//       const email = req.session.email;
+//       if(newPass1 === newPass2){
+//           const passwordHash = await securePassword(newPass1);
+//           await User.updateOne(
+//               {email:email},
+//               {$set:{password:passwordHash}}
+//           )
+         
+//           // ending session
+//           req.session.destroy(err => {
+//             if (err) {
+//               console.error("Error ending session:", err);
+//               return res.status(500).json({ message: "Could not end session." });
+//             }
+      
+//             // Respond with success message and redirect URL
+//             return res.status(200).json({ message: "Password changed successfully.", redirectUrl: '/login' });
+//           });
+
+//       }else{
+//           res.render("reset-password",{message:"Password do not match"})
+//       }
+//   } catch (error) {
+//     console.error("Error in updating password:", error);
+//     res.redirect("/pageNotFound");
+//   }
+// }
+
+const postNewPassword = async (req, res) => {
   try {
-      const {newPass1, newPass2} = req.body;
-      const email = req.session.email;
-      if(newPass1 === newPass2){
-          const passwordHash = await securePassword(newPass1);
-          await User.updateOne(
-              {email:email},
-              {$set:{password:passwordHash}}
-          )
-          res.redirect("/login");
-      }else{
-          res.render("reset-password",{message:"Password do not match"})
-      }
+    const { newPass1, newPass2 } = req.body;
+    const email = req.session.email;
+
+    if (newPass1 === newPass2) {
+      const passwordHash = await securePassword(newPass1);
+
+      await User.updateOne({ email: email }, { $set: { password: passwordHash } });
+
+      // End session
+      req.session.destroy(err => {
+        if (err) {
+          console.error("Error ending session:", err);
+          return res.status(500).json({ message: "Could not end session." });
+        }
+
+        // Respond with success message and redirect URL
+        return res.status(200).json({ message: "Password changed successfully.", redirectUrl: "/login" });
+      });
+    } else {
+      return res.status(400).json({ message: "Passwords do not match." });
+    }
   } catch (error) {
     console.error("Error in updating password:", error);
-    res.redirect("/pageNotFound");
+    return res.status(500).json({ message: "An error occurred. Please try again." });
   }
-}
+};
 
+//------------------------------------------------------------
 const getForgotPassPage = async (req,res) => {
   try {
       const googleUser  = req.user; 
@@ -468,7 +378,7 @@ const getForgotPassPage = async (req,res) => {
       res.redirect("/pageNotfound");
   }
 }
-
+//------------------------------------------------------------
 const forgotEmailValid = async (req,res) => {
   try {
       const {email} = req.body;
@@ -495,7 +405,7 @@ const forgotEmailValid = async (req,res) => {
       res.redirect("/pageNotFound");
   }
 }
-
+//------------------------------------------------------------
 const verifyForgotPassOtp = async (req,res) => {
   try {
       const enteredOtp = req.body.otp;
@@ -511,7 +421,7 @@ const verifyForgotPassOtp = async (req,res) => {
       res.status(500).json({success:false,message:"An error occured. Please try again"})
   }
 }
-
+//------------------------------------------------------------
 const addAddress = async (req,res) => {
   try {
       
@@ -524,7 +434,7 @@ const addAddress = async (req,res) => {
       res.redirect("/pageNotFound")
   }
 }
-
+//------------------------------------------------------------
 const showAddress = async (req,res) => {
   try {
      const sessionUser = req.session.user;
@@ -547,7 +457,7 @@ const showAddress = async (req,res) => {
     res.redirect("/pageNotFound");
   }
 }
-
+//------------------------------------------------------------
 const postAddAddress = async (req, res) => {
   try {
 
@@ -587,7 +497,7 @@ const postAddAddress = async (req, res) => {
       res.status(500).send("Internal Server Error");
   }
 }
-
+//------------------------------------------------------------
 const deleteAddress = async (req,res) => {
   try {
       const addressId = req.query.id;
@@ -615,7 +525,7 @@ const deleteAddress = async (req,res) => {
       res.redirect("/pageNotFound");
   }
 }
-
+//------------------------------------------------------------
 const editAddress = async (req,res) => {
   try {
       const addressId = req.query.id;
@@ -645,7 +555,7 @@ const editAddress = async (req,res) => {
       res.redirect("/pageNotFound");
   }
 }
-
+//------------------------------------------------------------
 const postEditAddress = async (req,res) => {
   try {
       const data = req.body;
@@ -679,7 +589,7 @@ const postEditAddress = async (req,res) => {
       res.redirect("/pageNotFound");
   }
 }
-
+//------------------------------------------------------------
 
 module.exports = {
   userProfile,
