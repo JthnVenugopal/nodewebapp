@@ -4,25 +4,19 @@ const Product = require("../../models/productSchema");
 const User = require("../../models/userSchema");
 const mongoose = require('mongoose');
 
-
 //-----------------------------------------------------
 
 
 const getOrderDetails = async (req, res) => {
     try {
         const googleUser = req.user;
-        const sessionUser = req.session.user;
+        const sessionUserId = req.session.user;
+        const sessionUser = sessionUserId._id
+
+        console.log("Session User ID:", sessionUser);
 
         // Ensure user is logged in
         const userId = sessionUser || googleUser;
-
-        console.log("User ID:", userId);
-
-        if (!mongoose.isValidObjectId(userId)) {
-    throw new Error("Invalid User ID.");
-}
-
-
 
         if (!userId ) {
             throw new Error("User is not logged in.");
@@ -141,7 +135,7 @@ const getOrderDetails = async (req, res) => {
             name,
             email,
             orderDetails,
-           
+           user:userId,
         });
 
     } catch (error) {
@@ -153,7 +147,7 @@ const getOrderDetails = async (req, res) => {
 };
 
 
-//------------------------------------------------------------------------
+
 const cancelOrder = async (req, res) => {
   const { id } = req.query;
 

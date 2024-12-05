@@ -71,7 +71,7 @@ router.get("/checkout",userIsAuthenticated,checkoutController.getCheckout);
 router.post("/placeOrder",checkoutController.placeOrder);
 
 //order management
-router.get("/orderDetails",orderController.getOrderDetails)
+router.get("/orderDetails",orderController.getOrderDetails);
 router.post("/cancelOrder",orderController.cancelOrder);
 
 

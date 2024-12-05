@@ -3,47 +3,57 @@
 <style>
     /* Order Box Styling */
     .order-box {
-        background-color: #f9f9f9;
+        background: linear-gradient(to bottom, #f5f5f5, #ffffff);
         border: 1px solid #ddd;
         margin-bottom: 30px;
-        width: 90%; /* Adjusted width */
+        border-radius: 10px;
+        width: 90%;
+        padding: 20px;
         margin-left: auto;
         margin-right: auto;
     }
 
     .order-id {
         color: #007bff;
+        font-size: 1.5rem;
+    }
+
+    .badge {
+        font-size: 1rem;
+        padding: 0.5em 0.8em;
     }
 
     /* Product Box Styling */
     .product-box {
         text-align: center;
-        transition: transform 0.3s ease-in-out;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 0 auto;
     }
 
     .product-box:hover {
         transform: scale(1.05);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
     }
 
     .product-image {
         max-height: 200px;
-        object-fit: contain;
+        object-fit: cover;
         width: 100%;
+        border-radius: 5px;
     }
 
     /* Modal Styling */
     .modal-content {
-        border-radius: 8px;
+        border-radius: 10px;
+        background-color: #fefefe;
     }
 
     .modal-header {
         background-color: #007bff;
         color: white;
-    }
-
-    .modal-body {
-        padding: 20px;
+        border-bottom: 2px solid #0056b3;
     }
 
     /* Responsive Grid */
@@ -53,64 +63,184 @@
             margin-bottom: 20px;
         }
     }
+
+    /* Increase font size for modal */
+    .modal-body p {
+        font-size: 1rem;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+    }
+
+    .btn {
+        font-size: 1rem;
+    }
+
+    /* Timeline Styling */
+    .timeline {
+        position: relative;
+        padding: 0;
+        list-style: none;
+    }
+
+    /* .timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: #ddd;
+        left: 50%;
+        transform: translateX(-50%);
+    } */
+
+    .timeline-item {
+        position: relative;
+        margin: 0 auto 20px;
+        padding: 0;
+        width: 90%;
+    }
+
+    .timeline-content {
+        padding: 15px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-align: center;
+    }
+
+    .timeline-badge {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #007bff;
+    }
+
+    @media (max-width: 768px) {
+        .timeline-item {
+            width: 90%;
+        }
+
+        /* .timeline::before {
+            left: 10%;
+        } */
+
+        .timeline-badge {
+            left: 10%;
+        }
+    }
 </style>
 
-<!-- Bootstrap Container -->
 <div class="container mt-4">
-    <p class="text-center mb-5">Email: <%= email %></p>
+    <h3 class="text-center mb-4">Your Orders</h3>
+    <p class="text-center mb-5"><strong>Email:</strong> <%= email %></p>
 
     <% orderDetails.forEach(order => { %>
         <div class="order-box shadow-sm p-4 mb-4 rounded">
-            <h2 class="order-id">Order ID: <%= order.orderId %></h2>
-            <p>Status: <span class="badge bg-warning"><%= order.status %></span></p>
-            <p>Payment Status: <span class="badge bg-info"><%= order.paymentStatus %></span></p>
-            <p>Total Price: ₹<%= order.totalPrice %></p>
 
-            <div class="row">
+            <div class=" d-flex" style="flex-direction: column;align-items: center;">
+            <p class="order-id">Order ID: <%= order.orderId %></p>
+            <p>Status: <span class="badge bg-warning text-dark"><%= order.status %></span></p>
+            <p>Payment Status: <span class="badge bg-success"><%= order.paymentStatus %></span></p>
+            <p><strong>Total Price:</strong> ₹<%= order.totalPrice %></p>
+            <p><strong>Estimated Delivery:</strong> Dec 12, 2024</p>
+            </div>
+
+        
+
+            <ul class="timeline py-5">
                 <% order.orderedItems.forEach(item => { %>
-                    <div class=" mb-4 ">
-                        <div class="product-box shadow-sm p-3 rounded bg-light">
-                            <h3><%= item.productName %></h3>
-                            <p><strong>Description:</strong> <%= item.description %></p>
+                    <li class="timeline-item">
+                        
+                        <div class="timeline-content shadow-sm p-3 rounded">
+                            <img style="width: 30%; " class="img-fluid product-image rounded mb-3" src="/uploads/re-image/<%= item.productImages[0] %>" alt="<%= item.productName %>">
+                            <h5><%= item.productName %></h5>
                             <p><strong>Brand:</strong> <%= item.brand %></p>
-                            <p><strong>Quantity:</strong> <%= item.quantity %></p>
+                           
                             <p><strong>Price:</strong> ₹<%= item.salePrice %></p>
-                            <img class="img-fluid product-image rounded mb-3" src="/uploads/re-image/<%= item.productImages[0] %>" alt="<%= item.productName %>">
-                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#productModal<%= item._id %>">View Details</button>
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#productModal<%= item._id %>">View Details</button>
                         </div>
-                    </div>
+                    </li>
 
                     <!-- Product Modal -->
                     <div class="modal fade" id="productModal<%= item._id %>" tabindex="-1" aria-labelledby="productModalLabel<%= item._id %>" aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="productModalLabel<%= item._id %>"><%= item.productName %> - Details</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
+                                <div class="modal-body ">
+                                    <img  class="img-fluid rounded mb-3" src="/uploads/re-image/<%= item.productImages[0] %>" alt="<%= item.productName %>">
                                     <p><strong>Description:</strong> <%= item.description %></p>
                                     <p><strong>Brand:</strong> <%= item.brand %></p>
-                                    <p><strong>Quantity:</strong> <%= item.quantity %></p>
+                                    <p><%= %></p>
                                     <p><strong>Price:</strong> ₹<%= item.salePrice %></p>
-                                    <img class="img-fluid rounded" src="/uploads/re-image/<%= item.productImages[0] %>" alt="<%= item.productName %>">
+                                    <div class="d-flex justify-content-between mt-4">
+                                        
+                                        <button class="btn btn-danger btn-sm" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
 
-                                    <div class="d-flex justify-content-center">
-                                      <a href=""><button class="btn btn-danger my-5">Cancel Order</button></a>
+
+                                        <button class="btn btn-primary btn-sm">Track Order</button>
                                     </div>
-                                    
                                 </div>
                             </div>
                         </div>
                     </div>
                 <% }) %>
-            </div>
+            </ul>
         </div>
     <% }) %>
 </div>
 
 <%- include("../../views/partials/user/footer") %>
 
-<!-- Bootstrap JS and Popper.js (required for modal functionality) -->
+<!-- Bootstrap JS and Popper.js -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+
+<script>
+    function cancelOrder(orderId) {
+    // Show a confirmation prompt before proceeding
+    if (!confirm('Are you sure you want to cancel this order?')) {
+        return;
+    }
+
+    // Perform an AJAX POST request to cancel the order
+    fetch('/cancelOrder', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderId }), // Send the orderId to the server
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to cancel the order');
+        }
+    })
+    .then(data => {
+        alert(data.message); // Display the server's response message
+
+        // Optionally, update the UI to reflect the cancellation
+        document.querySelector(`#order-box-${orderId}`).remove();
+    })
+    .catch(error => {
+        console.error('Error cancelling the order:', error);
+        alert('An error occurred while cancelling the order. Please try again.');
+    });
+}
+
+
+
+document.querySelector(`#order-box-${orderId} .status`).textContent = 'Cancelled';
+
+</script>
