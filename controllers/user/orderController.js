@@ -9,149 +9,53 @@ const mongoose = require('mongoose');
 
 const getOrderDetails = async (req, res) => {
     try {
+        // Identify user from Google or session
+        const user = req.user || req.session.user;
+        const userId = user?._id;
 
-        // console.log("Request User:", req.user); // Logs Google user
-        // console.log("Session User:", req.session.user); // Logs Session user
-
-        
-            const user = req.user || req.session.user
-
-            const googleUser = req.user;
-            const  googleUserId = googleUser?._id;//optional chaining
-           
-            const  sessionUser = req.session.user;
-            const  sessionUserId = sessionUser?._id;
-
-            const userId = sessionUserId || googleUserId
-
-            console.log("Session User ID:", userId);
-        
-
-        // Ensure user is logged in
-        // const userId = sessionUser || googleUser;
-
-        if (!userId ) {
+        if (!userId) {
             throw new Error("User is not logged in.");
         }
 
-        // Perform an aggregation to fetch order details
-        const orders = await User.aggregate([
-            {
-                $match: { _id: new mongoose.Types.ObjectId(userId) }, // Match user by ID
-            },
-            {
-                $lookup: {
-                    from: "orders", // Reference the 'Order' collection
-                    localField: "orderHistory", // Match user's order IDs
-                    foreignField: "_id", // Match with orders' _id
-                    as: "orderDetails", // Output array
-                },
-            },
-            {
-                $unwind: "$orderDetails", // Decompose the orderDetails array
-            },
-            {
-                $lookup: {
-                    from: "products", // Reference the 'Product' collection
-                    localField: "orderDetails.orderedItems.product", // Match order items with products
-                    foreignField: "_id", // Match with products' _id
-                    as: "orderDetails.orderedItems.productDetails", // Output detailed product info
-                },
-            },
-            {
-                $group: {
-                    _id: "$_id", // Group by user ID
-                    name: { $first: "$name" },
-                    email: { $first: "$email" },
-                    orders: { $push: "$orderDetails" }, // Collect all orders with product details
-                },
-            },
-        ]);
+        // Fetch user data
+        const userData = await User.findOne({ _id: userId }).select("name email orderHistory").lean();
 
-        // Check if orders exist
-        if (!orders || orders.length === 0) {
-            throw new Error("No orders found for the user.");
+        if (!userData) {
+            throw new Error("User not found.");
         }
 
-        // Destructure the first order data
-        const { name, email, orders: userOrders } = orders[0]; // Destructure name, email, and orders array
+        const { name, email, orderHistory } = userData;
 
-        // Example of further destructuring orders
-        const orderDetails = userOrders.map(order => {
-            const {
-                _id: orderId,
-                orderedItems,
-                totalPrice,
-                discount,
-                finalAmount,
-                address,
-                status,
-                paymentStatus,
-                couponApplied,
-                paymentMethod,
-                createdOn
-            } = order;
+        // Fetch orders based on orderHistory IDs
+        const orders = await Order.find({ _id: { $in: orderHistory } }).lean();
 
-            // Since orderedItems is an object, we directly access it
-            const productDetails = orderedItems.productDetails.map(product => {
-                const {
-                    _id: productId,
-                    productName,
-                    description,
-                    brand,
-                    category,
-                    regularPrice,
-                    salePrice,
-                    productOffer,
-                    quantity,
-                    color,
-                    productImages,
-                    isBlocked,
-                    status: productStatus
-                } = product;
+        // Fetch product details for each order
+        const detailedOrders = await Promise.all(
+            orders.map(async (order) => {
+                const detailedItems = await Promise.all(
+                    order.orderedItems.map(async (item) => {
+                        const product = await Product.findOne({ _id: item.product }).lean();
+                        return {
+                            ...item,
+                            productDetails: product || {},
+                        };
+                    })
+                );
 
                 return {
-                    productId,
-                    productName,
-                    description,
-                    brand,
-                    category,
-                    regularPrice,
-                    salePrice,
-                    productOffer,
-                    quantity,
-                    color,
-                    productImages,
-                    isBlocked,
-                    productStatus
+                    ...order,
+                    orderedItems: detailedItems,
                 };
-            });
+            })
+        );
 
-            return {
-                orderId,
-                orderedItems: productDetails,
-                totalPrice,
-                discount,
-                finalAmount,
-                address,
-                status,
-                paymentStatus,
-                couponApplied,
-                paymentMethod,
-                createdOn
-            };
-        });
-
-        // Render the data to the frontend
+        // Render data to the frontend
         res.render("orderDetails", {
             name,
             email,
-            orderDetails,
-            user:userId,
-            user,
-           
+            orderDetails: detailedOrders,
+            user, // Use consistent naming
         });
-
     } catch (error) {
         console.error("Error fetching order details:", error.message);
         res.status(500).render("pageNotFound", {
@@ -161,70 +65,45 @@ const getOrderDetails = async (req, res) => {
 };
 
 
+//------------------------------------------------------------------------
+
 
 const cancelOrder = async (req, res) => {
-  const { id } = req.query;
+    const { orderId } = req.body;  // Corrected to use body instead of query parameters
+    console.log("Order ID received for cancellation:", orderId);
 
-  try {
-      const order = await Order.findById(id);
+    try {
+        // Validate ID
+        if (!orderId || !mongoose.Types.ObjectId.isValid(orderId)) {
+            return res.status(400).json({ message: 'Invalid order ID' });
+        }
 
-      if (!order) {
-          return res.status(404).json({ message: 'Order not found' });
-      }
+        // Fetch the order
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
 
-      if (order.status !== 'Pending') {
-          return res.status(403).json({ message: 'Cannot cancel this order' });
-      }
+        // Check order status
+        if (order.status !== 'Pending') {
+            return res.status(403).json({ message: 'Cannot cancel this order as it is not pending' });
+        }
 
-      if (order.paymentMethod === 'COD') {
-          order.status = 'Cancelled';
-          await order.save();
-          return res.json({ message: 'Order cancelled successfully' });
-      }
-      
-      if (order.paymentMethod === 'online') {
-          const userId = req.session.user;
+        // Allow cancellation for COD orders only
+        if (order.paymentMethod !== 'COD') {
+            return res.status(403).json({ message: 'Only COD orders can be cancelled' });
+        }
 
-          if (!userId) {
-              return res.status(400).json({ message: 'User not authenticated' });
-          }
+        // Update order status to 'Cancelled'
+        order.status = 'Cancelled';
+        await order.save();
 
-          const amount = order.finalAmount;
-
-          let wallet = await Wallet.findOne({ userId });
-          if (!wallet) {
-              wallet = new Wallet({
-                  userId,
-                  balance: amount,
-                  transactions: [{
-                      type: 'refund',
-                      amount,
-                      orderId: id,
-                      description: 'Order refund',
-                  }],
-              });
-          } else {
-              wallet.balance += amount;
-              wallet.transactions.push({
-                  type: 'refund',
-                  amount,
-                  orderId: id,
-                  description: 'Order refund',
-              });
-          }
-     
-          await wallet.save();
-          order.status = 'Cancelled';
-          await order.save();
-
-          return res.json({ message: 'Order cancelled and refund processed successfully' });
-      }
-  } catch (error) {
-      console.error('Error cancelling order:', error);
-      return res.status(500).json({ message: 'Failed to cancel order' });
-  }
+        return res.json({ message: 'COD order cancelled successfully' });
+    } catch (error) {
+        console.error('Error cancelling order:', error);
+        return res.status(500).json({ message: 'Failed to cancel order' });
+    }
 };
-
 
 
 module.exports = {

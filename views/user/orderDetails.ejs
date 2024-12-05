@@ -15,7 +15,7 @@
 
     .order-id {
         color: #007bff;
-        font-size: 1.5rem;
+        font-size: 1rem;
     }
 
     .badge {
@@ -141,51 +141,45 @@
     <p class="text-center mb-5"><strong>Email:</strong> <%= email %></p>
 
     <% orderDetails.forEach(order => { %>
-        <div class="order-box shadow-sm p-4 mb-4 rounded">
-
-            <div class=" d-flex" style="flex-direction: column;align-items: center;">
-            <p class="order-id">Order ID: <%= order.orderId %></p>
-            <p>Status: <span class="badge bg-warning text-dark"><%= order.status %></span></p>
-            <p>Payment Status: <span class="badge bg-success"><%= order.paymentStatus %></span></p>
-            <p><strong>Total Price:</strong> ₹<%= order.totalPrice %></p>
-            <p><strong>Estimated Delivery:</strong> Dec 12, 2024</p>
+        <div class="order-box shadow-sm p-4 mb-4 rounded" id="order-box-<%= order._id %>">
+            <div class="d-flex" style="flex-direction: column; align-items: center;">
+                <p class="order-id">Order ID: <%= order.orderId %></p>
+                <p>Status: <span class="badge bg-warning text-dark"><%= order.status %></span></p>
+                <p>Payment Status: <span class="badge bg-success"><%= order.paymentStatus %></span></p>
+                <p><strong>Total Price:</strong> ₹<%= order.totalPrice %></p>
+                <p><strong>Estimated Delivery:</strong> Dec 12, 2024</p>
             </div>
 
-        
-
-            <ul class="timeline py-5 ">
+            <ul class="timeline py-5">
                 <% order.orderedItems.forEach(item => { %>
                     <li class="timeline-item d-flex">
-                        
                         <div class="timeline-content shadow-sm p-3 rounded w-50">
-                            <img style="width: 50%; " class="img-fluid product-image rounded mb-3" src="/uploads/re-image/<%= item.productImages[0] %>" alt="<%= item.productName %>">
-                          
-                           
-                            
+                            <img style="width: 50%;" class="img-fluid product-image rounded mb-3" 
+                                 src="/uploads/re-image/<%= item.productDetails.productImages[0] %>" 
+                                 alt="<%= item.productDetails.productName %>">
                         </div>
 
                         <div class="timeline-content shadow-sm p-3 rounded w-50">
-                           
-                          <h6 class="modal-title " style="opacity: 0.7;" ><%= item.productName %></h6>
+                            <h3 class="my-2" style="opacity: 0.7;"><%= item.productDetails.productName %></h3>
+                            <h5 style="opacity: 0.7;"><strong>Brand:</strong> <%= item.productDetails.brand %></h5>
+                            <h4 style="opacity: 0.7;" class="my-2"><strong>Price:</strong> ₹<%= item.productDetails.salePrice %></h4>
 
-                            <h5 style="opacity: 0.7;"><strong>Brand:</strong> <%= item.brand %></h5>
-                           
-                            <h3 style="opacity: 0.7;"><strong>Price:</strong> ₹<%= item.salePrice %></h3>
-
+                           <% if(order.status==="Cancelled"){ %>
+                                <p style="display: none;"></p>
+                           <% }else{ %>
                             <button class="btn btn-danger btn-sm" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
-
-
+                         <%   }    %>
                             
                         </div>
-
                     </li>
-
-            
                 <% }) %>
             </ul>
         </div>
     <% }) %>
 </div>
+
+
+
 
 <%- include("../../views/partials/user/footer") %>
 
@@ -194,42 +188,55 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-    function cancelOrder(orderId) {
-    // Show a confirmation prompt before proceeding
-    if (!confirm('Are you sure you want to cancel this order?')) {
-        return;
-    }
+  function cancelOrder(orderId) {
+    // Show a SweetAlert confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you really want to cancel this order? This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, cancel it!',
+        cancelButtonText: 'No, keep it',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Proceed with cancelation
+            fetch('/cancelOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ orderId }) // Send the orderId to the server
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to cancel the order');
+                    }
+                })
+                .then((data) => {
+                    // Show success SweetAlert
+                    Swal.fire('Cancelled!', data.message, 'success');
 
-    // Perform an AJAX POST request to cancel the order
-    fetch('/cancelOrder', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ orderId }), // Send the orderId to the server
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('Failed to cancel the order');
+                    // Update UI by removing the canceled order box
+                    const orderBox = document.querySelector(`#order-box-${orderId}`);
+                    if (orderBox) {
+                        orderBox.remove();
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error cancelling the order:', error);
+
+                    // Show error SweetAlert
+                    Swal.fire('Error!', 'An error occurred while cancelling the order. Please try again.', 'error');
+                });
         }
-    })
-    .then(data => {
-        alert(data.message); // Display the server's response message
-
-        // Optionally, update the UI to reflect the cancellation
-        document.querySelector(`#order-box-${orderId}`).remove();
-    })
-    .catch(error => {
-        console.error('Error cancelling the order:', error);
-        alert('An error occurred while cancelling the order. Please try again.');
     });
 }
-
-
-
-document.querySelector(`#order-box-${orderId} .status`).textContent = 'Cancelled';
 
 </script>

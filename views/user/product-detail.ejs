@@ -165,12 +165,29 @@ body {
                                 </div>
                                 <br><br>
                                 <div class="product-extra-link2">
-                                    <button type="submit" class="btn btn-success button-add-to-cart" onclick=""><a style="width: 200px;" type="submit" class="button button-add-to-cart" href="/addToCart?id=<%=product._id %>">Add to Cart</a>
+
+                                    <%console.log(product.quantity)%>
+
+                                    <% if(product.quantity===0){ %>
+                                        <h4>Out of Stock</h6>
+                                   <% }else{ %>
+
+                                        <!-- <button type="submit" class="btn btn-success button-add-to-cart" onclick=""><a style="width: 200px;" type="submit" class="button button-add-to-cart" href="/addToCart?id=<%=product._id %>">Add to Cart</a> -->
+                                            <a style="width: 200px;" class="btn btn-success button-add-to-cart" href="/addToCart?id=<%= product._id %>">
+                                                Add to Cart
+                                            </a>
+                                            
                                         
-                                    </button>
-                                    <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#">
-                                        <i class="fi-rs-heart"></i>
-                                    </a>
+
+
+                                        </button>
+                                        <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#">
+                                            <i class="fi-rs-heart"></i>
+                                        </a>
+
+                                  <% } %>
+
+                                   
                                 </div>
                             </div>
                             <br>

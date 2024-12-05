@@ -162,9 +162,16 @@
     <% } %>
 </div>
 
+            <%if(items.length>0){%> 
+
+                <p style="display: none;"></p>
+                <%}else{%>
+
             <div class="cart-action text-end d-flex justify-content-center my-5">
                 <a href="/" class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
             </div>
+
+            <%}%>
 
             <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
 

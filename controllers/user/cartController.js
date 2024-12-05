@@ -130,6 +130,8 @@ const updateCartQuantity = async (req, res) => {
       const { productId, quantity } = req.body;
       const userId = req.session.user;
       
+       console.log(quantity);
+      
 
      
       const cart = await Cart.findOne({ userId });

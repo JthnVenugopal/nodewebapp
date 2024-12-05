@@ -107,54 +107,54 @@
             </select>
         </div>
         
-        <div class="tab-content wow fadeIn animated" id="myTabContent">
-            <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+<div class="tab-content wow fadeIn animated" id="myTabContent">
+<div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
 
-                <div class="row product-grid-4" id="products-container">
-                    <% for (let i = 0; i < products.length; i++) { %>
-                        <div class="product-cart-wrap mb-30" 
-                             style="flex: 1 1 23%; box-sizing: border-box; margin: 10px; background-color: #ffffff; border-radius: 10px; padding: 15px; box-shadow: 0 4px 6px #424874;">
-                            <div class="product-img-action-wrap">
-                                <div class="product-img product-img-zoom">
-                                    <a href="/productDetails?id=<%= products[i]._id %>">
-                                        <% if (products[i].productImages && products[i].productImages.length > 0) { %>
-                                            <img class="default-img" src="/uploads/re-image/<%= products[i].productImages[0] %>" alt="<%= products[i].productName %>">
-                                        <% } %> 
-                                    </a>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="product-content-wrap">
-                                <h6><%= products[i].productName %></h6>
-                                <br>
-                                <h6>₹ <%= products[i].salePrice.toLocaleString() %></h6>
-                                <br>
-                                <% if (products[i].quantity > 0) { %>
-                                    <h6 style="color:green">Stock: <%= products[i].quantity %></h6>
-                                <% } else { %>
-                                    <h6 style="color:red">Out of Stock</h6>
-                                <% } %>
-                            </div>
-                            <% if (products[i].quantity > 0) { %>
-                                <div class="product-action-1 show">
-                                    <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart?id=<%= products[i]._id %>">
-                                        <i class="fi-rs-shopping-bag-add"></i>
-                                    </a>
-                                    <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/addToWishlist?id=<%= products[i]._id %>">
-                                        <i class="fi-rs-heart"></i>
-                                    </a>
-                                </div>
-                            <% } else { %>
-                                <div class="product-action-1 show">
-                                    <span class="text-muted">Unavailable</span>
-                                </div>
-                            <% } %>
-                        </div>
+    <div class="row product-grid-4 " style="margin-top: 10%; margin-bottom: 10%;";" id="products-container">
+        <% for (let i = 0; i < products.length; i++) { %>
+            <div class="product-cart-wrap mb-30" 
+                    style="flex: 1 1 23%; box-sizing: border-box; margin: 10px; background-color: #ffffff; border-radius: 10px; padding: 15px; box-shadow: 0 4px 6px #424874;">
+                <div class="product-img-action-wrap">
+                    <div class="product-img product-img-zoom">
+                        <a href="/productDetails?id=<%= products[i]._id %>">
+                            <% if (products[i].productImages && products[i].productImages.length > 0) { %>
+                                <img class="default-img" src="/uploads/re-image/<%= products[i].productImages[0] %>" alt="<%= products[i].productName %>">
+                            <% } %> 
+                        </a>
+                    </div>
+                </div>
+                <br>
+                <div class="product-content-wrap">
+                    <h6><%= products[i].productName %></h6>
+                    <br>
+                    <h6>₹ <%= products[i].salePrice.toLocaleString() %></h6>
+                    <br>
+                    <% if (products[i].quantity > 0) { %>
+                        <h6 style="color:green">Stock: <%= products[i].quantity %></h6>
+                    <% } else { %>
+                        <h6 style="color:red">Out of Stock</h6>
                     <% } %>
                 </div>
-                
+                <% if (products[i].quantity > 0) { %>
+                    <div class="product-action-1 show">
+                        <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart?id=<%= products[i]._id %>">
+                            <i class="fi-rs-shopping-bag-add"></i>
+                        </a>
+                        <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/addToWishlist?id=<%= products[i]._id %>">
+                            <i class="fi-rs-heart"></i>
+                        </a>
+                    </div>
+                <% } else { %>
+                    <div class="product-action-1 show">
+                        <span class="text-muted">Unavailable</span>
+                    </div>
+                <% } %>
             </div>
-        </div>
+        <% } %>
+    </div>
+    
+</div>
+</div>
 
 
 
