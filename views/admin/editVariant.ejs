@@ -1,0 +1,28 @@
+<!-- views/admin/editVariant.ejs -->
+<%- include("../../views/partials/admin/header") %>
+
+  <title>Edit Variant</title>
+
+<body>
+  <h1>Edit Variant</h1>
+
+  <form action="/admin/editVariant/<%= variant._id %>" method="POST">
+    <label for="color">Color:</label>
+    <input type="text" name="color" value="<%= variant.color %>" required><br><br>
+
+    <label for="size">Size:</label>
+    <input type="text" name="size" value="<%= variant.size %>" required><br><br>
+
+    <label for="material">Material:</label>
+    <input type="text" name="material" value="<%= variant.material %>" required><br><br>
+
+    <label for="price">Price:</label>
+    <input type="number" name="price" value="<%= variant.price %>" required><br><br>
+
+    <button type="submit">Update Variant</button>
+  </form>
+</body>
+
+
+<%- include("../../views/partials/admin/footer") %>
+

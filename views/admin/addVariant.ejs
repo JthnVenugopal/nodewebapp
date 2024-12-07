@@ -1,0 +1,27 @@
+
+<%- include("../../views/partials/admin/header") %>
+
+
+  <title>Add Variant</title>
+</head>
+<body>
+  <h1>Add Variant to <%= product.name %></h1>
+
+  <form action="/admin/product/<%= product._id %>/addVariant" method="POST">
+    <label for="color">Color:</label>
+    <input type="text" name="color" required><br><br>
+
+    <label for="size">Size:</label>
+    <input type="text" name="size" required><br><br>
+
+    <label for="material">Material:</label>
+    <input type="text" name="material" required><br><br>
+
+    <label for="price">Price:</label>
+    <input type="number" name="price" required><br><br>
+
+    <button type="submit">Add Variant</button>
+  </form>
+</body>
+
+<%- include("../../views/partials/admin/footer") %>

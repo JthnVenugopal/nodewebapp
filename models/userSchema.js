@@ -75,19 +75,23 @@ const userSchema = new Schema ({
       ref:"Category"
     },
     brand: {
-      type : String
+      type:Schema.Types.ObjectId,
+      ref:"Brand",
     },
     searchOn:{
       type:Date,
       default: Date.now
     }
   }],
-  addresses:[
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Address"
-    }
-  ],
+
+  address: [{
+    type: Schema.Types.ObjectId,
+    ref: "Address",
+  }]
+     ,
+
+
+
 
 }, { timestamps: true });
 

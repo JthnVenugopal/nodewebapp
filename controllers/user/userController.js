@@ -26,7 +26,7 @@ const loadHomepage = async (req, res, next) => {
 
    
     const currentPage = parseInt(req.query.page) || 1;
-    const productsPerPage = 8; 
+    const productsPerPage = 12; 
 
    
     const categories = await Category.find({ isListed: true });

@@ -24,7 +24,74 @@
     <link rel="stylesheet" href="css/style.css" type="text/css">
 
     <style>
-         .dropdown {
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+        }
+        .header {
+            background-color: rgb(243, 241, 241);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            transition: background-color 0.3s ease-in-out;
+        }
+        .header:hover {
+            background-color: rgb(233, 233, 233);
+        }
+
+        .header__logo img {
+            transition: transform 0.3s ease;
+        }
+
+        .header__logo img:hover {
+            transform: scale(1.1);
+        }
+
+        .header__menu ul {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .header__menu li {
+            position: relative;
+        }
+
+        .header__menu li a {
+            color: #333;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 16px;
+            padding: 10px 15px;
+            display: block;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .header__menu li a:hover {
+            color: #fff;
+            background-color: #2575fc;
+            border-radius: 5px;
+        }
+
+        .header__nav__option {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header__nav__option a {
+            color: #333;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .header__nav__option a:hover {
+            color: #2575fc;
+        }
+
+        .dropdown {
             position: relative;
             display: inline-block;
         }
@@ -49,7 +116,6 @@
             width: 100%;
         }
 
-
         .dropdown-content a:hover {
             background-color: #f1f1f1;
         }
@@ -58,14 +124,38 @@
             display: block;
         }
 
-        a{
-            text-decoration: none;
-            color: black;
-            font-weight: 700;
+        .search-switch {
+            cursor: pointer;
         }
-        .header{
-            position: relative;
-            z-index: 500;
+
+        .price {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .canvas__open {
+            display: none;
+        }
+
+        /* Mobile View */
+        @media screen and (max-width: 768px) {
+            .header__menu ul {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .header__nav__option {
+                flex-direction: column;
+            }
+
+            .header__logo img {
+                width: 100px;
+            }
+
+            .canvas__open {
+                display: block;
+                cursor: pointer;
+            }
         }
     </style>
 </head>
@@ -76,104 +166,66 @@
         <div class="loader"></div>
     </div>
 
-    <!-- Offcanvas Menu Begin -->
-    <div class="offcanvas-menu-overlay"></div>
-    <div class="offcanvas-menu-wrapper">
-        <div class="offcanvas__option">
-            <div class="offcanvas__links">
-                <a href="#">Sign in</a>
-                <a href="#">FAQs</a>
-            </div>
-            <div class="offcanvas__top__hover">
-                <span>Usd <i class="arrow_carrot-down"></i></span>
-                <ul>
-                    <li>USD</li>
-                    <li>EUR</li>
-                    <li>USD</li>
-                </ul>
-            </div>
-        </div>
-        <div class="offcanvas__nav__option">
-            <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
-            <a href="#"><img src="img/icon/heart.png" alt=""></a>
-            <a href="#"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
-            <div class="price">$0.00</div>
-        </div>
-        <div id="mobile-menu-wrap"></div>
-        <div class="offcanvas__text">
-            <p>Free shipping, 30-day return or refund guarantee.</p>
-        </div>
-    </div>
-    <!-- Offcanvas Menu End -->
-
     <!-- Header Section Begin -->
-    <header class="header" style="background-color: rgb(243, 241, 241);">
-       
-        </div>
+    <header class="header " style="background-color: #f5f5f5;">
         <div class="container">
             <div class="row">
-             
-                <div class="col-lg-3 col-md-3 d-flex mt-2">
+                <div class="col-lg-3 col-md-3 d-flex " style="margin-left: -150px;">
                     <div class="header__logo">
-                        <a href="/"><img src="/images/buyHiveLogo2.png" alt="logo" style="width: 120px; height: 100px; margin-top: -35px;"></a>
+                        <a href="/"><img src="/images/buyHiveLogo2.png" alt="logo" style="width: 120px; height: 100px;"></a>
                     </div>
-                    <div class="header__logo mt-2">
-                        <a href="/"><img src="/images/buyHiveLogo.png" alt="logo" style="width: 120px; height: 50px; margin-top: -35px;"></a>
+                    <div class="header__logo mt-3">
+                        <a href="/"><img src="/images/buyHiveLogo.png" alt="logo" style="width: 120px; height: 50px;"></a>
                     </div>
                 </div>
 
-                <div class="col-lg-6 col-md-6">
+                <div class="col-lg-6 col-md-6 ml-5">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <li class="active"><a href="/" style="color: #000000;">Home</a></li>
-                            <li><a href="/shop" style="color: #000000;">Shop</a></li>
-                            <li><a href="#" style="color: #000000;">About</a></li>
-                            <li><a href="#" style="color: #000000;">Contact</a></li>
-                            <li><a href="#" style="color: #000000;"></a></li>
+                            <li class="active"><a href="/">Home</a></li>
+                            <li><a href="/shop">Shop</a></li>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Contact</a></li>
                            
-
-                            <ul class="dropdown">
-                                    
+                                <ul class="dropdown">
+                                    <!-- Dropdown menu items -->
+                                </ul>
+                            </li>
                         </ul>
                     </nav>
                 </div>
-                <div class="col-lg-3 col-md-3">
+
+                <div class="col-lg-3 col-md-3 d-flex mt-2" style="height: 50px;">
                     <div class="header__nav__option">
-
-                        <% if (locals.user ) { %>
+                        <% if (locals.user) { %>
                             <div class="dropdown">
-
-                                <div class="user-info">
+                                <div class="user-info mt-1">
                                     <i class="fa-solid fa-circle-user"></i>
                                     <span class="username"><a href="#" class="sign-in-link">
-                                     <p style="color: #000000;"> <%= locals.user.name %> </p>       
-                                        </a></span>
+                                        <p style="color: #000000;"> <%= locals.user.name %> </p>
+                                    </a></span>
                                 </div>
                                 <div class="dropdown-content">
                                     <a href="/userProfile">Profile</a>
                                     <a href="/logout">Logout</a>
                                 </div>
                             </div>
-                            <% } else { %>
-                                <a href="/signup" class="sign-in-link" style="text-decoration: none; font-size: 18px; color: black;">Sign Up</a>
-                        <a href="/login" class="sign-in-link" style="text-decoration: none; font-size: 18px; color: black;">Log in</a>
+                        <% } else { %>
+                            <a href="/signup" class="sign-in-link">Sign Up</a>
+                            <a href="/login" class="sign-in-link">Log in</a>
+                        <% } %>
+                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
+                        <a href="#"><img src="img/icon/heart.png" alt="" style="width: 25px"></a>
 
-                                <% } %>
-                     <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
+                        <a href="/cart"><img src="img/icon/cart.png" alt="cart-icon" style="width: 25px;"> <span>0</span></a>
+
                         
-                                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-                                    <br>
-                                    <a href="#"><img src="img/icon/heart.png" alt="" style="width: 25px"></a>
-            
-                                    <a href="/cart"><img src="img/icon/cart.png" alt="cart-icon" style="width: 25px;"> <span>0</span></a>
-            
-                                    <div class="price" style="margin-top: 8px;">$0.00</div>
-                                </div>
-                       
-
                     </div>
                 </div>
             </div>
-            <div class="canvas__open"><i class="fa fa-bars"></i></div>
         </div>
     </header>
+    <!-- Header Section End -->
+</body>
+
+</html>

@@ -9,6 +9,8 @@ const storage = require("../helpers/multer");
 const uploads = multer({storage:storage});
 const brandController = require("../controllers/admin/brandController");
 const productController = require("../controllers/admin/productController");
+const orderController  = require("../controllers/admin/orderController");
+// const variantController = require("../controllers/admin/variantController");
 
 
 
@@ -55,6 +57,18 @@ router.get("/editProduct",adminAuth,productController.getEditProduct);
 router.post("/editProduct/:id",adminAuth,uploads.array("images",4),productController.editProduct);
 router.post("/deleteImage",adminAuth,productController.deleteSingleImage );
 router.delete('/deleteProduct', adminAuth, productController.deleteProduct);
+
+//order Management
+router.get("/orders",adminAuth,orderController.getOrders);
+router.post("/updateOrderStatus",adminAuth,orderController.updateOrderStatus);
+router.get("/adminOrderDetails",orderController.getAdminOrderDetails);
+
+// variant Management
+// router.get("/product/:productId/variants", adminAuth, variantController.getVariantsByProduct); // Get variants by product
+// router.post("/product/:productId/addVariant", adminAuth, variantController.addVariant); // Add variant to a product
+// router.post("/editVariant/:id", adminAuth, variantController.editVariant); // Edit an existing variant
+// router.delete("/deleteVariant/:id", adminAuth, variantController.deleteVariant); // Delete a variant
+
 
 
 

@@ -1,0 +1,39 @@
+
+
+<!-- views/admin/variantsList.ejs -->
+  <title>Variants List</title>
+</head>
+<body>
+  <h1>Variants for <%= product.name %></h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Color</th>
+        <th>Size</th>
+        <th>Material</th>
+        <th>Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% variants.forEach(variant => { %>
+        <tr>
+          <td><%= variant.color %></td>
+          <td><%= variant.size %></td>
+          <td><%= variant.material %></td>
+          <td><%= variant.price %></td>
+          <td>
+            <a href="/admin/variant/<%= variant._id %>/edit" class="btn btn-primary">Edit</a>
+            <form action="/admin/variant/<%= variant._id %>?_method=DELETE" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  
+
+  <a href="/admin/product/<%= product._id %>/addVariant">Add New Variant</a>
+</body>
+

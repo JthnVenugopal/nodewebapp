@@ -3,6 +3,7 @@ const Category = require("../../models/categorySchema");
 const User = require("../../models/userSchema");
 const passport = require("passport")
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const Brand = require("../../models/brandSchema")
 
 const productDetails = async (req, res) => {
   try {
@@ -20,6 +21,14 @@ const productDetails = async (req, res) => {
       return res.status(404).send("Product not found");
     }
 
+    const brandId = product.brand;
+
+    // console.log(brandId);
+
+    const brandData = await Brand.findById(brandId);
+
+    // console.log(brandData)
+
     const findCategory = product.category; // The category object
     const categoryOffer = findCategory?.categoryOffer || 0; // Category offer
     const productOffer = product.productOffer || 0; // Product offer
@@ -31,6 +40,7 @@ const productDetails = async (req, res) => {
       category: findCategory, // Explicitly pass the category data
       user: userData, // Optionally pass user data
       totalOffer, // Pass the total offer
+      brand:brandData
     });
   } catch (error) {
     console.error("Error fetching product details:", error);

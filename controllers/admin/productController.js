@@ -126,7 +126,7 @@ const getAllProducts = async (req, res) => {
 
     // const {brandName , brandImage , } = brand;
 
-    console.log(brandName)
+    
 
     if (category && brand) {
       res.render("products", {

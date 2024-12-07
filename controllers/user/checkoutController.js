@@ -12,7 +12,10 @@ const getCheckout = async (req, res) => {
     const userId = sessionUser || googleUser;
 
       const user = await User.findById(userId);
-     
+      // console.log(user)
+
+
+
       if (!user) {
           return res.redirect('/login');
       }
@@ -21,6 +24,7 @@ const getCheckout = async (req, res) => {
       //populate-retrieves the full product documents associated with those IDs
       
       const addresses = await Address.find({ userId: user._id });
+
 
       let totalAmount = cart.items.reduce((total, item) => total + item.totalPrice, 0);
 
@@ -38,7 +42,15 @@ const getCheckout = async (req, res) => {
             return res.render('checkout', { cart: null, products: [], addresses, totalAmount, product: null ,user});
           }
           totalAmount = cartItems.items.reduce((sum, item) => sum + item.totalPrice, 0);
-          return res.render('checkout', { cart: cartItems, products: cartItems.items, addresses, totalAmount, product: null ,user});
+
+
+          return res.render('checkout', { 
+            cart: cartItems,
+             products: cartItems.items, 
+             addresses:addresses, 
+             totalAmount,
+             product: null ,
+             user});
         }
      
   } catch (error) {
@@ -47,22 +59,29 @@ const getCheckout = async (req, res) => {
   }
 };
 
+
+
 const placeOrder = async (req, res) => {
   try {
-      const { addressId, payment_option, singleProduct,discountInput,couponCodeInput } = req.body;
+      const { addressId, payment_option, singleProduct,discountInput,couponCodeInput,selectedAddressId } = req.body;
       const sessionUser = req.session.user;
       const googleUser  = req.user;
       const userId = sessionUser || googleUser;
 
 
-      
       if (!userId) {
           console.log("User not logged in");
           return res.redirect('/login');
       }
 
      
-      const user = await User.findById(userId).populate('addresses');
+      const user = await User.findById(userId).populate('address');
+
+      console.log("Valid ObjectId:", mongoose.Types.ObjectId.isValid(addressId));
+
+
+     
+
       if (!user) {
           console.log("User not found");
           return res.status(404).send("User not found");
@@ -72,14 +91,8 @@ const placeOrder = async (req, res) => {
           console.error("Invalid or missing addressId:", addressId);
           return res.status(400).send("Invalid address selected");
       }
-      
-      
-      const selectedAddress = user.addresses.filter(addr => addr._id.toString() === addressId);
-      if (!selectedAddress) {
-          console.log("Selected address not found");
-          return res.status(400).send("Invalid address selected");
-      }
 
+      
       
       const cart = await Cart.findOne({ userId }).populate("items.productId");
 
@@ -153,6 +166,7 @@ const placeOrder = async (req, res) => {
 
       
       res.render("orderConfirmation",{orderId:newOrder._id,user});
+
   } catch (error) {
       console.error("Error placing order:", error);
       res.status(500).send("Internal Server Error");
@@ -161,9 +175,67 @@ const placeOrder = async (req, res) => {
 
 
 
+
+
+const postAddaddress = async (req, res) => {
+  try {
+
+      const sessionUser = req.session.user;
+      const googleUser  = req.user;
+      const userId = sessionUser || googleUser;
+      
+      if (!userId) {
+          return res.redirect("/login");
+      }
+
+      const userData = await User.findOne({ _id: userId });
+      if (!userData) {
+          return res.redirect("/pageNotFound");
+      }
+
+      const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body;
+      if (!addressType || !name || !city || !state || !pincode || !phone) {
+          return res.status(400).send("Missing required fields");
+      }
+
+      const userAddress = await Address.findOne({ userId: userData._id });
+      if (!userAddress) {
+          const newAddress = new Address({
+              userId: userData._id,
+              address: [{ addressType, name, city, landMark, state, pincode, phone, altPhone }],
+          });
+          await newAddress.save();
+      } else {
+          userAddress.address.push({ addressType, name, city, landMark, state, pincode, phone, altPhone });
+          await userAddress.save();
+      }
+
+      res.render("/checkout",{
+        user:userData,
+        address:userAddress,
+        payment:payment,
+
+      });
+  } catch (error) {
+      console.error("Error adding address", error);
+      res.status(500).send("Internal Server Error");
+  }
+}
+
+
+
+
+
+
 module.exports = {
   getCheckout,
   placeOrder,
+  postAddaddress
 
 
 }
+
+
+
+
+

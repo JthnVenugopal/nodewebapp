@@ -184,70 +184,7 @@
                     </div>
                 </div>
                 <div class="row">
-
-
-<div class="col-md-6">
-    <div class="mb-4">
-        <h5 class="fw-bold">Select Your Address</h5>
-    </div>
-    <div class="form-group">
-        <div class="shipping-address-selection">
-            <% addresses.forEach((address, index)=> { %>
-                <% address.address.forEach((addr, addrIndex)=> { %>
-                    <div class="address-box mb-3">
-                        <input type="radio" name="selectedAddress"
-                            id="address-<%= index %>-<%= addrIndex %>"
-                            value="<%= addr._id %>" class="address-radio" required>
-                        <label class="address-label" for="address-<%= index %>-<%= addrIndex %>">
-                            <div class="address-type-badge <%= addr.addressType.toLowerCase() %>">
-                                <%= addr.addressType %>
-                            </div>
-                            <div class="address-content">
-                                <div class="name-section">
-                                    <h6 class="mb-2">
-                                        <%= addr.name %>
-                                    </h6>
-                                </div>
-                                <div class="address-details">
-                                    <% if (addr.landMark) { %>
-                                        <p class="landmark"><i class="fi-rs-marker me-2"></i>
-                                            <%= addr.landMark %>
-                                        </p>
-                                        <% } %>
-                                            <p class="location">
-                                                <%= addr.city %>, <%= addr.state %>
-                                                        <%= addr.pincode %>
-                                            </p>
-                                            <div class="contact-info">
-                                                <p class="phone">
-                                                    <i class="fi-rs-phone-call me-2"></i>
-                                                    <%= addr.phone %>
-                                                        <% if (addr.altPhone) { %>
-                                                            <span class="alt-phone">/ <%=
-                                                                    addr.altPhone %></span>
-                                                            <% } %>
-                                                </p>
-                                            </div>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                    <% }); %>
-                        <% }); %>
-
-        </div>
-
-                            <div class="add-address-section mt-4">
-                                <a href="/add-address" class="btn btn-add-address">
-                                    <i class="fi-rs-plus me-2"></i>Add New Address
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-<div class="col-md-6">
+<div class="col-md-12">
 <div class="order_review">
     <div class="mb-20">
         <h4>Your Orders</h4>
@@ -342,28 +279,116 @@
         </table>
     </div>
 
+    <div>
 
-
-    <div class="row">
-        <div class="col-12">
-            <div class="divider mt-50 mb-50"></div>
-        </div>
-    </div>
-
-
+        <% addresses.forEach((address, index)=> { %>
+            <% address.address.forEach((addr, addrIndex)=> { %>
+                <div class="address-box mb-3">
+                    <input type="radio" name="selectedAddress"
+                        id="address-<%= index %>-<%= addrIndex %>"
+                        value="<%= addr._id %>" class="address-radio" required>
+                    <label class="address-label" for="address-<%= index %>-<%= addrIndex %>">
+                        <div class="address-type-badge <%= addr.addressType.toLowerCase() %>">
+                            <%= addr.addressType %>
+                        </div>
+                        <div class="address-content">
+                            <div class="name-section">
+                                <h6 class="mb-2">
+                                    <%= addr.name %>
+                                </h6>
+                            </div>
+                            <div class="address-details">
+                                <% if (addr.landMark) { %>
+                                    <p class="landmark"><i class="fi-rs-marker me-2"></i>
+                                        <%= addr.landMark %>
+                                    </p>
+                                    <% } %>
+                                        <p class="location">
+                                            <%= addr.city %>, <%= addr.state %>
+                                                    <%= addr.pincode %>
+                                        </p>
+                                        <div class="contact-info">
+                                            <p class="phone">
+                                                <i class="fi-rs-phone-call me-2"></i>
+                                                <%= addr.phone %>
+                                                    <% if (addr.altPhone) { %>
+                                                        <span class="alt-phone">/ <%=
+                                                                addr.altPhone %></span>
+                                                        <% } %>
+                                            </p>
+                                        </div>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                <% }); %>
+                    <% }); %>
     
 
 
-    <div class="row">
-        <div class="col-12">
-            <div class="divider mt-50 mb-50"></div>
-        </div>
     </div>
-    <div class="row">
+     
+
+   
+    
+<div class="container mt-4">
+   
+   <form id="addressForm" method="POST" action="/addaddress" class="border-0 p-3">
+       <div class="row mb-50">
+           <div class="form-group col-md-4">
+               <label for="addressType">Address Type:</label>
+               <input type="text" class="form-control border-3" id="addressType" name="addressType" >
+           </div>
+           <div class="form-group col-md-4">
+               <label for="name">Name:</label>
+               <input type="text" class="form-control border-3" id="name" name="name" >
+           </div>
+           <div class="form-group col-md-4">
+               <label for="city">City:</label>
+               <input type="text" class="form-control border-3" id="city" name="city" >
+           </div>
+       </div>
+       <div class="row mb-3">
+           <div class="form-group col-md-4">
+               <label for="landMark">Landmark:</label>
+               <input type="text" class="form-control border-3" id="landMark" name="landMark" >
+           </div>
+           <div class="form-group col-md-4">
+               <label for="state">State:</label>
+               <input type="text" class="form-control border-3" id="state" name="state" >
+           </div>
+           <div class="form-group col-md-4">
+               <label for="pincode">Pincode:</label>
+               <input type="number" class="form-control border-3" id="pincode" name="pincode" >
+           </div>
+       </div>
+       <div class="row mb-3">
+           <div class="form-group col-md-4">
+               <label for="phone">Phone:</label>
+               <input type="number" class="form-control border-3" id="phone" name="phone" >
+           </div>
+           <div class="form-group col-md-4">
+               <label for="altPhone">Alternate Phone:</label>
+               <input type="number" class="form-control border-3" id="altPhone" name="altPhone" >
+           </div>
+       </div>
+       <button type="submit" id="submitButton" class="btn btn-primary">Submit</button>
+   </form>
+</div>
+
+
+
+
+
+
+
+
+
+
 
         <form id="orderForm" method="POST" action="/placeOrder"
             onsubmit="return validateAddress()" class="my-5">
-            <div class="payment_option">
+            <div class="payment_option ">
                 <h4>Select Payment Method</h4>
                 <div class="custome-radio">
                     <input class="form-check-input" required type="radio" value="COD"
@@ -397,6 +422,10 @@
                                             id="submitButton" onclick="syncDiscount()">Place Order</button>
                                     </div>
                                 </form>
+
+
+
+                                
                             </div>
                         </div>
                     </div>
@@ -412,7 +441,7 @@
         document.querySelectorAll('.address-radio').forEach(radio => {
             radio.addEventListener('change', function () {
                 const selectedAddressField = document.getElementById('selectedAddressId');
-                selectedAddressField.value = this.value || ''; 
+                selectedAddressField.value = this.value || ''; // Set the selected address ID
             });
         });
 
@@ -445,8 +474,117 @@
             return '₹ ' + amount.toLocaleString();
         }
 
+  document.getElementById('addressForm').addEventListener('submit', function(event) {
+      if (!validateForm()) {
+          event.preventDefault();
+      }
+  });
 
 
+  function validateForm() {
+      let isValid = true;
+      const requiredFields = ["addressType", "name", "city", "landMark", "state", "pincode", "phone", "altPhone"];
+      requiredFields.forEach(function(field) {
+          const input = document.getElementById(field);
+          const inputValue = input.value.trim();
+          const errorElement = document.getElementById(field + '-error');
+
+
+          if (inputValue === "") {
+              if (!errorElement) {
+                  const errorMessage = "This field is required.";
+                  const errorDiv = document.createElement('div');
+                  errorDiv.className = "text-danger";
+                  errorDiv.textContent = errorMessage;
+                  errorDiv.id = field + '-error';
+                  input.parentNode.appendChild(errorDiv);
+              }
+              isValid = false;
+          } else {
+              if (errorElement) {
+                  errorElement.remove();
+              }
+          }
+      });
+
+
+      const addressType = document.getElementById('addressType').value;
+      const name = document.getElementById('name').value;
+      const city = document.getElementById('city').value;
+      const landMark = document.getElementById('landMark').value;
+      const state = document.getElementById('state').value;
+      const pincode = document.getElementById('pincode').value;
+      const phone = document.getElementById('phone').value;
+      const altPhone = document.getElementById('altPhone').value;
+      const namePattern = /^[A-Za-z\s]+$/;
+      const pincodePattern = /^\d{6}$/;
+      const phonePattern = /^\d{10}$/;
+      if (!namePattern.test(name)) {
+          Swal.fire({
+              title: 'Error',
+              text: 'Name should contain alphabets only.',
+              icon: 'error'
+          });
+          isValid = false;
+      }
+      if (!namePattern.test(city)) {
+          Swal.fire({
+              title: 'Error',
+              text: 'City should contain alphabets only.',
+              icon: 'error'
+          });
+          isValid = false;
+      }
+      if (!namePattern.test(landMark)) {
+          Swal.fire({
+              title: 'Error',
+              text: 'Landmark should contain alphabets only.',
+              icon: 'error'
+          });
+          isValid = false;
+      }
+      if (!namePattern.test(state)) {
+          Swal.fire({
+              title: 'Error',
+              text: 'State should contain alphabets only.',
+              icon: 'error'
+          });
+          isValid = false;
+      }
+      if (!pincodePattern.test(pincode)) {
+          Swal.fire({
+              title: 'Error',
+              text: 'Pincode should be a 6-digit number.',
+              icon: 'error'
+          });
+          isValid = false;
+      }
+      if (!phonePattern.test(phone)) {
+          Swal.fire({
+              title: 'Error',
+              text: 'Phone number should be a 10-digit number.',
+              icon: 'error'
+          });
+          isValid = false;
+      }
+      if (!phonePattern.test(altPhone)) {
+          Swal.fire({
+              title: 'Error',
+              text: 'Alternate phone number should be a 10-digit number.',
+              icon: 'error'
+          });
+          isValid = false;
+      }
+      if (phone === altPhone) {
+          Swal.fire({
+              title: 'Error',
+              text: 'Phone number and alternate phone number should be different.',
+              icon: 'error'
+          });
+          isValid = false;
+      }
+      return isValid;
+  }
 
 
 
@@ -454,7 +592,7 @@
 
 
     </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
