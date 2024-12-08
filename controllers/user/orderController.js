@@ -54,7 +54,7 @@ const getOrderDetails = async (req, res) => {
             name,
             email,
             orderDetails: detailedOrders,
-            user, // Use consistent naming
+            user, 
         });
     } catch (error) {
         console.error("Error fetching order details:", error.message);

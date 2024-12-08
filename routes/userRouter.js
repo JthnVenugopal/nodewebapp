@@ -15,12 +15,12 @@ router.get("/",userIsAuthenticated, userController.loadHomepage);
 
 //shop management
 router.get("/shop",userIsAuthenticated,shopController.loadShoppingPage);
-router.get('/filter',userIsAuthenticated,shopController.filterProduct);
-router.get('/filterPrice',userIsAuthenticated,shopController.filterByPrice)
-router.get('/filterPrice',userIsAuthenticated,shopController.searchProducts)
-router.get('/sortByPrice',userIsAuthenticated ,shopController.sortPrice);
-router.get('/sortByAlpha',userIsAuthenticated,shopController.sortByAlpha)
-router.get('/clearFilters',userIsAuthenticated,shopController.clearFilters)
+// router.get('/filter',userIsAuthenticated,shopController.filterProduct);
+// router.get('/filterPrice',userIsAuthenticated,shopController.filterByPrice)
+// router.get('/filterPrice',userIsAuthenticated,shopController.searchProducts)
+// router.get('/sortByPrice',userIsAuthenticated ,shopController.sortPrice);
+// router.get('/sortByAlpha',userIsAuthenticated,shopController.sortByAlpha)
+// router.get('/clearFilters',userIsAuthenticated,shopController.clearFilters)
 
 
 
