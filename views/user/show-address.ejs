@@ -19,11 +19,12 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     flex: 1 1 calc(33.33% - 40px); /* Responsive width */
     box-sizing: border-box; 
-   
+    
   }
 
   .address-box h3 {
     margin-bottom: 10px;
+    
   }
 
   .address-box p {
@@ -69,10 +70,14 @@
   }
 </style>
 
-<div style="display: flex; align-items: center; flex-direction: column;" class=" my-5">
-  <div class="address-container">
-    <% for (let address of userAddress) { %>
-      <div class="address-box">
+<div class="d-flex justify-content-center my-5"><h2>Address</h2></div>
+
+
+<div style="display: flex;">
+  <% for (let address of userAddress) { %>
+  <div class="container d-flex w-100">
+    
+      <div class="address-box w-50" style="width: 500px;">
         <h3>Name: <%= address.name %></h3>
         <p>Address Type: <%= address.addressType %></p>
         <p>City: <%= address.city %></p>
@@ -89,9 +94,12 @@
           class="btn-small"
           onclick="return confirm('Are you sure you want to delete this address?')">Delete</a>
       </div>
-    <% } %>
+    
   </div>
+  <% } %>
 </div>
+
+
 
 <div class="btn-container my-5">
   <button class="btn btn-success">

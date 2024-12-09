@@ -47,18 +47,13 @@
         </thead>
         <tbody>
 
-           
-
-
             <% for(let i=data.length-1;i>=0;i--){ %>
-
-            
-            
+ 
             <tr>
                 <td ><%= data[i].productName %></td>
-                <td><%= data[i].brand %></td>
+                <td><%= data[i].brand.brandName %></td>
                 <td><%= data[i].category.name %></td>
-                <td><%= data[i].salePrice %></td>
+                <td><%= data[i].variant.salePrice %></td>
                 <td>
 
                     <% if(locals.data[i].productOffer){ %>
@@ -77,14 +72,14 @@
                     </button>
                     <% }else{ %>
         
-                    <button class="btn btn-info" onclick="removeOffer('<%=data[i]._id%>')" style="width: 100px;height: 45px">
+                    <button class="btn btn-info" onclick="removeOffer('<%=data[i]._id%>')" style="width: 120px;height: 45px; font-size: 12px;">
                         <a href="#" class="text-white">Remove</a>
                     </button>
 
                     <% } %>
                 
                 </td>
-                <td><%=data[i].quantity%></td>
+                <td><%=data[i].variant.quantity%></td>
                 <td>
 
                     <% if(data[i].isBlocked===false){ %>
