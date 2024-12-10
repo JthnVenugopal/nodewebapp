@@ -2,19 +2,52 @@
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const User = require("../../models/userSchema");
-const Brand = require("../../models/brandSchema")
+const Brand = require("../../models/brandSchema");
+const Variant = require("../../models/variantSchema")
 
-const loadShoppingPage = async (req,res) => {
-   
-  try {
-    res.render('shop')
-  } catch (error) {
+// const loadShoppingPage = async (req, res) => { 
+//   try { 
+//     const user = req.session.user || req.user;
+
+//     console.log(req.body);
+
+//     const products = await Product.find({ isBlocked: false }); 
     
-  }
+//     res.render('shop', { 
+//       user: user,
+//       products: products,
 
-  }
+//      }); } 
 
-  
+//     catch (error) {
+
+//        console.error("Error loading shopping page:", error);
+//         res.status(500).send("Internal Server Error"); 
+
+//       } };
+
+const loadShoppingPage = async (req, res) => { 
+  try { 
+    const user = req.session.user || req.user;
+
+    console.log(req.body);
+    
+    // Use populate to get the variant associated with each product
+    const products = await Product.find({ isBlocked: false }).populate('variant'); 
+    
+    res.render('shop', { 
+      user: user,
+      products: products,
+    }); 
+  } catch (error) {
+    console.error("Error loading shopping page:", error);
+    res.status(500).send("Internal Server Error"); 
+  } 
+};
+
+
+ /////////////////////////////////////////////////////////////////
+
 //   const filterProduct = async (req, res) => {
     
 // };

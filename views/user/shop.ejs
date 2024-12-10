@@ -1,3 +1,50 @@
 <%- include("../../views/partials/user/header") %>
-<h1>Shop</h1>
+
+<div class="page-header breadcrumb-wrap my-5">
+  <div class="container">
+      <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                  <a href="#" rel="nofollow">Home</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Shop</li>
+              
+          </ol>
+      </nav>
+  </div>
+</div>
+
+<div class="container mt-4">
+  <div class="row">
+    <% products.forEach(product => { %>
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4 mb-5">
+
+        <a href="/productDetails?id=<%= product._id %>">
+
+          <div class="card h-100">
+            <% if (product.variant.productImages && product.variant.productImages.length > 0) { %>
+              <img style="height: 320px;" src="/uploads/re-image/<%= product.variant.productImages[0] %>" class="card-img-top" alt="<%= product.productName %>">
+            <% } %>
+            <div class="card-body">
+              <h5 class="card-title"><%= product.productName %></h5>
+              
+              <p class="text-success font-weight-bold">₹<%= product.variant.salePrice.toLocaleString('en-IN') %></p>
+              <% if (product.variant.quantity > 0) { %>
+                <p class="text-success">In Stock: <%= product.variant.quantity %></p>
+              <% } else { %>
+                <p class="text-danger">Out of Stock</p>
+              <% } %>
+              
+            </div>
+          </div>
+
+
+        </a>
+     
+
+      </div>
+    <% }) %>
+  </div>
+</div>
+
 <%- include("../../views/partials/user/footer") %>

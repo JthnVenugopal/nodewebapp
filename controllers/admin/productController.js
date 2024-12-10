@@ -7,6 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
 const Category = require("../../models/categorySchema");
+const Variant = require("../../models/variantSchema");
 const { name } = require("ejs");
 const mongoose = require("mongoose");
 //---------------------------------------------------------------------
@@ -93,6 +94,79 @@ const getProductAddPage = async (req,res) => {
 //     }
 //   };
 
+// const addProducts = async (req, res) => {
+//     try {
+//         const products = req.body;
+
+//         console.log(req.body); // Log the incoming request body for debugging
+
+//         // Check if all required fields are present
+//         if (!products.productName || !products.description || !products.brand || !products.category || 
+//             !products.regularPrice || !products.salePrice || !products.quantity || !products.color) {
+//             return res.status(400).json("All fields are required.");
+//         }
+
+//         // Check if the product already exists
+//         const productExists = await Product.findOne({ productName: products.productName });
+//         if (productExists) {
+//             return res.status(400).json("Product already exists, please try with another name");
+//         }
+
+//         // Process image uploads
+//         const images = [];
+//         if (req.files && req.files.length > 0) {
+//             for (let i = 0; i < req.files.length; i++) {
+//                 if (req.files[i].path && req.files[i].filename) {
+//                     const originalImagePath = req.files[i].path;
+//                     const resizedImagePath = path.join("public", "uploads", "product-images", req.files[i].filename);
+//                     await sharp(originalImagePath).resize({ width: 500, height: 500 }).toFile(resizedImagePath);
+//                     images.push(req.files[i].filename);
+//                 } else {
+//                     return res.status(400).json("Invalid file upload");
+//                 }
+//             }
+//         }
+
+//         // Validate and find category
+//         const category = await Category.findOne({ name: products.category });
+//         if (!category) {
+//             return res.status(400).json("Invalid category name");
+//         }
+
+//         // Validate and find brand
+//         const brand = await Brand.findOne({ brandName: products.brand });
+//         if (!brand) {
+//             return res.status(400).json("Invalid brand name");
+//         }
+
+//         const variant = await Variant.findOne({})
+
+//         // Create new product
+//         const newProduct = new Product({
+//             productName: products.productName,
+//             description: products.description,
+//             brand: brand._id,
+//             category: category._id,
+//             variant: { // Include the variant object
+//                 regularPrice: products.regularPrice, // Access directly
+//                 salePrice: products.salePrice, // Access directly
+//                 quantity: products.quantity || 0, // Access directly
+//                 color: products.color, // Access directly
+//                 productImages: images,
+//                 size: products.sizes ,
+//                 variantCode : products.variantCode , 
+//             },
+//             status: "Available",
+//         });
+
+//         await newProduct.save();
+//         return res.redirect('/admin/addProducts');
+//     } catch (error) {
+//         console.error("Error saving product", error.message);
+//         return res.redirect('/admin/pageerror');
+//     }
+// };
+
 const addProducts = async (req, res) => {
     try {
         const products = req.body;
@@ -138,21 +212,26 @@ const addProducts = async (req, res) => {
             return res.status(400).json("Invalid brand name");
         }
 
+        // Create new variant
+        const newVariant = new Variant({
+            variantCode: products.variantCode,
+            regularPrice: products.regularPrice,
+            salePrice: products.salePrice,
+            quantity: products.quantity || 0,
+            color: products.color,
+            productImages: images,
+            size: products.sizes,
+        });
+
+        await newVariant.save(); // Save the variant to the database
+
         // Create new product
         const newProduct = new Product({
             productName: products.productName,
             description: products.description,
             brand: brand._id,
             category: category._id,
-            variant: { // Include the variant object
-                regularPrice: products.regularPrice, // Access directly
-                salePrice: products.salePrice, // Access directly
-                quantity: products.quantity || 0, // Access directly
-                color: products.color, // Access directly
-                productImages: images,
-                size: products.sizes ,
-                variantCode : products.variantCode , 
-            },
+            variant: newVariant._id, // Link the variant to the product
             status: "Available",
         });
 

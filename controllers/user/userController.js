@@ -264,29 +264,64 @@ const loadLogin = async (req,res) => {
   }
 }
 //--------------------------------------------------------
-const login = async (req,res)=>{
+// const login = async (req,res)=>{
+//   try {
+//       const {email,password,googleId} = req.body;
+
+//       const findUser = await User.findOne({isAdmin:0,email:email});
+//       if(!findUser){
+//           return res.render("login",{message:"User not found"});
+//       }
+//       if(findUser.isBlocked){
+//           res.render("login",{message:"User is blocked by admin"})
+//       }
+
+//       const passwordMatch = await bcrypt.compare(password,findUser.password);
+//       if(!passwordMatch){
+//           return res.render("login",{message:"Incorrect Password"})
+//       }
+
+//       req.session.user = findUser;
+//       res.redirect("/");
+//   } catch (error) {
+//       console.error("login error",error);
+//       res.render("login",{message:"Login failed. Please try again."})
+//   }
+// }
+
+const login = async (req, res) => {
   try {
-      const {email,password,googleId} = req.body;
-      const findUser = await User.findOne({isAdmin:0,email:email});
-      if(!findUser){
-          return res.render("login",{message:"User not found"});
-      }
-      if(findUser.isBlocked){
-          res.render("login",{message:"User is blocked by admin"})
+      const { email, password, googleId } = req.body;
+      const findUser = await User.findOne({ isAdmin: 0, email: email });
+
+      if (!findUser) {
+          return res.render("login", { message: "User not found" });
       }
 
-      const passwordMatch = await bcrypt.compare(password,findUser.password);
-      if(!passwordMatch){
-          return res.render("login",{message:"Incorrect Password"})
+      if (findUser.isBlocked) {
+          return res.render("login", { message: "User is blocked by admin" });
       }
 
-      req.session.user = findUser;
+      const passwordMatch = await bcrypt.compare(password, findUser.password);
+      if (!passwordMatch) {
+          return res.render("login", { message: "Incorrect Password" });
+      }
+
+      // Store only necessary information in the session
+      req.session.user = {
+          id: findUser._id,
+          name: findUser.name,
+          email: findUser.email,
+          role: findUser.role, // Add only fields you need
+      };
+
       res.redirect("/");
   } catch (error) {
-      console.error("login error",error);
-      res.render("login",{message:"Login failed. Please try again."})
+      console.error("Login error:", error);
+      res.render("login", { message: "Login failed. Please try again." });
   }
-}
+};
+
 
 //-------------------------------------------------
 const logout = async (req,res)=>{

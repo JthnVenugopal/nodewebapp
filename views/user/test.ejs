@@ -1,0 +1,43 @@
+
+<style>
+  .variants {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.variant {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px;
+  width: 200px; /* Adjust as needed */
+}
+
+.product-images img {
+  width: 100%; /* Make images responsive */
+  height: auto;
+}
+</style>
+
+
+<h1><%= product.productName %></h1>
+<p><%= product.description %></p>
+<p>Brand: <%= brand.name %></p>
+<p>Category: <%= category.name %></p>
+
+<h3>Available Colors:</h3>
+<div class="variants">
+  <% sameVariants.forEach(variant => { %>
+    <div class="variant">
+      <h4>Color: <%= variant.color %></h4>
+      <p>Sizes: <%= variant.size.join(', ') %></p> <!-- Display sizes -->
+      <p>Regular Price: <%= variant.regularPrice %></p>
+      <p>Sale Price: <%= variant.salePrice %></p>
+      <p>Available Quantity: <%= variant.quantity %></p>
+      <div class="product-images">
+        <% variant.productImages.forEach(image => { %>
+          <img src="<%= image %>" alt="Product Image" />
+        <% }) %>
+      </div>
+    </div>
+  <% }) %>
+</div>

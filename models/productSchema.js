@@ -30,40 +30,9 @@ const productSchema = new Schema ({
 
   variant: {
 
-    variantCode: {
-      type: String,
-      required: true,
-      
-    },
-    regularPrice:{
-      type:Number,
-      required:true,
-    },
-    salePrice:{
-      type:Number,
-      required:true
-    },
-    offerPrice: {
-      type:Number,
-      default:0
-    },
-    quantity: {
-      type: Number,
-      default: 0
-    },
-    color:{
-      type:[String],
-      required:true
-    },
-    productImages:{
-      type:[String],
-      required:true
-    },
-    size:{
-      type:[Number],
-      required:true,
-
-    }
+    type:Schema.Types.ObjectId,
+    ref: "Variant",
+    required: true,
 
   },
 

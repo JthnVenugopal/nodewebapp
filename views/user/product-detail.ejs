@@ -4,9 +4,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
 <style>
 body {
-    background: linear-gradient(to bottom, #ffe6f2, #ffffff); 
+    
     background-size: cover;
     background-repeat: no-repeat;
+}
+
+a{
+    text-decoration: none;
 }
 
 .product-image-slider {
@@ -72,158 +76,218 @@ body {
 #mainImage {
     transition: transform 0.2s ease; /* Smooth transition for zoom effect */
 }
+
+.sizes-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.size-badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px; /* Circle size */
+    height: 50px; /* Circle size */
+    border-radius: 50%; /* Makes the div circular */
+    background-color: #ffffff; /* Circle background color */
+    color: rgb(0, 0, 0); /* Text color */
+    font-weight: bold;
+    text-align: center;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+    cursor: pointer; /* Change cursor on hover */
+    transition: background-color 0.3s ease;
+    
+}
+
+.size-badge:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
 </style>
 </head>
 <body>
 <main class="main">
-    <div class="page-header breadcrumb-wrap">
+
+    <div class="page-header breadcrumb-wrap my-5">
         <div class="container">
-            <div class="breadcrumb">
-                <a href="#" rel="nofollow">Home</a>
-                <span> &gt; </span>
-                <span>Fashion</span>
-                <span> &gt; </span>
-                <span>Product Detail Page</span>
-            </div>
+            <nav aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="#" rel="nofollow">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Shop</li>
+                    <li class="breadcrumb-item active" aria-current="page">Product Details</li>
+                </ol>
+            </nav>
         </div>
     </div>
+  
+    <section class="mt-50 mb-50 ">
+        <div class="d-flex justify-content-center">
+           <div class="row">
+              <div class="col-lg-9">
+                 <div class="product-detail accordion-detail" style="width: 70vw; margin-bottom: 100px;">
+                    <div class="row mb-50">
+                       <div class="col-md-6 col-sm-12 col-xs-12 ">
+                          <div class="detail-gallery">
+                             <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                             <div class="product-image-slider bg-info image-container" style="height: 420px; width: 400px;">
 
-<section class="mt-50 mb-50 ">
-<div class="container">
-    <div class="row">
-        <div class="col-lg-9">
-            <div class="product-detail accordion-detail " style="width: 70vw; margin-bottom: 100px;">
-                <div class="row mb-50">
-                    <div class="col-md-6 col-sm-12 col-xs-12 ">
-                        <div class="detail-gallery">
-                            <span class="zoom-icon"><i class="fi-rs-search"></i></span>
-                            <div class="product-image-slider bg-info image-container" style="height: 420px; width: 400px;">
+
+
                                 <figure class="border-radius-10">
-                                    <img src="/uploads/re-image/<%= product.productImages[0] %>" alt="Product Image 1" id="mainImage" style="width: 400px; height: 420px;">
+                                   <img src="/uploads/re-image/<%= variant.productImages[0] %>" alt="Product Image 1" id="mainImage" style="width: 400px; height: 420px;">
                                 </figure>
-                            </div>
-                            <div class="slider-nav-thumbnails">
-                                <% for (let i = 0; i < product.productImages.length; i++) { %>
-                                    <div>
-                                        <img src="/uploads/re-image/<%= product.productImages[i] %>" alt="Thumbnail <%= i + 1 %>" class="thumbnail" onclick="changeMainImage('/uploads/re-image/<%= product.productImages[i] %>')">
-                                    </div>
+                             </div>
+                             <div class="slider-nav-thumbnails">
+
+                                <% for (let i = 0; i < variant.productImages.length; i++) { %>
+                                <div>
+                                   <img src="/uploads/re-image/<%= variant.productImages[i] %>" alt="Thumbnail <%= i + 1 %>" class="thumbnail" onclick="changeMainImage('/uploads/re-image/<%= variant.productImages[i] %>')">
+                                </div>
                                 <% } %>
-                            </div>
-                        </div>
-                    </div>
 
-                 
+                             </div>
+                          </div>
+                       </div>
 
-                    <div class="col-md-6 col-sm-12 col-xs-12">
+                       
+
+                       <div class="col-md-6 col-sm-12">
                         <div class="detail-info">
-                            <h2 class="title-detail"><%=product.productName%></h2  class="product-detail-rating">
-                                <div class="pro-details-brand">
-                                    <span> Brands: <a href="#"><%=brand.brandName%></a></span>
-                                </div>
-                                <div class="product-rate-cover text-end">
-                                    <div class="product-rate d-inline-block">
-                                        <div class="product-rating" style="width:90%">
-                                            <span>★</span><span>★</span><span>★</span><span>★</span><span>☆</span>
-                                        </div>
-                                    </div>
-                                    <span class="font-small ml-5 text-muted"> (25 reviews)</span>
-                                </div>
+                            <!-- Product Name -->
+                            <h1 class="title-detail"><%= product.productName %></h1>
+                    
+                            <!-- Brand Information -->
+                            <div class="pro-details-brand mb-3">
+                                <span>Brand: <a href="#"><%= brand.brandName %></a></span>
                             </div>
-                            <div class="clearfix product-price-cover">
-                                <div class="product-price primary-color float-left">
+                    
+                            <!-- Pricing Section -->
+                            <div class="product-price-cover mb-4">
+                                <div class="product-price primary-color">
                                     <div>
-                                        <strike><span class="old-price font-md ml-15">Regular Price : <%=product.regularPrice%></span></strike> 
+                                        <strike><span class="old-price font-md">Regular Price: <%= variant.regularPrice %></span></strike>
                                     </div>
-                                    <br>
-                                    <div>
-                                        <span class="text-brand" style="font-weight: 1000;"><h4>Special Price : <%=product.salePrice%></h4></span>
+                                    <div class="mt-2">
+                                        <span class="text-brand font-weight-bold">
+                                            <h4>Special Price: <%= variant.salePrice %></h4>
+                                        </span>
                                     </div>
-                                    <br><br>
-                                    <span class="save-price font-md color3 ml-15">
-                                        <% if (!totalOffer) { %>
-                                            No Offers
-                                        <% } else { %>
-                                            <%= totalOffer %> % Offer
-                                        <% } %>
-                                    </span>
                                 </div>
                             </div>
-                            <div class="bt-1 border-color-1 mt-15 mb-15"></div>
-                            <div class="short-desc mb-30">
-                                <p><%=product.description%></p>
-                            </div>
-                            <div class="product_sort_info font-xs mb-30">
-                                <ul>
-                                    <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year Brand Warranty</li>
-                                    <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
-                                    <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
-                                </ul>
-                            </div>
-                            <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                            <div class="detail-extralink">
-                                <div class="detail-qty border radius">
-                                    <a href="#" class="qty-down" onclick="">
-                                        <i class="fi-rs-angle-small-down"></i>
-                                    </a>
+                    
+       
+
+
+
+                          <!-- Size Selection Section -->
+                          <div class="size-selection mb-4">
+                            <h5>Select Size</h5>
+                            <div class="sizes-container d-flex flex-wrap mt-3">
+                                <% size.forEach(sizes => { %>
+                                <div class="size-badge mx-2" data-size="<%= sizes %>">
+                                    <%= sizes %>
                                 </div>
-                                <br><br>
-                                <div class="product-extra-link2">
-
-                                    <%console.log(product.quantity)%>
-
-                                    <% if(product.quantity===0){ %>
-                                        <h4>Out of Stock</h6>
-                                   <% }else{ %>
-
-                                        <!-- <button type="submit" class="btn btn-success button-add-to-cart" onclick=""><a style="width: 200px;" type="submit" class="button button-add-to-cart" href="/addToCart?id=<%=product._id %>">Add to Cart</a> -->
-                                            <a style="width: 200px;" class="btn btn-success button-add-to-cart" href="/addToCart?id=<%= product._id %>">
-                                                Add to Cart
-                                            </a>
-                                            
-                                        
-
-
-                                        </button>
-                                        <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#">
-                                            <i class="fi-rs-heart"></i>
-                                        </a>
-
-                                  <% } %>
-
-                                   
-                                </div>
+                                <% }) %>
                             </div>
-                            <br>
-                            <ul class="product-meta font-xs color-grey mt-50">
-                                <li class="mb-5">Stock Code: <a href="#">FWM15VKT</a></li>
-                                <li class="mb-5">Tags: <a href="#" rel="tag">Fashion</a> <a href="#" rel="tag"><%=category.name%></a> <a href="#" rel="tag">Accessories</a></li>
-                                <li>Availability:<span class="in-stock text-success ml-5"><%=product.quantity%> Items in stock</span></li>
-                            </ul>
                         </div>
+                        
+                            <!-- Product Description -->
+                            <div class="short-desc mb-4">
+                                <h6><%= product.description %></h6>
+                            </div>
+                    
+                            <!-- Stock and Action Buttons -->
+                            <div class="detail-extralink mt-4">
+                                <% if (variant.quantity === 0) { %>
+                                <h4 class="text-danger">Out of Stock</h4>
+                                <% } else { %>
+                                <a class="btn btn-success button-add-to-cart" href="/addToCart?id=<%= product._id %>">
+                                    Add to Cart
+                                </a>
+                                <% } %>
+                             
+                                <a href=" " class="btn btn-warning">Add to wishlist</a>
+                            </div>
+
+                         <div>
+                          <h6 class="my-5">Availability:<span class="in-stock text-success ml-5"><%=variant.quantity%> Items in stock</span><h6>
+
+                         </div>
+
+                         
+                          <div>
+
+                            <h5>Available colors</h5>
+
+                            <%console.log(variantImages[1])%>
+
+                            <div>
+
+                           
+                                <div class="slider-nav-thumbnails">
+                                    <% if (variantImages && variantImages.length > 0) { %>
+                                        <% variantImages.forEach(image => { %>
+                                            <div>
+                                                <img style="height: 50px;" src="/uploads/product-images/<%= image %>" alt="Thumbnail" onclick="changeMainImage('/uploads/product-images/<%= image %>')" />
+                                            </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <p>No images available for this product.</p>
+                                    <% } %>
+                                </div>
+                                
+                                <script>
+                                function changeMainImage(imageSrc) {
+                                    document.getElementById('mainImage').src = imageSrc;
+                                }
+                                </script>
+
+                
+                    
+                           
+                            <%for(let i=0; i<colors.length; i++){%>
+                                <a href=""><%=colors[i]%></a><br>
+                           <% }%>
+                            
+
+                          </div>
+                         
+
+                        </div>
+
                     </div>
-                </div>
-                <div class="product-reviews mt-30">
+
+                    
+
+                    </div>
+                 </div>
+                 <div class="product-reviews mt-30">
                     <h3>Customer Reviews</h3>
                     <div class="review-item">
-                        <div class="review-author">John Doe</div>
-                        <div class="review-rating">
-                            <span>★★★★☆</span>
-                        </div>
-                        <div class="review-text">Great product! Highly recommend.</div>
+                       <div class="review-author">John Doe</div>
+                       <div class="review-rating">
+                          <span>★★★★☆</span>
+                       </div>
+                       <div class="review-text">Great product! Highly recommend.</div>
                     </div>
                     <div class="review-item">
-                        <div class="review-author">Jane Smith</div>
-                        <div class="review-rating">
-                            <span>★★★★★</span>
-                        </div>
-                        <div class="review-text">Excellent quality and fast shipping!</div>
+                       <div class="review-author">Jane Smith</div>
+                       <div class="review-rating">
+                          <span>★★★★★</span>
+                       </div>
+                       <div class="review-text">Excellent quality and fast shipping!</div>
                     </div>
-                </div>
-            </div>
+                 </div>
+              </div>
+           </div>
         </div>
-    </div>
-</div>
-</section>
+     </section>
+     
+
+
 </main>
 
 <%- include("../../views/partials/user/footer") %>
@@ -266,5 +330,39 @@ $(document).ready(function () {
             'transform': 'scale(1)' // Reset scale on mouse leave
         });
     });
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+let selectedSize = null;
+
+// Handle size selection
+$('.size-badge').on('click', function () {
+    // Remove blue color from all size badges
+    $('.size-badge').css('background-color', 'white'); // Reset to original color
+    $('.size-badge').css('color', 'black'); // Reset text color
+
+    // Set the selected size
+    selectedSize = $(this).data('size');
+
+    // Change the background color of the selected size badge
+    $(this).css('background-color', 'DodgerBlue'); // Change to blue
+    $(this).css('color', 'white'); // Change text color to white
+});
+
+// Add to Cart functionality
+$('#addToCartBtn').on('click', function (e) {
+    e.preventDefault(); // Prevent default anchor behavior
+
+    if (selectedSize) {
+        const productId = '<%= product._id %>'; // Get the product ID from the server-side variable
+        const url = `/addToCart?id=${productId}&size=${selectedSize}`; // Construct the URL with selected size
+
+        // Redirect to the add to cart URL
+        window.location.href = url;
+    } else {
+        alert('Please select a size before adding to cart.');
+    }
 });
 </script>
