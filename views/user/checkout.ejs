@@ -1,600 +1,277 @@
-<%- include('../partials/user/header') %>
+<%- include("../../views/partials/user/header") %>
 
-    <style>
-        .shipping-address-selection {
+<title>Checkout</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
-            padding-right: 10px;
-        }
 
-        .address-box {
-            position: relative;
-            border: 1px solid #e2e2e2;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
+<style>
 
-        .address-box:hover {
-            border-color: #424874;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
+#loader, #orderLoader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
 
-        .address-radio {
-            position: absolute;
-            opacity: 0;
-        }
 
-        .address-label {
-            display: block;
-            padding: 1.25rem;
-            cursor: pointer;
-            margin: 0;
-            width: 100%;
-        }
+</style>
 
-        .address-radio:checked+.address-label {
-            background-color: #f8fff9;
-            border-color: #424874;
-        }
 
-        .address-radio:checked+.address-label::before {
-            content: '✓';
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            color: #424874;
-            font-weight: bold;
-        }
+<body>
 
-        .address-type-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
+   
 
-        .address-type-badge.home {
-            background-color: #e8f6ff;
-            color: #0084ff;
-        }
+    <div class="container mt-5">
+        <% if (cart && cart.items.length > 0) { %>
+            <table class="table table-bordered table-hover shadow-sm bg-white rounded">
+                <thead class="thead-dark">
+                    <tr>
+                        <th colspan="2">Product</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% cart.items.forEach(item => { %>
+                        <tr>
+                            <td class="image product-thumbnail">
+                                <% if (item.productId.productImages?.length) { %>
+                                    <img src="/uploads/re-image/<%= item.productId.productImages[0] %>" alt="<%= item.productId.productName %>" class="img-thumbnail" style="width: 100px; height: 100px;">
+                                <% } else { %>
+                                    <img src="/uploads/re-image/default.jpg" alt="Default Image" class="img-thumbnail" style="width: 100px; height: 100px;">
+                                <% } %>
+                            </td>
+                            <td>
+                                <h5><a href="/product/<%= item.productId._id %>"><%= item.productId.productName %></a></h5>
+                                <span class="product-qty">x <%= item.quantity %></span>
+                            </td>
+                            <td>₹<%= item.totalPrice %></td>
+                        </tr>
+                    <% }); %>
+                    <tr>
+                        <th>SubTotal</th>
+                        <td colspan="2">₹<%= totalAmount.toLocaleString() %></td>
+                    </tr>
+                    <tr>
+                        <th>Coupon Discount</th>
+                        <td colspan="2" id="discount"><em>₹ 0</em></td>
+                    </tr>
+                    <tr>
+                        <th>Total</th>
+                        <td colspan="2" id="finalAmount" class="text-brand font-weight-bold">₹<%= totalAmount.toLocaleString() %></td>
+                    </tr>
+                </tbody>
+            </table>
+        <% } else { %>
+            <div class="alert alert-warning text-center shadow-sm rounded p-4">
+                <h5>Your cart is empty.</h5>
+                <p>Start adding items to your cart now!</p>
+                <a href="/shop" class="btn btn-primary btn-lg mt-3">Continue Shopping</a>
+            </div>
+        <% } %>
+    </div>
 
-        .address-type-badge.work {
-            background-color: #fff2e5;
-            color: #ff6b00;
-        }
+  
+    <!-- Button to Open the Modal -->
+    <div class="text-center mt-4">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
+            Add New Address
+        </button>
+    </div>
 
-        .address-type-badge.other {
-            background-color: #f0f0f0;
-            color: #666;
-        }
-
-        .address-content {
-            padding-right: 20px;
-        }
-
-        .name-section h6 {
-            color: #222;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .address-details p {
-            margin-bottom: 0.5rem;
-            color: #555;
-            font-size: 0.9rem;
-        }
-
-        .address-details .landmark {
-            color: #666;
-            font-style: italic;
-        }
-
-        .contact-info {
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px dashed #eee;
-        }
-
-        .contact-info .phone {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .contact-info .alt-phone {
-            color: #888;
-            font-size: 0.85rem;
-        }
-
-        .btn-add-address {
-            background-color: #424874;
-            color: white;
-
-            padding: 8px 20px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-add-address:hover {
-            background-color: #ffffff;
-            color: black;
-            border-style: solid;
-        }
-
-        /* Custom scrollbar for address list */
-        .shipping-address-selection::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .shipping-address-selection::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .shipping-address-selection::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 10px;
-        }
-
-        .shipping-address-selection::-webkit-scrollbar-thumb:hover {
-            background: #999;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .shipping-address-selection {
-                max-height: 300px;
-            }
-
-            .address-label {
-                padding: 1rem;
-            }
-
-            .address-type-badge {
-                font-size: 0.7rem;
-                padding: 3px 8px;
-            }
-        }
-    </style>
-
-    <main class="main">.
-        
-        <div class="page-header breadcrumb-wrap my-2">
-            <div class="container">
-                <nav aria-label="Breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="index.html" rel="nofollow">Home</a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="shop.html">Shop</a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
-                    </ol>
-                </nav>
+    <!-- Modal -->
+    <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="modalAddressForm" method="POST" action="#">
+                        <div class="form-group">
+                            <label for="modalAddressType">Address Type</label>
+                            <input type="text" class="form-control" id="modalAddressType" name="addressType" >
+                        </div>
+                        <div class="form-group">
+                            <label for="modalName">Name</label>
+                            <input type="text" class="form-control" id="modalName" name="name" >
+                        </div>
+                        <div class="form-group">
+                            <label for="modalCity">City</label>
+                            <input type="text" class="form-control" id="modalCity" name="city" >
+                        </div>
+                        <div class="form-group">
+                            <label for="modalLandMark">Landmark</label>
+                            <input type="text" class="form-control" id="modalLandMark" name="landMark">
+                        </div>
+                        <div class="form-group">
+                            <label for="modalState">State</label>
+                            <input type="text" class="form-control" id="modalState" name="state" >
+                        </div>
+                        <div class="form-group">
+                            <label for="modalPincode">Pincode</label>
+                            <input type="number" class="form-control" id="modalPincode" name="pincode">
+                        </div>
+                        <div class="form-group">
+                            <label for="modalPhone">Phone</label>
+                            <input type="number" class="form-control" id="modalPhone" name="phone" >
+                        </div>
+                        <div class="form-group">
+                            <label for="modalAltPhone">Alternate Phone</label>
+                            <input type="number" class="form-control" id="modalAltPhone" name="altPhone">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
             </div>
         </div>
-        <section class="mt-50 mb-50">
-            <div class="container">
+    </div>
 
-                <div class="row">
-                    <div class="col-12">
-                        <div class="divider mt-50 mb-50"></div>
+   
+    
+<!-- Displaying Addresses -->
+<div class="container mt-4" id="addresses-container">
+    <% addresses.forEach((address, index) => { %>
+        <% address.address.forEach((addr, addrIndex) => { %>
+            <div class="address-box mb-3">
+                <input type="radio" name="selectedAddress" id="<%= addrIndex %>" value="<%= addr._id %>" class="address-radio">
+                <label class="address-label" for="address-<%= index %>-<%= addrIndex %>">
+                    <div class="address-type-badge <%= addr.addressType.toLowerCase() %>">
+                        <%= addr.addressType %>
                     </div>
-                </div>
-                <div class="row">
-<div class="col-md-12">
-<div class="order_review">
-    <div class="mb-20">
-        <h4>Your Orders</h4>
-    </div>
-    <div class="table-responsive order_table text-center">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th colspan="2">Product</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-<% if(cart && cart.items.length> 0) { %>
-<% cart.items.forEach(item=> { %>
-<tr>
-    <td class="image product-thumbnail">
-        <img src="/uploads/re-image/<%= item.productId.productImages[0] %>"
-            alt="#">
-    </td>
-    <td>
-        <h5><a href="shop-product-full.html">
-                <%= item.productId.productName %>
-            </a></h5>
-        <span class="product-qty">x <%= item.quantity %></span>
-    </td>
-    <td>₹<%= item.totalPrice %>
-    </td>
-</tr>
-<% }); %>
-    <tr>
-        <th>SubTotal</th>
-        <td class="product-subtotal" colspan="2">₹<%=
-                totalAmount.toLocaleString() %>
-        </td>
-    </tr>
-    <tr>
-        <th>Coupon Discount</th>
-        <td colspan="2" id="discount"><em>₹ 0</em></td>
 
-    </tr>
-    <tr>
-        <th>Total</th>
-        <td colspan="2" class="product-subtotal" id="finalAmount">
-            <span class="font-xl text-brand fw-900">₹<%=
-                    totalAmount.toLocaleString() %></span>
-        </td>
-    </tr>
-    <% } else { %>
-        <% if (product) { %>
-            <tr>
-                <td class="image product-thumbnail">
-                    <img src="/uploads/re-image/<%= product.productImages[0] %>"
-                        alt="<%= product.productName %>">
-                </td>
-                <td>
-                    <h5>
-                        <a href="shop-product-full.html">
-                            <%= product.productName %>
-                        </a>
-                    </h5>
-                    <span class="product-qty">x 1</span>
-                </td>
-                <td>
-                    ₹<%= product.salePrice.toLocaleString() %>
-                </td>
-            </tr>
-            <tr>
-                <th>SubTotal</th>
-                <td class="product-subtotal" colspan="2">₹<%=
-                        totalAmount.toLocaleString() %>
-                </td>
-            </tr>
-            <tr>
-                <th>Coupon Discount</th>
-                <td colspan="2" id="discount"><em>₹ 0</em></td>
-
-            </tr>
-            <tr>
-                <th>Total</th>
-                <td colspan="2" class="product-subtotal"
-                    id="finalAmount">
-                    <span class="font-xl text-brand fw-900">₹<%=
-                            totalAmount.toLocaleString() %></span>
-                </td>
-            </tr>
-            <% } %>
-
-            <% } %>
-
-            </tbody>
-        </table>
-    </div>
-
-    <div>
-
-        <% addresses.forEach((address, index)=> { %>
-            <% address.address.forEach((addr, addrIndex)=> { %>
-                <div class="address-box mb-3">
-                    <input type="radio" name="selectedAddress"
-                        id="address-<%= index %>-<%= addrIndex %>"
-                        value="<%= addr._id %>" class="address-radio" required>
-                    <label class="address-label" for="address-<%= index %>-<%= addrIndex %>">
-                        <div class="address-type-badge <%= addr.addressType.toLowerCase() %>">
-                            <%= addr.addressType %>
+                    <div class="address-content">
+                        <div class="name-section">
+                            <h6 class="mb-2"><%= addr.name %></h6>
                         </div>
-                        <div class="address-content">
-                            <div class="name-section">
-                                <h6 class="mb-2">
-                                    <%= addr.name %>
-                                </h6>
-                            </div>
-                            <div class="address-details">
-                                <% if (addr.landMark) { %>
-                                    <p class="landmark"><i class="fi-rs-marker me-2"></i>
-                                        <%= addr.landMark %>
-                                    </p>
+                        <div class="address-details">
+                            <% if (addr.landMark) { %>
+                                <p class="landmark"><i class="fi-rs-marker me-2"></i><%= addr.landMark %></p>
+                            <% } %>
+                            <p class="location"><%= addr.city %>, <%= addr.state %> <%= addr.pincode %></p>
+                            <div class="contact-info">
+                                <p class="phone">
+                                    <i class="fi-rs-phone-call me-2"></i>
+                                    <%= addr.phone %>
+                                    <% if (addr.altPhone) { %>
+                                        <span class="alt-phone">/ <%= addr.altPhone %></span>
                                     <% } %>
-                                        <p class="location">
-                                            <%= addr.city %>, <%= addr.state %>
-                                                    <%= addr.pincode %>
-                                        </p>
-                                        <div class="contact-info">
-                                            <p class="phone">
-                                                <i class="fi-rs-phone-call me-2"></i>
-                                                <%= addr.phone %>
-                                                    <% if (addr.altPhone) { %>
-                                                        <span class="alt-phone">/ <%=
-                                                                addr.altPhone %></span>
-                                                        <% } %>
-                                            </p>
-                                        </div>
+                                </p>
                             </div>
                         </div>
-                    </label>
-                </div>
-                <% }); %>
-                    <% }); %>
-    
-
-
-    </div>
-     
-
-   
-    
-<div class="container mt-4">
-   
-   <form id="addressForm" method="POST" action="/addaddress" class="border-0 p-3">
-       <div class="row mb-50">
-           <div class="form-group col-md-4">
-               <label for="addressType">Address Type:</label>
-               <input type="text" class="form-control border-3" id="addressType" name="addressType" >
-           </div>
-           <div class="form-group col-md-4">
-               <label for="name">Name:</label>
-               <input type="text" class="form-control border-3" id="name" name="name" >
-           </div>
-           <div class="form-group col-md-4">
-               <label for="city">City:</label>
-               <input type="text" class="form-control border-3" id="city" name="city" >
-           </div>
-       </div>
-       <div class="row mb-3">
-           <div class="form-group col-md-4">
-               <label for="landMark">Landmark:</label>
-               <input type="text" class="form-control border-3" id="landMark" name="landMark" >
-           </div>
-           <div class="form-group col-md-4">
-               <label for="state">State:</label>
-               <input type="text" class="form-control border-3" id="state" name="state" >
-           </div>
-           <div class="form-group col-md-4">
-               <label for="pincode">Pincode:</label>
-               <input type="number" class="form-control border-3" id="pincode" name="pincode" >
-           </div>
-       </div>
-       <div class="row mb-3">
-           <div class="form-group col-md-4">
-               <label for="phone">Phone:</label>
-               <input type="number" class="form-control border-3" id="phone" name="phone" >
-           </div>
-           <div class="form-group col-md-4">
-               <label for="altPhone">Alternate Phone:</label>
-               <input type="number" class="form-control border-3" id="altPhone" name="altPhone" >
-           </div>
-       </div>
-       <button type="submit" id="submitButton" class="btn btn-primary">Submit</button>
-   </form>
+                    </div>
+                </label>
+            </div>
+        <% }); %>
+    <% }); %>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-        <form id="orderForm" method="POST" action="/placeOrder"
-            onsubmit="return validateAddress()" class="my-5">
-            <div class="payment_option ">
-                <h4>Select Payment Method</h4>
-                <div class="custome-radio">
-                    <input class="form-check-input" required type="radio" value="COD"
-                        name="payment_option" id="exampleRadios3" checked>
-                    <label class="form-check-label" for="exampleRadios3">Cash on
-                        Delivery</label>
-                </div>
-                <div class="custome-radio">
-                    <input class="form-check-input" required type="radio" value="online"
-                        name="payment_option" id="exampleRadios5">
-                    <label class="form-check-label" for="exampleRadios5">Online Payment</label>
-                </div>
+<!-- Order Form -->
+<div class="text-center mt-4">
+    <form id="orderForm" method="POST" action="/placeOrder" class="my-5">
+        <div class="payment_option mb-4">
+            <h4>Select Payment Method</h4>
+            <div class="form-check mb-2">
+                <input class="form-check-input" required type="radio" value="COD" name="payment_option" id="cashOnDelivery" checked>
+                <label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
             </div>
+            <div class="form-check">
+                <input class="form-check-input" required type="radio" value="online" name="payment_option" id="onlinePayment">
+                <label class="form-check-label" for="onlinePayment">Online Payment</label>
+            </div>
+        </div>
 
-            <!-- Hidden fields to store cart and totals -->
-            <input type="hidden" name="cart" value='<%= JSON.stringify(cart) %>'>
-            <input type="hidden" id="totalamount" name="totalPrice"
-                value="<%= totalAmount.toLocaleString() %>">
-            <input type="hidden" id="selectedAddressId" name="addressId">
-            <input type="hidden" id="discountInput" name="discountInput">
-            
+        <!-- Hidden Fields -->
+        <input type="hidden" name="cart" value='<%= JSON.stringify(cart) %>'>
+        <input type="hidden" id="totalamount" name="totalPrice" value="<%= totalAmount %>">
+    
+        <input type="hidden" id="selectedAddressId" name="addressId" value="">
+        <input type="hidden" id="discountInput" name="discountInput">
 
-                                    <% if (product) { %>
-                                        <input type="hidden" name="singleProduct"
-                                            value="<%= JSON.stringify(product) %>">
-                                        <% } %>
+        <% if (product) { %>
+            <input type="hidden" name="singleProduct" value="<%= JSON.stringify(product) %>">
+        <% } %>
 
-                                    <!-- Single Payment Button -->
-                                    <div id="paymentButtons" class="my-5">
-                                        <button type="submit" class="btn btn-fill-out btn-success btn-block"
-                                            id="submitButton" onclick="syncDiscount()">Place Order</button>
-                                    </div>
-                                </form>
-
+        <!-- Place Order Button -->
+        <button type="submit" class="btn btn-success btn-sm mt-3" onclick="">Place Order</button>
 
 
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        </section>
-    </main>
+    </form>
+
+</div>
+
+<!-- <script>
+    // Ensure the selected address is set in the hidden input before submitting
+    $('#orderForm').submit(function(event) {
+        const selectedAddress = $('input[name="selectedAddress"]:checked').val();
+        if (!selectedAddress) {
+            event.preventDefault();
+            alert('Please select an address.');
+            return;
+        }
+        $('#selectedAddressId').val(selectedAddress);
+        console.log('Submitting address ID:', selectedAddress); // Log for debugging
+    });
+</script> -->
 
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-
-        document.querySelectorAll('.address-radio').forEach(radio => {
-            radio.addEventListener('change', function () {
-                const selectedAddressField = document.getElementById('selectedAddressId');
-                selectedAddressField.value = this.value || ''; // Set the selected address ID
-            });
-        });
 
 
-        function validateAddress() {
-            const addressRadioButtons = document.querySelectorAll('input[name="selectedAddress"]');
-            const paymentOption = document.querySelector('input[name="payment_option"]:checked').value;
-            let addressSelected = false;
 
-            addressRadioButtons.forEach((radio) => {
-                if (radio.checked) {
-                    addressSelected = true;
-                }
-            });
 
-            if (!addressSelected) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'No Address Selected',
-                    text: 'Please select an address before proceeding.',
-                    confirmButtonColor: '#39b4ac',
-                });
-                return false;
+<%- include("../../views/partials/user/footer") %>
+
+
+<script>
+
+
+
+
+    // Add a click event listener to all radio buttons with the class "address-radio"
+document.querySelectorAll('.address-radio').forEach((radio) => {
+    radio.addEventListener('click', (event) => {
+        // Get the ID of the clicked radio button
+        const addressId = event.target.id;
+        document.getElementById("selectedAddressId").value = addressId;
+        console.log(`User clicked on radio button with ID: ${addressId}`);
+    });
+});
+
+
+
+
+
+$(document).ready(function() {
+    $('#modalAddressForm').submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission
+        var formData = $(this).serialize();
+        $.ajax({
+            type: 'POST',
+            url: '/addAddress',
+            data: formData,
+            success: function(response) {
+                // Clear the form
+                $('#modalAddressForm')[0].reset();
+                // Close the modal
+                $('#addAddressModal').modal('hide');
+                // Refresh the page to load updated addresses
+                location.reload();
+            },
+            error: function(error) {
+                console.log('Error adding address:', error);
+                alert('Failed to add address. Please try again.');
             }
-         
-            return true;
-        }
-
-        function formatPrice(amount) {
-            return '₹ ' + amount.toLocaleString();
-        }
-
-  document.getElementById('addressForm').addEventListener('submit', function(event) {
-      if (!validateForm()) {
-          event.preventDefault();
-      }
-  });
-
-
-  function validateForm() {
-      let isValid = true;
-      const requiredFields = ["addressType", "name", "city", "landMark", "state", "pincode", "phone", "altPhone"];
-      requiredFields.forEach(function(field) {
-          const input = document.getElementById(field);
-          const inputValue = input.value.trim();
-          const errorElement = document.getElementById(field + '-error');
-
-
-          if (inputValue === "") {
-              if (!errorElement) {
-                  const errorMessage = "This field is required.";
-                  const errorDiv = document.createElement('div');
-                  errorDiv.className = "text-danger";
-                  errorDiv.textContent = errorMessage;
-                  errorDiv.id = field + '-error';
-                  input.parentNode.appendChild(errorDiv);
-              }
-              isValid = false;
-          } else {
-              if (errorElement) {
-                  errorElement.remove();
-              }
-          }
-      });
-
-
-      const addressType = document.getElementById('addressType').value;
-      const name = document.getElementById('name').value;
-      const city = document.getElementById('city').value;
-      const landMark = document.getElementById('landMark').value;
-      const state = document.getElementById('state').value;
-      const pincode = document.getElementById('pincode').value;
-      const phone = document.getElementById('phone').value;
-      const altPhone = document.getElementById('altPhone').value;
-      const namePattern = /^[A-Za-z\s]+$/;
-      const pincodePattern = /^\d{6}$/;
-      const phonePattern = /^\d{10}$/;
-      if (!namePattern.test(name)) {
-          Swal.fire({
-              title: 'Error',
-              text: 'Name should contain alphabets only.',
-              icon: 'error'
-          });
-          isValid = false;
-      }
-      if (!namePattern.test(city)) {
-          Swal.fire({
-              title: 'Error',
-              text: 'City should contain alphabets only.',
-              icon: 'error'
-          });
-          isValid = false;
-      }
-      if (!namePattern.test(landMark)) {
-          Swal.fire({
-              title: 'Error',
-              text: 'Landmark should contain alphabets only.',
-              icon: 'error'
-          });
-          isValid = false;
-      }
-      if (!namePattern.test(state)) {
-          Swal.fire({
-              title: 'Error',
-              text: 'State should contain alphabets only.',
-              icon: 'error'
-          });
-          isValid = false;
-      }
-      if (!pincodePattern.test(pincode)) {
-          Swal.fire({
-              title: 'Error',
-              text: 'Pincode should be a 6-digit number.',
-              icon: 'error'
-          });
-          isValid = false;
-      }
-      if (!phonePattern.test(phone)) {
-          Swal.fire({
-              title: 'Error',
-              text: 'Phone number should be a 10-digit number.',
-              icon: 'error'
-          });
-          isValid = false;
-      }
-      if (!phonePattern.test(altPhone)) {
-          Swal.fire({
-              title: 'Error',
-              text: 'Alternate phone number should be a 10-digit number.',
-              icon: 'error'
-          });
-          isValid = false;
-      }
-      if (phone === altPhone) {
-          Swal.fire({
-              title: 'Error',
-              text: 'Phone number and alternate phone number should be different.',
-              icon: 'error'
-          });
-          isValid = false;
-      }
-      return isValid;
-  }
-
+        });
+    });
+});
 
 
 
 
 
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
-    <%- include('../partials/user/footer') %></div>

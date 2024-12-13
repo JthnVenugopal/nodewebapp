@@ -67,7 +67,7 @@ router.post("/verify-passForgot-otp",profileController.verifyForgotPassOtp);
 //address management
 router.get("/add-address",userIsAuthenticated,profileController.addAddress);
 router.get("/show-address",userIsAuthenticated,profileController.showAddress)
-router.post("/addAddress",userIsAuthenticated,profileController.postAddAddress);
+router.post("/addAddress",userIsAuthenticated,profileController.postAddAddress1);
 router.get("/editAddress",userIsAuthenticated,profileController.editAddress);
 router.post("/editAddress",userIsAuthenticated,profileController.postEditAddress);
 router.get("/deleteAddress",userIsAuthenticated,profileController.deleteAddress);
@@ -82,7 +82,7 @@ router.post('/cart/remove/:cartItemId', cartController.removeFromCart);
 //checkout management
 router.get("/checkout",userIsAuthenticated,checkoutController.getCheckout);
 router.post("/placeOrder",checkoutController.placeOrder);
-// router.post("/checkout",userIsAuthenticated,checkoutController.postAddaddress);
+router.post("/addAddress2",userIsAuthenticated,checkoutController.postAddAddress);
 
 //order management
 router.get("/orderDetails",orderController.getOrderDetails);

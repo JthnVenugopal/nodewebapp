@@ -458,9 +458,9 @@ const showAddress = async (req,res) => {
   }
 }
 //------------------------------------------------------------
-const postAddAddress = async (req, res) => {
+const postAddAddress1 = async (req, res) => {
   try {
-
+        console.log("------------------postAddAddress1------------------")
       const sessionUser = req.session.user;
       const googleUser  = req.user;
       const userId = sessionUser || googleUser;
@@ -606,7 +606,7 @@ module.exports = {
   verifyForgotPassOtp,
   addAddress,
   showAddress,
-  postAddAddress,
+  postAddAddress1,
   deleteAddress,
   editAddress,
   postEditAddress,
