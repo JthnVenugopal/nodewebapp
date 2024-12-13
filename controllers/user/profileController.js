@@ -64,6 +64,8 @@ const userProfile = async (req,res) => {
     const sessionUser  = req.session.user; 
     const userId = sessionUser  || googleUser ;
 
+
+
       const page = parseInt(req.query.page) || 1;
       const limit = 6;
       const skip = (page - 1)*limit;

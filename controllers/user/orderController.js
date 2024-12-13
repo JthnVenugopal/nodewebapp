@@ -20,6 +20,11 @@ const getOrderDetails = async (req, res) => {
         // Fetch user data
         const userData = await User.findOne({ _id: userId }).select("name email orderHistory").lean();
 
+
+        console.log("userData : "+ JSON.stringify(userData))
+
+        
+
         if (!userData) {
             throw new Error("User not found.");
         }
@@ -99,6 +104,7 @@ const cancelOrder = async (req, res) => {
         await order.save();
 
         return res.json({ message: 'COD order cancelled successfully' });
+        
     } catch (error) {
         console.error('Error cancelling order:', error);
         return res.status(500).json({ message: 'Failed to cancel order' });

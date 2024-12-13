@@ -11,6 +11,7 @@ const Variant = require("../../models/variantSchema");
 const getCart = async (req, res) => {
   try {
     const userId = req.session.user || req.user;
+    
 
     if (!userId) {
       return res.status(401).json({ error: "User not authenticated" });

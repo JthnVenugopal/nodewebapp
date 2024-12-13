@@ -20,7 +20,7 @@ const userSchema = new Schema ({
   },
   phone: {
 
-    type: BigInt,
+    type: String,
     required: false,
     unique: true,
     sparse: true,// to avoid multiple null
