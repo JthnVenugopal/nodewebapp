@@ -1,5 +1,15 @@
 <%- include("../../views/partials/user/header") %>
 
+<style>
+
+#paginationContainer button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+
+</style>
+
 <body>
   <div class="page-header breadcrumb-wrap my-5">
     <div class="container">
@@ -100,6 +110,9 @@
     </div>
   </div>
 
+  <div class="d-flex justify-content-center mt-4" id="paginationContainer"></div>
+
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const filterForm = document.getElementById('filterForm');
@@ -191,10 +204,44 @@
         });
       }
 
+      function paginateProducts(products) {
+    const totalPages = Math.ceil(products.length / productsPerPage);
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const endIndex = startIndex + productsPerPage;
+
+    productsContainer.innerHTML = '';
+    products.slice(startIndex, endIndex).forEach(product => productsContainer.appendChild(product));
+
+    renderPagination(totalPages);
+  }
+
+  function renderPagination(totalPages) {
+    paginationContainer.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    for (let i = 1; i <= totalPages; i++) {
+      const pageButton = document.createElement('button');
+      pageButton.textContent = i;
+      pageButton.classList.add('btn', 'btn-outline-primary', 'mx-1');
+      if (i === currentPage) pageButton.classList.add('active');
+
+      pageButton.addEventListener('click', () => {
+        currentPage = i;
+        applyFilters();
+      });
+
+      paginationContainer.appendChild(pageButton);
+    }
+  }
+
       // Initial application of filters and sort to display products on page load
       applyFilters();
     });
   </script>
+
+
+
 </body>
 
 <%- include("../../views/partials/user/footer") %>
