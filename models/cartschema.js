@@ -22,14 +22,16 @@ const cartSchema =  new Schema({
 
       type:Number,
       required:true,
+      default:0,
 
     },
-    regularPrice:{
 
-      type:Number,
-      required:true
-
+    variantId: { // Add this line to reference the Variant
+      type: Schema.Types.ObjectId,
+      ref: 'Variant',
+      required: true // Make it required if every item must have a variant
     },
+
     price:{
 
       type:Number,

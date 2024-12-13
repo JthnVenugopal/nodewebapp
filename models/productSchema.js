@@ -36,6 +36,19 @@ const productSchema = new Schema ({
 
   },
 
+  popularity: {
+    type: Number,
+    default: 0,
+  },
+  averageRating: {
+    type: Number,
+    default: 0,
+  },
+  numberOfRatings: {
+    type: Number,
+    default: 0,
+  },
+
   isBlocked:{
     type:Boolean,
     default:false

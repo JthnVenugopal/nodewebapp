@@ -1,283 +1,90 @@
 <%- include("../../views/partials/user/header") %>
 
-<style>
+<title>Cart</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
 
- /* Increase the width for larger screens */
- .cart-totals {
-        min-width: 1200px; /* Adjust percentage as per your requirement */
-        max-width: 1200px; /* Optionally limit the maximum width */
-        margin: 0 auto; /* Center the container */
-    }
+<body>
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .cart-totals {
-            width: 90%; /* Adjust width for smaller screens */
-        }
-    }
-
-.detail-qty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 35px;
-    height: 40px;
-    
-}
-
-.detail-qty button {
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 35px;
-    height: 40px;
-    /* display: flex; */
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #333;
-    transition: background-color 0.3s ease;
-}
-
-.detail-qty button:hover {
-    background-color: #e0e0e0;
-}
-
-.qty-val {
-    width: 50px;
-    text-align: center;
-    font-size: 16px;
-    border: none;
-    outline: none;
-    background-color: transparent;
-    pointer-events: none;
-}
-
-.cart-action a.btn {
-    background-color: #424874;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
-
-.cart-action a.btn:hover {
-    background-color: #36395E;
-}
-</style>
-
-<main class="main">
-    <div class="page-header breadcrumb-wrap my-5">
-        <div class="container">
-            <nav aria-label="Breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="index.html" rel="nofollow">Home</a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="shop.html">Shop</a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">Checkout</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-
-<section class="mt-50 mb-50">
-    <div class="container">
-        <div class="row">
-<div class="col-12">
-<div class="table-responsive">
-    <% if(cart && cart.items.length>0){ %>
-    <table class="table shopping-summery text-center clean">
-        <thead>
-            <tr class="main-heading">
-                <th scope="col">Image</th>
-                <th scope="col">Name</th>
-                <th scope="col">Price</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Subtotal</th>
-                <th scope="col">Remove</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% for(let i=0;i<products.length;i++){ %>
-            <tr>
-                <td class="image product-thumbnail">
-                    <img src="/uploads/re-image/<%= products[i].productId.productImages[0] %>" alt="#">
-                </td>
-                <td class="product-des product-name">
-                    <h5 class="product-name">
-                        <span>
-                            <%= products[i].productId.productName %>
-                        </span>
-                    </h5>
-                </td>
-                <td class="price" data-title="Price">
-                    <span>₹<%= products[i].productId.salePrice %></span>
-                </td>
-                <td class="text-center" data-title="Stock">
-                    <div class="detail-qty border radius m-auto">
-                        <button class="qty-down"
-                            onclick="updateQuantity('<%= products[i].productId._id %>', -1, 5)">-</button>
-                        <input readonly class="qty-val" id="qty-<%= products[i].productId._id %>"
-                            value="<%= products[i].quantity %>">
-                        <button class="qty-up"
-                            onclick="updateQuantity('<%= products[i].productId._id %>', 1, 5)">+</button>
-                    </div>
-                </td>
-                <td class="text-right" data-title="Cart">
-                    <span id="totalPrice-<%= products[i].productId._id %>">₹<%= products[i].totalPrice %></span>
-                </td>
-                <td class="action" data-title="Remove">
-                    <button class="btn btn-danger">
-                        <a href="javascript:void(0);" onclick="confirmRemoveProduct('<%= products[i].productId._id %>')" class="text-muted">
-                        Remove
-                    </a>
-                    </button>
-                    
-                </td>
-            </tr>
-            <% } %>
-        </tbody>
-    </table>
-    <% }else{ %>
-    <section class="mt-50 mb-50">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="text-center my-5">
-                        <h1 class="mb-4">Your Cart is Empty</h1>
-                        <p class="mb-4">It seems like you haven't added any products to your cart yet.</p>
-                        <p>Start browsing our products and add them to your cart to complete your order.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <% } %>
-</div>
-
-            <%if(items.length>0){%> 
-
-                <p style="display: none;"></p>
-                <%}else{%>
-
-            <div class="cart-action text-end d-flex justify-content-center my-5">
-                <a href="/" class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
-            </div>
-
-            <%}%>
-
-            <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
-
-            <div class="row mb-50">
-                <div class="col-lg-6 col-md-12">
-    
-                    
-                    
-
-    <%if(items.length===0){%>                
-
-
-        <p style="display: none;"></p>
-
-        <%}else{%>
-    <div class="border p-md-4 p-30 border-radius cart-totals  my-5">
-        <div class="heading_s1 mb-3">
-            <h4>Cart Total Amount</h4>
-        </div>
-        <div class="table-responsive">
-            <table class="table">
-                <tbody>
+<div class="container mt-5 my-5" style="height: fit-content;">
+    <% if (items.length > 0) { %>
+        <table class="table table-bordered table-hover shadow-sm bg-white rounded">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Images</th>
+                    <th>Product</th>
+                    <th>Variant Code</th>
+                    <th>Color</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% items.forEach(item => { %>
                     <tr>
-                        <td class="cart_total_label">Total</td>
-                        <td class="cart_total_amount">
-                            <strong><span class="font-xl fw-900 text-brand">₹<%= totalAmount.toLocaleString() %></span></strong>
+                        <td>
+                            <% if (item.variantId.productImages && item.variantId.productImages.length > 0) { %>
+                                <img src="/uploads/re-image/<%= item.variantId.productImages[0] %>" alt="<%= item.productId.productName %>" class="img-thumbnail" style="width: 100px; height: 100px;">
+                            <% } %>
+                        </td>
+                        <td><%= item.productId.productName %></td>
+                        <td><%= item.variantId.variantCode %></td>
+                        <td><%= item.variantId.color %></td>
+                        <td><%= item.quantity %></td>
+                        <td>₹<%= item.price.toFixed(2) %></td>
+                        <td class="total-price">₹<%= item.totalPrice.toFixed(2) %></td>
+                        <td>
+                          <form action="/cart/remove/<%= item._id %>" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Remove Item">
+                                <i class="fas fa-trash-alt"></i> Remove
+                            </button>
+                          </form>
                         </td>
                     </tr>
-                </tbody>
-            </table>
+                <% }); %>
+            </tbody>
+        </table>
+
+        <div class="text-right mt-3">
+            <h5>Total Amount: ₹<span id="totalAmount">0.00</span></h5>
         </div>
-
-      
-
-        <div class="d-flex justify-content-center my-2">
-        <% if(cart){ %>
-        <a href="/checkout" class="btn btn-success"><i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
-        <% }else{ %>
-        <a href="#" class="btn btn-success"><i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
-        <% } %> 
+    <% } else { %>
+        <div class="alert alert-warning text-center shadow-sm rounded p-4">
+            <h5>Your cart is empty.</h5>
+            <p>Start adding items to your cart now!</p>
+            <a href="/shop" class="btn btn-primary btn-lg mt-3">
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+            </a>
         </div>
-      
-  <%}%>
-    </div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-</main>
+    <% } %>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <a href="/checkout">
+        <button type="button" class="btn btn-primary btn-sm mt-2" data-toggle="tooltip" title="Proceed to Checkout">
+            Checkout
+        </button>
+    </a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-function confirmRemoveProduct(productId) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "Do you want to remove this product from your cart?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, remove it!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = `/removeFromCart?id=${productId}`;
-        }
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
     });
-}
 
-async function updateQuantity(productId, change, maxStock) {
-    const quantityElement = document.getElementById(`qty-${productId}`);
-    const totalPriceElement = document.getElementById(`totalPrice-${productId}`);   
-    let quantity = parseInt(quantityElement.value) || 0;
-    const newQuantity = quantity + change;
-
-    if (newQuantity < 1) {
-        Swal.fire({ icon: "warning", title: "Minimum quantity reached", text: "The minimum quantity is 1" });
-        return;
-    } else if (newQuantity > maxStock) {
-        Swal.fire({ icon: "warning", title: "Maximum quantity reached", text: `The maximum quantity is ${maxStock}` });
-        return;
-    }
-
-    quantityElement.value = newQuantity;
-
-    try {
-        const response = await fetch(`/updateCartQuantity`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ productId, quantity: newQuantity }),
+    // Calculate total amount
+    $(document).ready(function() {
+        let totalAmount = 0;
+        $('.total-price').each(function() {
+            const price = parseFloat($(this).text().replace('₹', '').replace(',', ''));
+            totalAmount += price;
         });
-
-        const data = await response.json();
-        if (data.success) {
-            totalPriceElement.innerText = `₹${data.newTotalPrice}`;
-        } else {
-            Swal.fire({ icon: "error", title: "Update failed", text: "Error updating cart." });
-        }
-    } catch (error) {
-        console.error('Error during fetch request:', error);
-    }
-}
+        $('#totalAmount').text(totalAmount.toFixed(2));
+    });
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
+</body>
 
 <%- include("../../views/partials/user/footer") %>

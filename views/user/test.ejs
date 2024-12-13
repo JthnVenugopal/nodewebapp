@@ -1,43 +1,67 @@
-
+<%- include("../../views/partials/user/header") %>
+<title>Shopping Cart</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/css/bootstrap.min.css">
 <style>
-  .variants {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.variant {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin: 10px;
-  width: 200px; /* Adjust as needed */
-}
-
-.product-images img {
-  width: 100%; /* Make images responsive */
-  height: auto;
-}
+  .cart-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  .cart-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 20px;
+  }
+  .cart-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+  }
 </style>
 
+<main class="container mt-5">
+  <h1>Shopping Cart</h1>
 
-<h1><%= product.productName %></h1>
-<p><%= product.description %></p>
-<p>Brand: <%= brand.name %></p>
-<p>Category: <%= category.name %></p>
-
-<h3>Available Colors:</h3>
-<div class="variants">
-  <% sameVariants.forEach(variant => { %>
-    <div class="variant">
-      <h4>Color: <%= variant.color %></h4>
-      <p>Sizes: <%= variant.size.join(', ') %></p> <!-- Display sizes -->
-      <p>Regular Price: <%= variant.regularPrice %></p>
-      <p>Sale Price: <%= variant.salePrice %></p>
-      <p>Available Quantity: <%= variant.quantity %></p>
-      <div class="product-images">
-        <% variant.productImages.forEach(image => { %>
-          <img src="<%= image %>" alt="Product Image" />
+  <% if (cartItems.length > 0) { %>
+    <table class="table table-bordered table-hover shadow-sm bg-white rounded">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Product</th>
+          <th scope="col">Price</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Total</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% cartItems.forEach(item => { %>
+          <tr class="cart-item">
+            <td>
+              <img src="/uploads/re-image/<%= item.productImage %>" alt="<%= item.productName %>">
+              <div><%= item.productName %></div>
+            </td>
+            <td>₹<%= item.salePrice.toLocaleString('en-IN') %></td>
+            <td><%= item.quantity %></td>
+            <td>₹<%= item.totalPrice.toLocaleString('en-IN') %></td>
+            <td class="cart-actions">
+              <form action="/removeFromCart" method="POST" class="me-2">
+                <input type="hidden" name="itemId" value="<%= item.itemId %>">
+                <button type="submit" class="btn btn-danger">Remove</button>
+              </form>
+            </td>
+          </tr>
         <% }) %>
-      </div>
+      </tbody>
+    </table>
+
+    <div class="mt-4">
+      <a href="/checkout" class="btn btn-success">Proceed to Checkout</a>
     </div>
-  <% }) %>
-</div>
+  <% } else { %>
+    <p>Your cart is empty.</p>
+  <% } %>
+</main>
+
+<%- include("../../views/partials/user/footer") %>

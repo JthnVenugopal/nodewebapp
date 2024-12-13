@@ -1,50 +1,105 @@
 <%- include("../../views/partials/user/header") %>
 
-<div class="page-header breadcrumb-wrap my-5">
-  <div class="container">
-      <nav aria-label="Breadcrumb">
-          <ol class="breadcrumb">
-              <li class="breadcrumb-item">
-                  <a href="#" rel="nofollow">Home</a>
-              </li>
-              <li class="breadcrumb-item active" aria-current="page">Shop</li>
-              
-          </ol>
-      </nav>
+<body >
+
+  <div class="page-header breadcrumb-wrap my-5">
+    <div class="container">
+        <nav aria-label="Breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="#" rel="nofollow">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Shop</li>
+            </ol>
+        </nav>
+    </div>
   </div>
-</div>
+  
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-lg-3 d-flex" style="flex-direction: column;">
+        <h5 class="my-2">Filter Products</h5>
 
-<div class="container mt-4">
-  <div class="row">
-    <% products.forEach(product => { %>
-      <div class="col-lg-3 col-md-4 col-sm-6 mb-4 mb-5">
-
-        <a href="/productDetails?id=<%= product._id %>">
-
-          <div class="card h-100">
-            <% if (product.variant.productImages && product.variant.productImages.length > 0) { %>
-              <img style="height: 320px;" src="/uploads/re-image/<%= product.variant.productImages[0] %>" class="card-img-top" alt="<%= product.productName %>">
-            <% } %>
-            <div class="card-body">
-              <h5 class="card-title"><%= product.productName %></h5>
-              
-              <p class="text-success font-weight-bold">₹<%= product.variant.salePrice.toLocaleString('en-IN') %></p>
-              <% if (product.variant.quantity > 0) { %>
-                <p class="text-success">In Stock: <%= product.variant.quantity %></p>
-              <% } else { %>
-                <p class="text-danger">Out of Stock</p>
-              <% } %>
-              
-            </div>
+        <form action="/filter" method="POST">
+      
+          <!-- Search Bar -->
+          <div class="mb-3">
+            <input type="text" name="search" id="search" class="form-control form-control-sm" placeholder="Search Products" />
+          </div>
+      
+          <!-- Category Dropdown -->
+          <div class="mb-3">
+            <select name="category" id="category" class="form-select my-3">
+              <option value="">Select Category</option>
+              <% categories.forEach(category => { %>
+                <option value="<%= category._id %>"><%= category.name %></option>
+              <% }) %>
+            </select>
+          </div>
+      
+          <!-- Brand Dropdown -->
+          <div class="mb-3">
+            <select name="brand" id="brand" class="form-select">
+              <option value="">Select Brand</option>
+              <% brands.forEach(brand => { %>
+                <option value="<%= brand._id %>"><%= brand.brandName %></option>
+              <% }) %>
+            </select>
           </div>
 
-
-        </a>
-     
-
+          <!-- Sort By Dropdown -->
+          <div class="mb-3">
+            
+            <select name="sort" id="sort" class="form-select my-3">
+              <option value="">Sort</option>
+              <option value="popularity">Popularity</option>
+              <option value="priceAsc">Price: Low to High</option>
+              <option value="priceDesc">Price: High to Low</option>
+              <option value="averageRating">Average Ratings</option>
+              <option value="featured">Featured</option>
+              <option value="newArrivals">New Arrivals</option>
+              <option value="nameAsc">Name: A-Z</option>
+              <option value="nameDesc">Name: Z-A</option>
+            </select>
+          </div>
+      
+          <!-- Submit Button -->
+          <div style="margin-top: 250px;">
+            <button type="submit" class="btn btn-success btn-sm">Filter</button>
+          </div>
+      
+        </form>
       </div>
-    <% }) %>
+  
+      <!-- ------------------------------------------------------------------------------ -->
+  
+      <div class="col-lg-9">
+        <div class="row">
+          <% products.forEach(product => { %>
+            <div class="col-lg-4 col-md-6 mb-4">
+              <a href="/productDetails?id=<%= product._id %>">
+                <div class="card h-100">
+                  <% if (product.variant.productImages && product.variant.productImages.length > 0) { %>
+                    <img style="height: 320px;" src="/uploads/re-image/<%= product.variant.productImages[0] %>" class="card-img-top" alt="<%= product.productName %>">
+                  <% } %>
+                  <div class="card-body">
+                    <h5 class="card-title"><%= product.productName %></h5>
+                    <p class="text-success font-weight-bold">₹<%= product.variant.salePrice.toLocaleString('en-IN') %></p>
+                    <% if (product.variant.quantity > 0) { %>
+                      <p class="text-success">In Stock: <%= product.variant.quantity %></p>
+                    <% } else { %>
+                      <p class="text-danger">Out of Stock</p>
+                    <% } %>
+                  </div>
+                </div>
+              </a>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+  
+</body>
 
 <%- include("../../views/partials/user/footer") %>

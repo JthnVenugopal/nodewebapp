@@ -177,50 +177,50 @@ const placeOrder = async (req, res) => {
 
 
 
-const postAddaddress = async (req, res) => {
-  try {
+// const postAddaddress = async (req, res) => {
+//   try {
 
-      const sessionUser = req.session.user;
-      const googleUser  = req.user;
-      const userId = sessionUser || googleUser;
+//       const sessionUser = req.session.user;
+//       const googleUser  = req.user;
+//       const userId = sessionUser || googleUser;
       
-      if (!userId) {
-          return res.redirect("/login");
-      }
+//       if (!userId) {
+//           return res.redirect("/login");
+//       }
 
-      const userData = await User.findOne({ _id: userId });
-      if (!userData) {
-          return res.redirect("/pageNotFound");
-      }
+//       const userData = await User.findOne({ _id: userId });
+//       if (!userData) {
+//           return res.redirect("/pageNotFound");
+//       }
 
-      const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body;
-      if (!addressType || !name || !city || !state || !pincode || !phone) {
-          return res.status(400).send("Missing required fields");
-      }
+//       const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body;
+//       if (!addressType || !name || !city || !state || !pincode || !phone) {
+//           return res.status(400).send("Missing required fields");
+//       }
 
-      const userAddress = await Address.findOne({ userId: userData._id });
-      if (!userAddress) {
-          const newAddress = new Address({
-              userId: userData._id,
-              address: [{ addressType, name, city, landMark, state, pincode, phone, altPhone }],
-          });
-          await newAddress.save();
-      } else {
-          userAddress.address.push({ addressType, name, city, landMark, state, pincode, phone, altPhone });
-          await userAddress.save();
-      }
+//       const userAddress = await Address.findOne({ userId: userData._id });
+//       if (!userAddress) {
+//           const newAddress = new Address({
+//               userId: userData._id,
+//               address: [{ addressType, name, city, landMark, state, pincode, phone, altPhone }],
+//           });
+//           await newAddress.save();
+//       } else {
+//           userAddress.address.push({ addressType, name, city, landMark, state, pincode, phone, altPhone });
+//           await userAddress.save();
+//       }
 
-      res.render("/checkout",{
-        user:userData,
-        address:userAddress,
-        payment:payment,
+//       res.render("/checkout",{
+//         user:userData,
+//         address:userAddress,
+//         payment:payment,
 
-      });
-  } catch (error) {
-      console.error("Error adding address", error);
-      res.status(500).send("Internal Server Error");
-  }
-}
+//       });
+//   } catch (error) {
+//       console.error("Error adding address", error);
+//       res.status(500).send("Internal Server Error");
+//   }
+// }
 
 
 
@@ -230,7 +230,7 @@ const postAddaddress = async (req, res) => {
 module.exports = {
   getCheckout,
   placeOrder,
-  postAddaddress
+  // postAddaddress
 
 
 }

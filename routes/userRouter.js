@@ -15,7 +15,7 @@ router.get("/",userIsAuthenticated, userController.loadHomepage);
 
 //shop management
 router.get("/shop",userIsAuthenticated,shopController.loadShoppingPage);
-// router.get('/filter',userIsAuthenticated,shopController.filterProduct);
+router.post('/filter',userIsAuthenticated,shopController.filterProduct);
 // router.get('/filterPrice',userIsAuthenticated,shopController.filterByPrice)
 // router.get('/filterPrice',userIsAuthenticated,shopController.searchProducts)
 // router.get('/sortByPrice',userIsAuthenticated ,shopController.sortPrice);
@@ -45,6 +45,9 @@ router.get("/logout", userController.logout);
 
 // Product management
 router.get("/productDetails", productController.productDetails);
+// Route to post selected size
+router.post("/selectSize", productController.selectSize);
+
 
 //profile management
 router.get("/userProfile",userIsAuthenticated,profileController.userProfile);
@@ -71,14 +74,15 @@ router.get("/deleteAddress",userIsAuthenticated,profileController.deleteAddress)
 
 //cart management
 router.get("/cart",userIsAuthenticated,cartController.getCart);
-router.get("/addToCart",userIsAuthenticated,cartController.addToCart);
-router.get('/removeFromCart', cartController.removeFromCart);
-router.post('/updateQuantity', cartController.updateCartQuantity);
+router.post("/add-to-cart", userIsAuthenticated, cartController.addToCart);
+router.post('/cart/remove/:cartItemId', cartController.removeFromCart);
+
+
 
 //checkout management
 router.get("/checkout",userIsAuthenticated,checkoutController.getCheckout);
 router.post("/placeOrder",checkoutController.placeOrder);
-router.post("/checkout",userIsAuthenticated,checkoutController.postAddaddress);
+// router.post("/checkout",userIsAuthenticated,checkoutController.postAddaddress);
 
 //order management
 router.get("/orderDetails",orderController.getOrderDetails);

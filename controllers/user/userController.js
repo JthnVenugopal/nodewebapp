@@ -2,6 +2,7 @@ const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const Brand =  require("../../models/brandSchema");
+const Variant = require("../../models/variantSchema")
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
@@ -20,56 +21,121 @@ const pageNotFound = async (req,res) => {
 
 //-------------------------------------------------------
 
-const loadHomepage = async (req, res, next) => {
-  try {
+// const loadHomepage = async (req, res, next) => {
+//   try {
+
+//     let userData = req.session.user || req.user;
   
+//     const currentPage = parseInt(req.query.page) || 1;
+//     const productsPerPage = 12; 
 
-   
-    const currentPage = parseInt(req.query.page) || 1;
-    const productsPerPage = 12; 
+//     const categories = await Category.find({ isListed: true });
 
-   
-    const categories = await Category.find({ isListed: true });
-
-    let productData = await Product.find({
-      isBlocked: false,
-      category: { $in: categories.map(category => category._id) },
-      quantity: { $gte: 0 }
-    });
+//     let products = await Product.find({
+//       isBlocked: false
+//     });
 
     
-    const totalProducts = productData.length;
+
+//     const [{variant}] = products;
+    
+//     const variantData = await Variant.findById(variant)
+    
+//     const {salePrice,quantity,productImages} = variantData
+
+//     console.log("VData "+variantData)
+    
+//     const totalProducts = products.length;
 
 
-    const totalPages = Math.ceil(totalProducts / productsPerPage);
+//     //pagination
+//     const totalPages = Math.ceil(totalProducts / productsPerPage);
+//     // Slice the product data to only include the products for the current page
+//     const startIndex = (currentPage - 1) * productsPerPage;
+//     products = products.slice(startIndex, startIndex + productsPerPage);
 
-    // Slice the product data to only include the products for the current page
-    const startIndex = (currentPage - 1) * productsPerPage;
-    productData = productData.slice(startIndex, startIndex + productsPerPage);
+    
 
-    let user = req.session.user;
-    let googleUser = req.user;
-    let userData = user || googleUser
-   
+    
 
-  res.locals.user = userData;
+//   res.locals.user = userData;
 
-   console.log("home page rendering...");
+//    console.log("home page rendering...");
    
       
-      // Render homepage with user, product data
-      return res.render("home", {
-        user: userData,
-        products: productData,
-        currentPage,
-        totalPages,
-        sortBy: req.query.sortBy || 'name' // Example: you may want to handle sorting
-      })
+//       // Render homepage with user, product data
+//       return res.render("home", {
+//         user: userData,
+//         products: products,
+//         currentPage,
+//         totalPages,
+//         sortBy: req.query.sortBy || 'name' ,
+//         variants : variantData,
+        
+//       })
+//   } catch (error) {
+//     console.log("Error loading homepage:", error);
+//     next(error);
+//   }
+// };
+
+
+const loadHomepage = async (req, res, next) => {
+  try {
+    let userData = req.session.user || req.user;
+
+    const currentPage = parseInt(req.query.page) || 1;
+    const productsPerPage = 12;
+
+    const categories = await Category.find({ isListed: true });
+
+    // Fetch all products that are not blocked
+    let products = await Product.find({ isBlocked: false });
+
+    // Pagination
+    const totalProducts = products.length;
+    const totalPages = Math.ceil(totalProducts / productsPerPage);
+    const startIndex = (currentPage - 1) * productsPerPage;
+    products = products.slice(startIndex, startIndex + productsPerPage);
+
+    // Fetch variant data for each product
+    const productsWithVariants = await Promise.all(products.map(async (product) => {
+      const variantData = await Variant.findById(product.variant); 
+
+      return {
+        ...product.toObject(), // Convert Mongoose document to plain object
+        variantData: variantData || null // Include variant data or null if not found
+      };
+    }));
+
+
+    
+
+   
+
+    res.locals.user = userData;
+
+    console.log("home page rendering...");
+
+    // Render homepage with user, product data
+    return res.render("home", {
+      user: userData,
+      products: productsWithVariants,
+      currentPage,
+      totalPages,
+      sortBy: req.query.sortBy || 'name',
+      categories: categories,
+    });
   } catch (error) {
     console.log("Error loading homepage:", error);
     next(error);
   }
 };
+
+
+
+
+
 //------------------------------------------------------
 const loadSignup = async (req,res) => {
   try{

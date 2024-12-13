@@ -4,9 +4,6 @@
     /* Existing Styles */
 
     /* New Banner Styles */
-
-  
-
     .fashion-banner {
         background: linear-gradient(to right, #4facfe, #00f2fe); /* Gradient for elegance */
         padding: 50px 20px;
@@ -36,32 +33,32 @@
     <!-- New Banner Section -->
     <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img class="d-block w-100" src="admin-assets\imgs\banner\banner6.jpg" alt="First slide">
-          </div>
-          <div class="carousel-item">
-            <img class="d-block w-100" src="admin-assets\imgs\banner\banner5.jpg" alt="Second slide">
-          </div>
-          <div class="carousel-item">
-            <img class="d-block w-100" src="admin-assets\imgs\banner\banner7.jpg" alt="Third slide">
-          </div>
+            <div class="carousel-item active">
+                <img class="d-block w-100" src="admin-assets/imgs/banner/banner6.jpg" alt="First slide">
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="admin-assets/imgs/banner/banner5.jpg" alt="Second slide">
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="admin-assets/imgs/banner/banner7.jpg" alt="Third slide">
+            </div>
         </div>
-      </div>
+    </div>
 
-      <!-- offer -->
-      <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+    <!-- Offer Section -->
+    <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img class="d-block w-100" src="admin-assets\imgs\offer\offers1.jpeg" alt="First slide">
-          </div>
-          <div class="carousel-item">
-            <img class="d-block w-100" src="admin-assets\imgs\offer\offers2.jpeg" alt="Second slide">
-          </div>
-          <div class="carousel-item">
-            <img class="d-block w-100" src="admin-assets\imgs\offer\offers3.jpeg" alt="Third slide">
-          </div>
+            <div class="carousel-item active">
+                <img class="d-block w-100" src="admin-assets/imgs/offer/offers1.jpeg" alt="First slide">
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="admin-assets/imgs/offer/offers2.jpeg" alt="Second slide">
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="admin-assets/imgs/offer/offers3.jpeg" alt="Third slide">
+            </div>
         </div>
-      </div>
+    </div>
 
     <!-- Existing Sections -->
     <section class="home-slider position-relative pt-50">
@@ -69,62 +66,88 @@
         <!-- Retain the slider code here -->
     </section>
 
- 
     <section class="product-tabs section-padding position-relative wow fadeIn animated">
         <div class="container">
             <br>
             <br>
 
             
-           
 
-                <div class="tab-content wow fadeIn animated" id="myTabContent">
-                    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
-                        <div class="row" id="product-list ">
-                            <% for (let i = 0; i < products.length; i++) { %>
-                                 
-                                <div class="col-md-4 col-lg-3 mb-4">
-                                    <div class="card h-100 shadow-sm border-0">
-                                        <!-- Product Image -->
-                                        <% if (products[i].productImages && products[i].productImages.length > 0) { %>
-                                            <img src="/uploads/re-image/<%= products[i].productImages[0] %>" 
-                                                 class="card-img-top" 
-                                                 alt="<%= products[i].productName %>">
-                                        <% } else { %>
-                                            <img src="/images/placeholder.png" 
-                                                 class="card-img-top" 
-                                                 alt="No image available">
-                                        <% } %>
-                                        <!-- Product Details -->
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title text-truncate"><%= products[i].productName %></h5>
-                                            <p class="card-text">
-                                                <strong>₹<%= products[i].salePrice.toLocaleString() %></strong>
-                                            </p>
-                                            <% if (products[i].quantity > 0) { %>
-                                                <span class="badge  mb-2">In Stock: <%= products[i].quantity %></span>
-                                            <% } else { %>
-                                                <span class="badge  mb-2">Out of Stock</span>
-                                            <% } %>
-                                            <!-- Action Button -->
-                                            
-                                        </div>
+            <%const [{variantData}] = products%>
+
+            
+
+            <div class="d-flex justify-content-center my-5">
+                <h4>New Arrivals</h4>
+            </div>
+
+            <div class="tab-content wow fadeIn animated" id="myTabContent">
+                <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+                  <div class="row " id="product-list">
+
+                  
+
+                    <% for (let i = 0; i < products.length; i++) { %>
+                        <div class="col-md-4 col-lg-3 mb-4">
+                            <div class="card h-100 shadow-sm border-0" style="background-color: rgba(251, 238, 238, 0.642);">
+                                <!-- Product Image -->
+                                
+                                <% if (products[i].variantData && products[i].variantData.productImages && products[i].variantData.productImages.length > 0) { %>
+                                    <img style="height: 350px;" src="/uploads/re-image/<%= products[i].variantData.productImages[0] %>" 
+                                         class="card-img-top" 
+                                         alt="<%= products[i].productName %>">
+                               
+                                <% } else { %>
+                                    <img src="/images/placeholder.png" 
+                                         class="card-img-top" 
+                                         alt="No image available">
+                                <% } %>
+
+
+                                <!-- Product Details -->
+                                <div class="card-body text-center">
+                                    <h5 class="card-title text-truncate"><%= products[i].productName %></h5>
+                
+                                    <% const { variantData } = products[i]; %> <!-- Destructure variantData -->
+                                    <% if (variantData) { %>
+                                        <strong>₹<%= variantData.salePrice %></strong>
+                                    <% } else { %>
+                                        <strong>Price not available</strong>
+                                    <% } %>
+                
+                                    <div class="my-1">  
+                                      
+                                    <% if (variantData && variantData.quantity > 0) { %>
+                                        <span class="badge mb-2">In Stock: <%= variantData.quantity %></span>
+                                    <% } else { %>
+                                        <span class="badge mb-2">Out of Stock</span>
+                                    <% } %>
+
                                     </div>
+                                  
+                                   
+
                                 </div>
-                           
-      
-    <% } %>
-
-
+                            </div>
                         </div>
-                    </div>
+                    <% } %>
+
+                    
+
                 </div>
-                
-                
-               
+
+
+
+
+
+                </div>
+            </div>
+
+
+
 
         </div>
-    
+
         <div class="view-more-container" style="text-align: center; margin-top: 100px; margin-bottom: 20px;">
             <a href="/shop" 
                class="view-more-btn" 
@@ -142,22 +165,13 @@
                 View More Products
             </a>
         </div>
-        
-     
-        
-
-
     </section>
-    
-    
-
-
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-   
+    // Additional JavaScript can be added here
 </script>
 
 <%- include("../partials/user/footer") %>

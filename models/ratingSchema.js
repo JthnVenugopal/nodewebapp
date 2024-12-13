@@ -27,5 +27,9 @@ const ratingSchema = new Schema({
       default: Date.now  
     }
   });
+
+  // Create a unique index to prevent multiple ratings from the same user for the same product
+ratingSchema.index({ userId: 1, productId: 1 }, { unique: true });
+
 const Rating = mongoose.model("Rating", ratingSchema);
 module.exports = Rating
