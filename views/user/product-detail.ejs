@@ -132,7 +132,7 @@ a{
             <div class="col-md-6 col-sm-12 col-xs-12 ">
                 <div class="detail-gallery">
                     <span class="zoom-icon"><i class="fi-rs-search"></i></span>
-                    <div class="product-image-slider bg-info image-container" style="height: 420px; width: 400px;">
+                    <div class="product-image-slider  image-container" style="height: 420px; width: 400px;">
 
 
 
@@ -253,14 +253,14 @@ a{
         <div>
             <h6>Available colors</h6>
                 <div>
-                    <div class="slider-nav-thumbnails">
+                    <div class="slider-nav-thumbnai">
                     <% if (variantImages && variantImages.length > 0) { %>
                         <% for (const imageGroup of variantImages) { %> <!-- Outer Loop -->
                             <div class="image-group">
                                 <% if (imageGroup.length > 0) { %> <!-- Check if there is at least one image -->
                                     <div>
                                         <img 
-                                            style="height: 60px;" 
+                                            style="height: 200px;" 
                                             src="/uploads/product-images/<%= imageGroup[0] %>" 
                                             
                                         />

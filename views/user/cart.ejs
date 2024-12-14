@@ -56,10 +56,14 @@
             </div>
         </div>
         
-
+<a href="/checkout" class="btn btn-primary btn-md shadow-sm mt-3 text-center">
+        <button type="button" class="btn btn-primary btn-sm mt-2" data-toggle="tooltip" title="Proceed to Checkout">
+            Checkout
+        </button>
+    </a>
 
     <% } else { %>
-        <div class="alert alert-warning text-center shadow-sm rounded p-4">
+        <div class="alert text-center shadow-sm rounded p-4 " style="height: 520px;">
             <h5>Your cart is empty.</h5>
             <p>Start adding items to your cart now!</p>
             <a href="/shop" class="btn btn-primary btn-lg mt-3">
@@ -68,13 +72,12 @@
         </div>
     <% } %>
 
-    <a href="/checkout">
-        <button type="button" class="btn btn-primary btn-sm mt-2" data-toggle="tooltip" title="Proceed to Checkout">
-            Checkout
-        </button>
-    </a>
+    
 </div>
-
+<div class="my-5" style="margin-bottom: 500px;">
+       .
+</div>
+<%- include("../../views/partials/user/footer") %>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(function () {
@@ -93,4 +96,4 @@
 </script>
 </body>
 
-<%- include("../../views/partials/user/footer") %>
+
