@@ -85,7 +85,7 @@ const loadHomepage = async (req, res, next) => {
     let userData = req.session.user || req.user;
 
     const currentPage = parseInt(req.query.page) || 1;
-    const productsPerPage = 12;
+    const productsPerPage =8;
 
     const categories = await Category.find({ isListed: true });
 
