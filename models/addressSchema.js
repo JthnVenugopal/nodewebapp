@@ -43,7 +43,7 @@ const addressSchema =  new Schema ({
     },
     isDeliveryAddress:{
       type:Boolean,
-      required:false,
+      default:false,
     }
 }]
 

@@ -29,6 +29,8 @@
                         <td>
                             <% if (item.variantId.productImages && item.variantId.productImages.length > 0) { %>
                                 <img src="/uploads/re-image/<%= item.variantId.productImages[0] %>" alt="<%= item.productId.productName %>" class="img-thumbnail" style="width: 100px; height: 100px;">
+                            <% } else { %>
+                                <img src="/images/placeholder.png" alt="No image available" class="img-thumbnail" style="width: 100px; height: 100px;">
                             <% } %>
                         </td>
                         <td><%= item.productId.productName %></td>
@@ -38,11 +40,11 @@
                         <td>₹<%= item.price.toFixed(2) %></td>
                         <td class="total-price">₹<%= item.totalPrice.toFixed(2) %></td>
                         <td>
-                          <form action="/cart/remove/<%= item._id %>" method="POST" class="d-inline">
-                            <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Remove Item">
-                                <i class="fas fa-trash-alt"></i> Remove
-                            </button>
-                          </form>
+                            <form action="/cart/remove/<%= item._id %>" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Remove Item">
+                                    <i class="fas fa-trash-alt"></i> Remove
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 <% }); %>
@@ -56,14 +58,12 @@
             </div>
         </div>
         
-<a href="/checkout" class="btn btn-primary btn-md shadow-sm mt-3 text-center">
-        <button type="button" class="btn btn-primary btn-sm mt-2" data-toggle="tooltip" title="Proceed to Checkout">
-            Checkout
-        </button>
-    </a>
+        <a href="/checkout" class="btn btn-primary btn-md shadow-sm mt-3">
+            Proceed to Checkout
+        </a>
 
     <% } else { %>
-        <div class="alert text-center shadow-sm rounded p-4 " style="height: 520px;">
+        <div class="alert text-center shadow-sm rounded p-4" style="height: 520px;">
             <h5>Your cart is empty.</h5>
             <p>Start adding items to your cart now!</p>
             <a href="/shop" class="btn btn-primary btn-lg mt-3">
@@ -71,13 +71,14 @@
             </a>
         </div>
     <% } %>
+</div>
 
-    
-</div>
 <div class="my-5" style="margin-bottom: 500px;">
-       .
+    <!-- Placeholder for spacing -->
 </div>
+
 <%- include("../../views/partials/user/footer") %>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(function () {
@@ -95,5 +96,3 @@
     });
 </script>
 </body>
-
-

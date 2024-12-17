@@ -55,76 +55,47 @@ async function sendVerificationEmail(email,otp){
         return false;
   }
 }
-
 //------------------------------------------------------------
-// const userProfile = async (req,res) => {
-//   try {
 
-//     const googleUser  = req.user; 
-//     const sessionUser  = req.session.user; 
-//     const userId =  sessionUser  || googleUser ;
-
-//     console.log("userId : "+userId);
-    
-
-//       const page = parseInt(req.query.page) || 1;
-//       const limit = 6;
-//       const skip = (page - 1)*limit;
-//       const count = await Order.countDocuments();
-//       const totalPages = Math.ceil(count / limit);
-
-//       const userData = await User.findById(userId);
-//       const addressData = await Address.findOne({userId : userId});
-      
-//       const orders = await Order.find({ user: userId }).sort({ createdOn: -1 }).skip(skip).limit(limit);
-//       res.render('profile',{
-//           user:userData,
-//           userAddress:addressData,
-//           orders,
-//           currentPage:page,
-//           totalPages,
-//           userDetails : userId
-//       })
-//   } catch (error) {
-//       console.error("Error retreiving profile data",error);
-//       res.redirect("/pageNotFound")
-//   }
-// }
-
-const userProfile = async (req,res) => {
+const userProfile = async (req, res) => {
   try {
+    console.log("--------------------userprofile---------------");
+    // console.log("req.user:", req.user);
+    // console.log("req.session:", req.session);
 
-    const googleUser  = req.user; 
-    const sessionUser  = req.session.user.id; 
-    const userId =  sessionUser  || googleUser ;
+    const userId = req.session?.user?.id || req?.user?.id;
+    if (!userId) {
+      throw new Error("User ID not found in session or request.");
+    }
+    // console.log("userID:", userId);
 
-    console.log("userId : "+userId);
-    
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6;
+    const skip = (page - 1) * limit;
 
-      const page = parseInt(req.query.page) || 1;
-      const limit = 6;
-      const skip = (page - 1)*limit;
-      const count = await Order.countDocuments();
-      const totalPages = Math.ceil(count / limit);
+    const count = await Order.countDocuments();
+    const totalPages = Math.ceil(count / limit);
 
-      const userData = await User.findById(userId);
-      const addressData = await Address.findOne({userId : userId});
-      
-      const orders = await Order.find({ user: userId }).sort({ createdOn: -1 }).skip(skip).limit(limit);
-      res.render('profile',{
-          user:userData,
-          userAddress:addressData,
-          orders,
-          currentPage:page,
-          totalPages,
-          userDetails : userId
-      })
+    const userData = await User.findById(userId);
+    const addressData = await Address.findOne({ userId: userId });
+    const orders = await Order.find({ user: userId })
+      .sort({ createdOn: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.render('profile', {
+      user: userData,
+      userAddress: addressData,
+      orders,
+      currentPage: page,
+      totalPages,
+      userDetails: userId
+    });
   } catch (error) {
-      console.error("Error retreiving profile data",error);
-      res.redirect("/pageNotFound")
+    console.error("Error retrieving profile data:", error.message);
+    res.redirect("/pageNotFound");
   }
-}
-
+};
 //------------------------------------------------------------
 const getEditProfile = async (req,res) => {
   try {
@@ -177,10 +148,13 @@ const UpdateProfile = async (req, res) => {
 const changePassword = async (req,res) => {
   try {
 
-    const googleUser  = req.user; 
-    const sessionUser  = req.session.user; 
+    console.log("--------------------------changePassword-------------------------");
+    
 
-    // console.log(sessionUser)
+    const googleUser  = req.user; 
+    const sessionUser  = req.session.user.id; 
+
+    console.log("session-user : "+sessionUser)
 
     if(googleUser){
       res.json({message: "since you login using google id , You can't change password"})
@@ -292,7 +266,6 @@ const updatePassword = async (req, res) => {
 
   }
 };
-
 //----------------------------------------------------------------------
 const resendOtp = async (req,res) => {
   try {
@@ -326,6 +299,7 @@ const verifyChangePassOtp = async (req,res) => {
   }
 }
 //------------------------------------------------------------
+
 const getResetPassPage = async (req,res) => {
   try {
       const user = req.session.user;
@@ -337,7 +311,6 @@ const getResetPassPage = async (req,res) => {
       res.redirect("/pageNotFound")
   }
 }
-
 //------------------------------------------------------------
 // const postNewPassword = async (req,res) => {
 //   try {
@@ -482,9 +455,14 @@ const addAddress = async (req,res) => {
 
 const showAddress = async (req, res) => {
   try {
+
+    console.log("---------------------Show address----------------------------");
+    
     // Validate session and Google users
     const sessionUser = req.session?.user; // Use optional chaining to avoid errors
     const googleUser = req?.user;
+
+    const userData = sessionUser || googleUser;
 
     // Determine the user
     const user = sessionUser?.id || googleUser;
@@ -509,6 +487,7 @@ const showAddress = async (req, res) => {
 
     // Restructure the address data
     const structuredAddress = userAddress.flatMap(item => item.address.map(addr => ({
+      addressId: addr._id, // Include the address ID
       addressType: addr.addressType,
       name: addr.name,
       city: addr.city,
@@ -518,13 +497,15 @@ const showAddress = async (req, res) => {
       phone: addr.phone,
       altPhone: addr.altPhone,
       isDeliveryAddress: addr.isDeliveryAddress,
+      
+
     })));
 
-    console.log('Structured User Address:', structuredAddress);
+    // console.log('Structured User Address Backend:', structuredAddress);
 
     // Render address page
     res.render("show-address", {
-      user: user,
+      user : userData,
       userAddress: structuredAddress, // Pass structured data
     });
 
@@ -535,6 +516,7 @@ const showAddress = async (req, res) => {
 };
 
 //------------------------------------------------------------
+
 const postAddAddress1 = async (req, res) => {
   try {
       
@@ -577,6 +559,7 @@ const postAddAddress1 = async (req, res) => {
   }
 }
 //------------------------------------------------------------
+
 const deleteAddress = async (req,res) => {
   try {
       const addressId = req.query.id;
@@ -608,90 +591,47 @@ const deleteAddress = async (req,res) => {
 
 
 
-// const editAddress = async (req, res) => {
-//   try {
-
-//       // Access the user session
-//       const user = req.session.user.id  || req.user;
-//       if (!user) {
-//           return res.redirect("/pageNotFound");
-//       }
-
-//       // Find the user data
-//       const userData = await User.findById(user);
-//       if (!userData) {
-//           return res.redirect("/pageNotFound");
-//       }
-
-//       // Fetch the address ID from query parameters
-//       const addressId = req.query.id;
-
-//       // Fetch the current address using address ID
-//       const currAddress = await Address.findOne({ "address._id": addressId });
-//       if (!currAddress) {
-//           return res.redirect("/pageNotFound");
-//       }
-
-//       // Find the specific address data within the address array
-//       const addressData = currAddress.address.find((item) => item._id.toString() === addressId.toString());
-//       if (!addressData) {
-//           return res.redirect("/pageNotFound");
-//       }
-
-//       // Render the edit address page with the fetched address data and user data
-//       res.render("edit-address", { address: addressData, user: user });
-//   } catch (error) {
-//       console.error("Error in edit address", error);
-//       res.redirect("/pageNotFound");
-//   }
-// };
-
-
 const editAddress = async (req, res) => {
   try {
-      // Access the user session
-      const userId = req.session.user.id || req.user;
-      if (!userId) {
-          return res.status(404).redirect("/pageNotFound");
-      }
 
-      // Find the user data
-      const userData = await User.findById(userId);
-      if (!userData) {
-          return res.status(404).redirect("/pageNotFound");
-      }
+  console.log("----------------------editAddress----------------------------");
 
-      console.log("userData backend : "+userData)
+  const addressId = req.query.id; 
+  console.log("Address ID : "+ addressId)
 
-      // Fetch the address ID from query parameters
-      const addressId = req.query.id;
-      if (!addressId) {
-          return res.status(400).send("Address ID is required.");
-      }
+  const addressData = await Address.findById(addressId)
+  
+  if (!addressData) {
+    return res.status(404).send("Address not found");
+  }
 
-      // Fetch the current address using address ID
-      const currAddress = await Address.findOne({ "address._id": addressId });
-      if (!currAddress) {
-          return res.status(404).redirect("/pageNotFound");
-      }
+  console.log("Address data: "+addressData);
 
-      // Find the specific address data within the address array
-      const addressData = currAddress.address.find(item => item._id.toString() === addressId.toString());
-      if (!addressData) {
-          return res.status(404).redirect("/pageNotFound");
-      }
+  res.render("edit-address",{
+    address:addressData,
+  })
 
-      // Render the edit address page with the fetched address data and user data
-      res.render("edit-address", { 
 
-        address: addressData, 
-        user: userData });
 
   } catch (error) {
       console.error("Error in edit address", error);
       res.status(500).send("Internal Server Error");
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

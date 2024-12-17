@@ -1,104 +1,141 @@
 <%- include("../partials/user/header") %>
 
 <style>
+  a {
+    text-decoration: none;
+    color: white;
+  }
+
   .address-container {
-    display: flex; 
-    flex-direction: row; /* Change to row for horizontal alignment */
-    flex-wrap: wrap; 
+    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
     padding: 20px;
     max-width: 1200px;
-    margin: 0 auto; /* Center the container */
+    margin: 0 auto;
   }
 
   .address-box {
-    color: white; 
+    
+    color: white;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    flex: 1 1 calc(33.33% - 40px); /* Responsive width */
-    box-sizing: border-box; 
-    
+    flex: 1 1 calc(33.33% - 40px);
+    box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .address-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   }
 
   .address-box h3 {
     margin-bottom: 10px;
-    
   }
 
   .address-box p {
-    font-size: 16px; /* Adjust font size for better readability */
-    margin: 5px 0; 
+    font-size: 16px;
+    margin: 5px 0;
+  }
+
+  .button-group {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-small-edit {
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: white;
+    background-color: #007bff;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-small-edit:hover {
+    background-color: #0056b3;
+  }
+
+  .btn-small-dlt {
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: white;
+    background-color: #dc3545;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-small-dlt:hover {
+    background-color: #c82333;
   }
 
   .btn-container {
     text-align: center;
-    margin: 20px 0;
-  }
-
-  .btn-container .btn-success a {
-    color: white; 
-    text-decoration: none;
+    margin-top: 40px;
   }
 
   .btn-container .btn-success {
-    padding: 10px 20px;
+    padding: 12px 24px;
     border-radius: 5px;
     font-size: 18px;
-    background-color: #28a745; /* Button background color */
-    border: none; /* Remove border */
-    cursor: pointer; /* Change cursor to pointer */
+    color: white;
+    background-color: #28a745;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
   }
 
   .btn-container .btn-success:hover {
-    background-color: #218838; /* Darker green on hover */
+    background-color: #218838;
   }
 
-  .btn-small {
-    display: inline-block; /* Make sure delete button is inline */
-    margin-top: 10px; /* Add some space above the delete button */
-    color: white; /* Button text color */
-    text-decoration: none; /* Remove underline */
-    padding: 5px 10px; /* Button padding */
-    border-radius: 5px; /* Rounded corners */
-    background-color: #dc3545; /* Red background for delete */
+  .btn-container .btn-success a {
+    color: white;
   }
 
-  .btn-small:hover {
-    background-color: #c82333; /* Darker red on hover */
+  @media (max-width: 768px) {
+    .address-box {
+      flex: 1 1 100%;
+    }
   }
 </style>
 
-<div class="d-flex justify-content-center my-5"><h2>Address</h2></div>
 
 
-<div style="display: flex;">
+
+
+<div class="d-flex justify-content-center my-5">
+  <h2>Address</h2>
+</div>
+
+<div class="address-container">
   <% for (let address of userAddress) { %>
-  <div class="container d-flex w-100">
-    
-      <div class="address-box w-50" style="width: 500px;">
-        <h3>Name: <%= address.name %></h3>
-        <p>Address Type: <%= address.addressType %></p>
-        <p>City: <%= address.city %></p>
-        <p>Landmark: <%= address.landMark %></p>
-        <p>State: <%= address.state %></p>
-        <p>Pincode: <%= address.pincode %></p>
-        <p>Phone Number: <%= address.phone %></p>
-        <p>Alternate Phone Number: <%= address.altPhone %></p>
-        <br>
-        <a href="/editAddress?id=<%=address._id %>"
-          class="btn-small">Edit</a>
+  <div class="address-box">
+    <h3>Name: <%= address.name %></h3>
+    <p>Address Type: <%= address.addressType %></p>
+    <p>City: <%= address.city %></p>
+    <p>Landmark: <%= address.landMark %></p>
+    <p>State: <%= address.state %></p>
+    <p>Pincode: <%= address.pincode %></p>
+    <p>Phone Number: <%= address.phone %></p>
+    <p>Alternate Phone Number: <%= address.altPhone %></p>
 
-        <a href="/deleteAddress?id=<%=address._id %>"
-          class="btn-small"
-          onclick="return confirm('Are you sure you want to delete this address?')">Delete</a>
-      </div>
     
+    <div class="button-group">
+      <a href="/editAddress?id=<%= address.addressId %>" class="btn-small-edit">Edit</a>
+
+      <a href="javascript:void(0)" 
+   class="btn-small-dlt" 
+   onclick="confirmDelete('<%= address.addressId %>')">Delete</a>
+
+
+    </div>
   </div>
   <% } %>
 </div>
-
 
 
 <div class="btn-container my-5">
@@ -106,5 +143,31 @@
     <a href="/add-address">Add Address</a>
   </button>
 </div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+function confirmDelete(addressId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Redirect to delete address URL
+        window.location.href = '/deleteAddress?id=' + addressId;
+      }
+    });
+  }
+
+</script>
 
 <%- include("../partials/user/footer") %>
