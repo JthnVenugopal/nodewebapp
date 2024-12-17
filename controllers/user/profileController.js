@@ -125,9 +125,6 @@ const userProfile = async (req,res) => {
   }
 }
 
-
-
-
 //------------------------------------------------------------
 const getEditProfile = async (req,res) => {
   try {
@@ -482,28 +479,6 @@ const addAddress = async (req,res) => {
   }
 }
 //------------------------------------------------------------
-// const showAddress = async (req,res) => {
-//   try {
-//      const sessionUser = req.session.user;
-//      const googleUser  = req.user;
-//      const user = sessionUser.id || googleUser;
-
-//     const userAddress = await Address.findOne({
-//       userId:user._id,
-
-//     });
-//     // console.log(user._id)
-//     // console.log(userAddress.address)
-
-//     res.render("show-address",{
-//       user:user,
-//       userAddress:userAddress.address
-//     })
-//   } catch (error) {
-//     console.error(error);
-//     res.redirect("/pageNotFound");
-//   }
-// }
 
 const showAddress = async (req, res) => {
   try {
@@ -519,28 +494,45 @@ const showAddress = async (req, res) => {
       return res.redirect("/login"); // Redirect to login if no user is found
     }
 
-    // Fetch user address
-    const userAddress = await Address.findOne({ userId: user._id });
+    // Fetch user address based on userId in Address schema
+    const userAddress = await Address.find({ userId: user }) // Query Address collection using userId
+      .select('address') // Select the "address" array field
+      .lean(); // Convert Mongoose documents to plain JavaScript objects for easier manipulation
 
-    if (!userAddress) {
-      console.warn("No address found for user:", user._id);
+    if (!userAddress.length) {
+      console.warn("No address found for user:", user);
       return res.render("show-address", {
         user: user,
-        userAddress: "Address not found.", // Provide a default message
+        userAddress: [],
       });
     }
+
+    // Restructure the address data
+    const structuredAddress = userAddress.flatMap(item => item.address.map(addr => ({
+      addressType: addr.addressType,
+      name: addr.name,
+      city: addr.city,
+      landMark: addr.landMark,
+      state: addr.state,
+      pincode: addr.pincode,
+      phone: addr.phone,
+      altPhone: addr.altPhone,
+      isDeliveryAddress: addr.isDeliveryAddress,
+    })));
+
+    console.log('Structured User Address:', structuredAddress);
 
     // Render address page
     res.render("show-address", {
       user: user,
-      userAddress: userAddress.address,
+      userAddress: structuredAddress, // Pass structured data
     });
+
   } catch (error) {
     console.error("Error in showAddress:", error);
     res.redirect("/pageNotFound");
   }
 };
-
 
 //------------------------------------------------------------
 const postAddAddress1 = async (req, res) => {
@@ -669,7 +661,7 @@ const editAddress = async (req, res) => {
           return res.status(404).redirect("/pageNotFound");
       }
 
-      console.log(userData)
+      console.log("userData backend : "+userData)
 
       // Fetch the address ID from query parameters
       const addressId = req.query.id;
