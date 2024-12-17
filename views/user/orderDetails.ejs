@@ -63,6 +63,11 @@
         <h3 class="text-center mb-4">Your Orders</h3>
         <p class="text-center mb-5"><strong>Email:</strong> <%= email %></p>
 
+        <% 
+            // Sort orders by createdAt in descending order
+            orderDetails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        %>
+
         <% orderDetails.forEach(order => { %>
             <div class="order-table shadow-sm p-4 rounded" id="order-box-<%= order._id %>">
                 <h5 class="text-center">Order ID: <%= order.orderId %></h5>
@@ -107,95 +112,42 @@
 
                 <!-- Order Items Table -->
                 <table class="table table-bordered table-striped mt-4">
-                    <thead>
+                    <thead class="thead-light">
                         <tr>
-                        
                             <th>Product Name</th>
                             <th>Product-ID</th>
                             <th>Price per item</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         <% order.orderedItems.forEach(item => { %> 
                             <tr>  
                                 <td><%= item.productDetails.productName %></td> 
                                 <td><%= item.productDetails.brand %></td> 
                                 <td>₹<%= item.price %></td> 
-                                <td> <% if (order.status === "Cancelled") { %> 
-                                    <span class="text-muted">Order Cancelled</span>
-                                     <% } else if (order.status === "Delivered") 
-                                     { %>
-                                         <span class="text-muted">Order Delivered</span>
-                                          <% } else { %> 
-                                            <button style="font-size: 15px;" class="btn btn-danger btn-sm" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button> <% } %>
-                                             </td>
-                                              </tr> 
-                                              <% }) %>
+                                <td>
+                                    <% if (order.status === "Cancelled") { %> 
+                                        <span class="text-muted">Order Cancelled</span>
+                                    <% } else if (order.status === "Delivered") { %>
+                                        <span class="text-muted">Order Delivered</span>
+                                    <% } else { %> 
+                                        <button class="btn btn-danger btn-sm" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
+                                    <% } %>
+                                </td>
+                            </tr> 
+                        <% }) %>
                     </tbody>
                 </table>
             </div>
         <% }) %>
-
-        
     </div>
-
-    
 </body>
-
-
-
 
 <!-- Bootstrap JS and Popper.js -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-// <script>
-//     function cancelOrder(orderId) {
-//         Swal.fire({
-//             title: 'Are you sure?',
-//             text: 'Do you really want to cancel this order? This action cannot be undone.',
-//             icon: 'warning',
-//             showCancelButton: true,
-//             confirmButtonColor: '#d33',
-//             cancelButtonColor: '#3085d6',
-//             confirmButtonText: 'Yes, cancel it!',
-//             cancelButtonText: 'No, keep it',
-//         }).then((result) => {
-//             if (result.isConfirmed) {
-//                 fetch('/cancelOrder', {
-//                     method: 'POST',
-//                     headers: {
-//                         'Content-Type': 'application/json',
-//                     },
-//                     body: JSON.stringify({ orderId }) 
-//                 })
-//                     .then((response) => {
-//                         if (response.ok) {
-//                             return response.json();
-//                         } else {
-//                             return response.json().then((data) => {
-//                                 throw new Error(data.message || 'Failed to cancel the order');
-//                             });
-//                         }
-//                     })
-//                     .then((data) => {
-//                         Swal.fire('Cancelled!', data.message, 'success');
-//                         const orderBox = document.querySelector(`#order-box-${orderId}`);
-//                         if (orderBox) {
-//                             orderBox.remove();
-//                         }
-//                     })
-//                     .catch((error) => {
-//                         console.error('Error cancelling the order:', error);
-//                         Swal.fire('Error!', 'An error occurred while cancelling the order. Please try again.', 'error');
-//                     });
-//             }
-//         });
-//     }
-// </script>
 
 <script>
     function cancelOrder(orderId) {
