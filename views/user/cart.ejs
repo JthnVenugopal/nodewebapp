@@ -39,13 +39,15 @@
                         <td><%= item.quantity %></td>
                         <td>₹<%= item.price.toFixed(2) %></td>
                         <td class="total-price">₹<%= item.totalPrice.toFixed(2) %></td>
+
                         <td>
-                            <form action="/cart/remove/<%= item._id %>" method="POST" class="d-inline">
+                            <form action="/cart/remove/<%= item._id %>" method="POST" class="d-inline" onsubmit="return confirmRemove(event, this);">
                                 <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Remove Item">
                                     <i class="fas fa-trash-alt"></i> Remove
                                 </button>
                             </form>
                         </td>
+
                     </tr>
                 <% }); %>
             </tbody>
@@ -79,6 +81,8 @@
 
 <%- include("../../views/partials/user/footer") %>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(function () {
@@ -95,4 +99,25 @@
         $('#totalAmount').text(totalAmount.toFixed(2));
     });
 </script>
+
+<script>
+    function confirmRemove(event, form) {
+        event.preventDefault(); // Prevent the form from submitting immediately
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, remove it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit(); // Submit the form if confirmed
+            }
+        });
+    }
+</script>
+
 </body>

@@ -1,480 +1,491 @@
-<%- include("../../views/partials/user/header") %>
-<title>Product Detail</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
-<style>
-body {
-    
-    background-size: cover;
-    background-repeat: no-repeat;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../../views/partials/user/header") %>
+    <title>Product Detail</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+    <style>
+        body {
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
 
-a{
-    text-decoration: none;
-}
+        a {
+            text-decoration: none;
+        }
 
-.product-image-slider {
-    display: flex;
-    overflow: hidden;
-    justify-content: center;
-    margin-bottom: 1rem;
-}
+        .product-image-slider {
+            display: flex;
+            overflow: hidden;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
 
-.slider-nav-thumbnails {
-    display: flex;
-    overflow-x: auto;
-    margin-top: 1rem;
-    overflow: hidden;
-}
+        .slider-nav-thumbnails {
+            display: flex;
+            overflow-x: auto;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
 
-.slider-nav-thumbnails img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    margin-right: 1rem;
-    cursor: pointer;
-}
+        .slider-nav-thumbnails img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-right: 1rem;
+            cursor: pointer;
+        }
 
-.main {
-    padding: 20px; /* Add some padding to the main section */
-}
+        .main {
+            padding: 20px;
+        }
 
-.title-detail {
-    font-weight: bold;
-    font-size: 24px; /* Adjust font size for the title */
-}
+        .title-detail {
+            font-weight: bold;
+            font-size: 24px;
+        }
 
-.product-detail {
-    background: rgba(255, 255, 255, 0.8); /* Slightly transparent white background for product detail */
-    padding: 20px;
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-}
+        .product-detail {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-.breadcrumb {
-    display: flex; /* Use flexbox for alignment */
-    align-items: center; /* Center vertically */
-    list-style: none; /* Remove default list styling */
-    padding: 10px 0; /* Add some padding */
-}
+        .available-colors {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-.breadcrumb a {
-    text-decoration: none; /* Remove underline from links */
-    color: #007bff; /* Change link color */
-}
+        .image-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-.breadcrumb span {
-    margin: 0 5px; /* Add spacing between elements */
-    color: #6c757d; /* Change color for separators */
-}
+        .image-group:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
 
-.image-container {
-    position: relative;
-    overflow: hidden;
-}
-
-#mainImage {
-    transition: transform 0.2s ease; /* Smooth transition for zoom effect */
-}
-
-.sizes-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.size-badge {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px; /* Circle size */
-    height: 50px; /* Circle size */
-    border-radius: 50%; /* Makes the div circular */
-    background-color: #ffffff; /* Circle background color */
-    color: rgb(0, 0, 0); /* Text color */
-    font-weight: bold;
-    text-align: center;
-    font-size: 14px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
-    cursor: pointer; /* Change cursor on hover */
-    transition: background-color 0.3s ease;
-    
-}
-
-.size-badge:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-}
-</style>
+        .image-group img {
+            height: 150px;
+            width: 120px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
 <main class="main">
-
     <div class="page-header breadcrumb-wrap my-5">
         <div class="container">
             <nav aria-label="Breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="#" rel="nofollow">Home</a>
-                    </li>
+                    <li class="breadcrumb-item"><a href="#" rel="nofollow">Home</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Shop</li>
                     <li class="breadcrumb-item active" aria-current="page">Product Details</li>
                 </ol>
             </nav>
         </div>
     </div>
-  
-<section class="mt-50 mb-50 ">
-<div class="d-flex justify-content-center">
-<div class="row">
-    <div class="col-lg-9">
-        <div class="product-detail accordion-detail" style="width: 70vw; margin-bottom: 100px;">
-        <div class="row mb-50">
-            <div class="col-md-6 col-sm-12 col-xs-12 ">
-                <div class="detail-gallery">
-                    <span class="zoom-icon"><i class="fi-rs-search"></i></span>
-                    <div class="product-image-slider  image-container" style="height: 420px; width: 400px;">
 
-
-
-                <figure class="border-radius-10">
-                    <img src="/uploads/re-image/<%= variant.productImages[0] %>" alt="Product Image 1" id="mainImage" style="width: 400px; height: 420px;">
-                </figure>
-                </div>
-                <div class="slider-nav-thumbnails">
-
-                <% for (let i = 0; i < variant.productImages.length; i++) { %>
-                <div>
-                    <img src="/uploads/re-image/<%= variant.productImages[i] %>" alt="Thumbnail <%= i + 1 %>" class="thumbnail" onclick="changeMainImage('/uploads/re-image/<%= variant.productImages[i] %>')">
-                </div>
-                <% } %>
-
-                </div>
-            </div>
-        </div>
-
-                       
-
-        <div class="col-md-6 col-sm-12">
-        <div class="detail-info">
-            <!-- Product Name -->
-            <h1 class="title-detail"><%= product.productName %></h1>
-    
-            <!-- Brand Information -->
-            <div class="pro-details-brand mb-3">
-                <span>Brand: <a href="#"><%= brand.brandName %></a></span>
-            </div>
-    
-            <!-- Pricing Section -->
-            <div class="product-price-cover mb-4">
-                <div class="product-price primary-color">
-                    <div>
-                        <strike><span class="old-price font-md">Regular Price: <%= variant.regularPrice %></span></strike>
-                    </div>
-                    <div class="mt-2">
-                        <span class="text-brand font-weight-bold">
-                            <h4>Special Price: <%= variant.salePrice %></h4>
-                        </span>
-                    </div>
-                </div>
-            </div>
-                            
-
-        <div class="my-5">
-            <%console.log(variant.color)%>
-            <h6>Color : <%=variant.color%></h6>
-        </div>
-
-      
-
-            <div class="size-selection my-5">
-                <h5>Select Size</h5>
-                <div class="sizes-container d-flex flex-wrap mt-3">
-                    <% size.forEach(sizes => { %>
-                        <div class="size-badge mx-2" data-size="<%= sizes %>">
-                            <%= sizes %>
-                        </div>
-                    <% }) %>
-                </div>
-            </div>
-            
-                <!-- Product Description -->
-                <div class="short-desc mb-4">
-                    <h6><%= product.description %></h6>
-                </div>
-        
-                           
-                           
-                
-        <div class="detail-extralink mt-4">
-            <% if (variant.quantity === 0) { %>
-                <h4 class="text-danger">Out of Stock</h4>
-            <% } else { %>
-
-            <!-- Add to Cart Form -->
-              <!-- Add to Cart Form -->
-                <!-- Add to Cart Form -->
-                    <form action="/add-to-cart" method="POST" id="addToCartForm">
-                        <input type="hidden" name="variantId" value="<%= variant._id %>"> 
-                        <input type="hidden" name="productId" value="<%= product._id %>"> 
-                        <input type="hidden" name="quantity" value="1">
-                        <input type="hidden" name="price" value="<%= variant.salePrice %>"> <!-- Add total price -->
-                        <input type="hidden" name="name" value="<%= product.productName %>"> <!-- Add product name -->
-                        <input type="hidden" name="color" value="<%= variant.color %>"> <!-- Add variant color -->
-                        <button type="submit" id="addToCartBtn" class="btn btn-primary" disabled>Add to Cart</button> 
-                    </form>
-
-            <% } %>  
-        </div>
-
-
-
-
-<div>
-<h6 class="my-5">Availability:<span class="in-stock text-success ml-5"><%=variant.quantity%> Items in stock</span><h6>
-
-</div>
-
-
-<!-- Quantity selection -->
-<div class="quantity-selection my-5">
-    <h5>Select Quantity</h5>
-    <div class="quantity-container d-flex flex-wrap mt-3">
-        <div class="input-group">
-            <button class="btn btn-secondary" id="decrement-quantity" type="button">-</button>
-            <input type="number" id="quantity" name="quantity" value="1" min="1" max="5" class="form-control" style="width: 100px;">
-            <button class="btn btn-secondary" id="increment-quantity" type="button">+</button>
-        </div>
-    </div>
-</div>
-
-    
-<div>
-    <div>
-        <div>
-            <h6>Available colors</h6>
-                <div>
-                    <div class="slider-nav-thumbnai">
-                    <% if (variantImages && variantImages.length > 0) { %>
-                        <% for (const imageGroup of variantImages) { %> <!-- Outer Loop -->
-                            <div class="image-group">
-                                <% if (imageGroup.length > 0) { %> <!-- Check if there is at least one image -->
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="product-detail accordion-detail">
+                        <div class="detail-gallery">
+                            <div class="product-image-slider image-container">
+                                <figure class="border-radius-10">
+                                    <img src="/uploads/re-image/<%= variant.productImages[0] %>" alt="Product Image" id="mainImage" style="width: 100%; height: auto;">
+                                </figure>
+                            </div>
+                            <div class="slider-nav-thumbnails">
+                                <% for (let i = 0; i < variant.productImages.length; i++) { %>
                                     <div>
-                                        <img 
-                                            style="height: 200px;" 
-                                            src="/uploads/product-images/<%= imageGroup[0] %>" 
-                                            
-                                        />
+                                        <img src="/uploads/re-image/<%= variant.productImages[i] %>" alt="Thumbnail <%= i + 1 %>" class="thumbnail" onclick="changeMainImage('/uploads/re-image/<%= variant.productImages[i] %>')">
                                     </div>
                                 <% } %>
                             </div>
-                        <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="detail-info">
+                        <h1 class="title-detail"><%= product.productName %></h1>
+                        <div class="pro-details-brand mb-3">
+                            <span>Brand: <a href="#"><%= brand.brandName %></a></span>
+                        </div>
+                        <div class="product-price-cover mb-4">
+                            <div class="product-price primary-color">
+                                <div>
+                                    <strike><span class="old-price font-md">Regular Price: <%= variant.regularPrice %></span></strike>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="text-brand font-weight-bold">
+                                        <h4>Special Price: <%= variant.salePrice %></h4>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="my-5">
+                            <h6>Color: <%= variant.color %></h6>
+                        </div>
+
+                        <div class="size-selection my-5">
+                            <h5>Select Size</h5>
+                            <div class="sizes-container d-flex flex-wrap mt-3">
+                                <% size.forEach(sizes => { %>
+                                    <div class="size-badge mx-2" data-size="<%= sizes %>">
+                                        <%= sizes %>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+
+                        <div class="short-desc mb-4">
+                            <h6><%= product.description %></h6>
+                        </div>
+
+                     
+                        <div class="detail-extralink mt-4">
+                            <% if (variant.quantity === 0) { %>
+                                <h4 class="text-danger">Out of Stock</h4>
+                            <% } else { %>
+                                <form action="/add-to-cart" method="POST" id="addToCartForm">
+                                    <input type="hidden" name="variantId" value="<%= variant._id %>">
+                                    <input type="hidden" name="productId" value="<%= product._id %>">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <input type="hidden" name="price" value="<%= variant.salePrice %>">
+                                    <input type="hidden" name="name" value="<%= product.productName %>">
+                                    <input type="hidden" name="color" value="<%= variant.color %>">
+                                    <button type="submit" id="addToCartBtn" class="btn btn-primary" disabled>Add to Cart</button>
+                                    
+                                </form>
+                            <% } %>
+
+                            
+                            <form action="/add-to-wishlist" method="POST" id="addToWishlistForm" class="my-3">
+                                <input type="hidden" name="variantId" value="<%= variant._id %>">
+                                <input type="hidden" name="productId" value="<%= product._id %>">
+                                <input type="hidden" name="name" value="<%= product.productName %>">
+                                <input type="hidden" name="color" value="<%= variant.color %>">
+                                <button type="submit" id="addToWishlistBtn" class="btn btn-warning">Add to Wishlist</button>
+                            </form>
+
+                        </div>
+
+                        <div>
+                            <h6 class="my-5">Availability: <span class="in-stock text-success ml-5"><%= variant.quantity %> Items in stock</span></h6>
+                        </div>
+
+                        <style>
+                            .custom-quantity-container {
+                                width: 200px; /* Adjust width as needed */
+                            }
+                        </style>
+                        
+                        <div class="quantity-selection my-5">
+                            <h5>Select Quantity</h5>
+                            <div class="quantity-container custom-quantity-container d-flex flex-wrap mt-3">
+                                <div class="input-group">
+                                    <button class="btn btn-success" id="decrement-quantity" type="button">-</button>
+                                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="5" class="form-control" style="width: 100px;">
+                                    <button class="btn btn-success" id="increment-quantity" type="button">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h6 class="available-colors my-5">Available Colors</h6>
+                            <div class="slider-nav-thumbnails">
+                                <% if (variantImages && variantImages.length > 0) { %>
+                                    <% for (const imageGroup of variantImages) { %>
+                                        <div class="image-group">
+                                            <% if (imageGroup.length > 0) { %>
+                                                <img src="/uploads/product-images/<%= imageGroup[0] %>" alt="Product Image" />
+                                            <% } %>
+                                        </div>
+                                    <% } %>
+                                <% } else { %>
+                                    <p>No images available for this product.</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mt-5 my-5">
+                <h5 class="mb-4">Ratings</h5>
+                <div class="mb-4">
+                    <% if (ratings.length > 0) { %>
+                        <% ratings.forEach(rating => { %>
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-2">
+                                        <strong><%= rating.userId.name %></strong>
+                                    </h6>
+                                    <p class="card-text">Rating: <strong><%= rating.rating %></strong></p>
+                                    <p class="card-text">Review: <%= rating.review %></p>
+                                    <p class="card-text text-muted">Posted on: <%= rating.createdAt.toDateString() %></p>
+                                </div>
+                            </div>
+                        <% }) %>
                     <% } else { %>
-                        <p>No images available for this product.</p>
+                        <p class="text-muted">No ratings yet.</p>
                     <% } %>
-                </div> 
+                </div>
+
+                <h5 class="mb-4">Submit a Rating</h5>
+                <form action="/ratings" method="POST" class="border p-4 rounded bg-light">
+                    <input type="hidden" name="productId" value="<%= product._id %>">
+                    <input type="hidden" name="userId" value=""> <!-- Assuming user is logged in -->
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Rating (1-5):</label>
+                        <input type="number" id="rating" name="rating" min="1" max="5" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="review" class="form-label">Review:</label>
+                        <textarea id="review" name="review" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Rating</button>
+                </form>
             </div>
         </div>
-     </div>
-  </div>
-
-
-
- </div>
- </div>
-</div>
-</div>
-
-              <div>
-                <div class="container mt-5">
-                    <h5 class="mb-4">Ratings</h5>
-                    <div class="mb-4">
-                        <% if (ratings.length > 0) { %>
-                            <% ratings.forEach(rating => { %>
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <h6 class="card-title mb-2">
-                                            <strong><%= rating.userId.name %></strong>
-                                        </h6>
-                                        <p class="card-text">Rating: <strong><%= rating.rating %></strong></p>
-                                        <p class="card-text">Review: <%= rating.review %></p>
-                                        <p class="card-text text-muted">Posted on: <%= rating.createdAt.toDateString() %></p>
-                                    </div>
-                                </div>
-                            <% }) %>
-                        <% } else { %>
-                            <p class="text-muted">No ratings yet.</p>
-                        <% } %>
-                    </div>
-                
-                    <!-- Rating submission form -->
-                    <h5 class="mb-4">Submit a Rating</h5>
-                    <form action="/ratings" method="POST" class="border p-4 rounded bg-light">
-                        <input type="hidden" name="productId" value="<%= product._id %>">
-                        <input type="hidden" name="userId" value=""> <!-- Assuming user is logged in -->
-                
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Rating (1-5):</label>
-                            <input type="number" id="rating" name="rating" min="1" max="5" class="form-control" required>
-                        </div>
-                
-                        <div class="mb-3">
-                            <label for="review" class="form-label">Review:</label>
-                            <textarea id="review" name="review" class="form-control" rows="4" required></textarea>
-                        </div>
-                
-                        <button type="submit" class="btn btn-primary">Submit Rating</button>
-                    </form>
-                </div>
-              </div>
-              
-              
-            
-
-           </div>
-        </div>
-
-
-
-     </section>
-    
+    </section>
 </main>
 
 <%- include("../../views/partials/user/footer") %>
 
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 
+<script>
+    function changeMainImage(imageSrc) {
+        document.getElementById('mainImage').src = imageSrc;
+    }
+
+    let selectedSize = null;
+
+    $(document).ready(function () {
+        $('.thumbnail').on('click', function () {
+            const imageSrc = $(this).attr('src');
+            $('#mainImage').attr('src', imageSrc);
+            $('.thumbnail').removeClass('active');
+            $(this).addClass('active');
+        });
+
+        $('.image-container').on('mousemove', function (e) {
+            const offsetX = e.offsetX;
+            const offsetY = e.offsetY;
+            const width = $(this).width();
+            const height = $(this).height();
+
+            const xPercent = (offsetX / width) * 100;
+            const yPercent = (offsetY / height) * 100;
+
+            $('#mainImage').css({
+                'transform-origin': `${xPercent}% ${yPercent}%`,
+                'transform': 'scale(1.5)'
+            });
+        });
+
+        $('.image-container').on('mouseleave', function () {
+            $('#mainImage').css({
+                'transform-origin': 'center center',
+                'transform': 'scale(1)'
+            });
+        });
+
+        $('.size-badge').on('click', function () {
+            $('.size-badge').css('background-color', 'white');
+            $('.size-badge').css('color', 'black');
+
+            selectedSize = $(this).data('size');
+
+            $(this).css('background-color', 'DodgerBlue');
+            $(this).css('color', 'white');
+
+            $('#addToCartBtn').prop('disabled', false);
+        });
+
+        $('#addToCartForm').on('submit', function (e) {
+            if (!selectedSize) {
+                e.preventDefault();
+                alert('Please select a size before adding to cart.');
+            } else {
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'size',
+                    value: selectedSize
+                }).appendTo('#addToCartForm');
+
+                const quantity = $('#quantity').val();
+                $('input[name="quantity"]').val(quantity);
+            }
+        });
+
+        $('#decrement-quantity').on('click', function () {
+            const quantity = parseInt($('#quantity').val());
+            if (quantity > 1) {
+                $('#quantity').val(quantity - 1);
+            } else {
+                alert('Minimum quantity is 1');
+            }
+        });
+
+        $('#increment-quantity').on('click', function () {
+            const quantity = parseInt($('#quantity').val());
+            if (quantity < 5) {
+                $('#quantity').val(quantity + 1);
+            } else {
+                alert('Maximum quantity is 5');
+            }
+        });
+
+        $('#quantity').on('input', function () {
+            const quantity = $(this).val();
+            if (quantity < 1) {
+                alert('Minimum quantity is 1');
+                $(this).val(1);
+            } else if (quantity > 5) {
+                alert('Maximum quantity is 5');
+                $(this).val(5);
+            }
+        });
+    });
+</script> -->
 
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+    function changeMainImage(imageSrc) {
+        document.getElementById('mainImage').src = imageSrc;
+    }
 
-    <script>
-        // Your JavaScript code here
-        function changeMainImage(imageSrc) {
-            document.getElementById('mainImage').src = imageSrc;
-        }
-        
-        let selectedSize = null; // Variable to store the selected size
-        
-        $(document).ready(function () {
-            // Thumbnail click event
-            $('.thumbnail').on('click', function () {
-                const imageSrc = $(this).attr('src');
-                $('#mainImage').attr('src', imageSrc);
-                $('.thumbnail').removeClass('active');
-                $(this).addClass('active');
-            });
-        
-            // Zoom effect for main image
-            $('.image-container').on('mousemove', function (e) {
-                const offsetX = e.offsetX;
-                const offsetY = e.offsetY;
-                const width = $(this).width();
-                const height = $(this).height();
-        
-                const xPercent = (offsetX / width) * 100;
-                const yPercent = (offsetY / height) * 100;
-        
-                $('#mainImage').css({
-                    'transform-origin': `${xPercent}% ${yPercent}%`,
-                    'transform': 'scale(1.5)' // Adjust scale for zoom effect
-                });
-            });
-        
-            $('.image-container').on('mouseleave', function () {
-                $('#mainImage').css({
-                    'transform-origin': 'center center',
-                    'transform': 'scale(1)' // Reset scale on mouse leave
-                });
-            });
-        
-            // Handle size selection
-            $('.size-badge').on('click', function () {
-                $('.size-badge').css('background-color', 'white'); // Reset to original color
-                $('.size-badge').css('color', 'black'); // Reset text color
-    
-                selectedSize = $(this).data('size');
-    
-                $(this).css('background-color', 'DodgerBlue'); // Change to blue
-                $(this).css('color', 'white'); // Change text color to white
-    
-                $('#addToCartBtn').prop('disabled', false);
-            });
-    
-           
-          // Submit the form when the Add to Cart button is clicked
-                $('#addToCartForm').on('submit', function (e) {
-                    if (!selectedSize) {
-                        e.preventDefault(); // Prevent form submission if no size is selected
-                        alert('Please select a size before adding to cart.');
-                    } else {
-                        // Set the selected size in a hidden input
-                        $('<input>').attr({
-                            type: 'hidden',
-                            name: 'size',
-                            value: selectedSize
-                        }).appendTo('#addToCartForm');
+    let selectedSize = null;
 
-                        // Update the quantity input value
-                        const quantity = $('#quantity').val();
-                        $('input[name="quantity"]').val(quantity);
-                    }
-                });
-    
-            // Quantity selection
-            $('#decrement-quantity').on('click', function () {
-                const quantity = parseInt($('#quantity').val());
-                if (quantity > 1) {
-                    $('#quantity').val(quantity - 1);
-                } else {
-                    alert('Minimum quantity is 1');
-                }
-            });
-    
-            $('#increment-quantity').on('click', function () {
-                const quantity = parseInt($('#quantity').val());
-                if (quantity < 5) {
-                    $('#quantity').val(quantity + 1);
-                } else {
-                    alert('Maximum quantity is 5');
-                }
-            });
-    
-            $('#quantity').on('input', function () {
-                const quantity = $(this).val();
-                if (quantity < 1) {
-                    alert('Minimum quantity is 1');
-                    $(this).val(1);
-                } else if (quantity > 5) {
-                    alert('Maximum quantity is 5');
-                    $(this).val(5);
-                }
-            });+
-
-                    function updateTotalPrice() {
-                    const quantity = parseInt($('#quantity').val());
-                    if (isNaN(quantity) || quantity < 1) {
-                        alert('Invalid quantity. Setting to 1.');
-                        $('#quantity').val(1);
-                        return; // Exit the function if quantity is invalid
-                    }
-
-                    const totalPrice = salePrice * quantity; // Calculate total price
-                    if (isNaN(totalPrice)) {
-                        console.error('Total price calculation failed. Sale price or quantity is invalid.');
-                        return; // Exit if total price is NaN
-                    }
-
-                    $('input[name="totalPrice"]').val(totalPrice); // Update hidden input
-                    }
-
-
-
-
+    $(document).ready(function () {
+        $('.thumbnail').on('click', function () {
+            const imageSrc = $(this).attr('src');
+            $('#mainImage').attr('src', imageSrc);
+            $('.thumbnail').removeClass('active');
+            $(this).addClass('active');
         });
 
+        $('.image-container').on('mousemove', function (e) {
+            const offsetX = e.offsetX;
+            const offsetY = e.offsetY;
+            const width = $(this).width();
+            const height = $(this).height();
+
+            const xPercent = (offsetX / width) * 100;
+            const yPercent = (offsetY / height) * 100;
+
+            $('#mainImage').css({
+                'transform-origin': `${xPercent}% ${yPercent}%`,
+                'transform': 'scale(1.5)'
+            });
+        });
+
+        $('.image-container').on('mouseleave', function () {
+            $('#mainImage').css({
+                'transform-origin': 'center center',
+                'transform': 'scale(1)'
+            });
+        });
+
+        $('.size-badge').on('click', function () {
+            $('.size-badge').css('background-color', 'white');
+            $('.size-badge').css('color', 'black');
+
+            selectedSize = $(this).data('size');
+
+            $(this).css('background-color', 'DodgerBlue');
+            $(this).css('color', 'white');
+
+            $('#addToCartBtn').prop('disabled', false);
+        });
+
+        $('#addToCartForm').on('submit', function (e) {
+            if (!selectedSize) {
+                e.preventDefault();
+                alert('Please select a size before adding to cart.');
+            } else {
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'size',
+                    value: selectedSize
+                }).appendTo('#addToCartForm');
+
+                const quantity = $('#quantity').val();
+                $('input[name="quantity"]').val(quantity);
+            }
+        });
+
+        $('#decrement-quantity').on('click', function () {
+            const quantity = parseInt($('#quantity').val());
+            if (quantity > 1) {
+                $('#quantity').val(quantity - 1);
+            } else {
+                Swal.fire({
+                    title: 'Minimum Quantity Reached',
+                    text: 'The minimum quantity you can select is 1.',
+                    icon: 'warning'
+                });
+            }
+        });
+
+        $('#increment-quantity').on('click', function () {
+            const quantity = parseInt($('#quantity').val());
+            if (quantity < 5) {
+                $('#quantity').val(quantity + 1);
+            } else {
+                Swal.fire({
+                    title: 'Maximum Quantity Reached',
+                    text: 'The maximum quantity you can select is 5.',
+                    icon: 'warning'
+                });
+            }
+        });
+
+        $('#quantity').on('input', function () {
+            const quantity = $(this).val();
+            if (quantity < 1) {
+                Swal.fire({
+                    title: 'Minimum Quantity Reached',
+                    text: 'The minimum quantity you can select is 1.',
+                    icon: 'warning'
+                });
+                $(this).val(1);
+            } else if (quantity > 5) {
+                Swal.fire({
+                    title: 'Maximum Quantity Reached',
+                    text: 'The maximum quantity you can select is 5.',
+                    icon: 'warning'
+                });
+                $(this).val(5);
+            }
+        });
+    });
+</script>
 
 
 
-    </script>
+
+</body>
+</html>

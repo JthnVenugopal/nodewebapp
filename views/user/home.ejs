@@ -89,12 +89,12 @@
 
                     <% for (let i = 0; i < products.length; i++) { %>
                         <div class="col-md-4 col-lg-3 mb-4">
-                            <div class="card h-100 shadow-sm border-0" style="background-color: rgba(251, 238, 238, 0.642);">
+                            <div class="card h-100 shadow-sm border-0 " style="background-color: rgba(255, 239, 239, 0.642);">
                                 <!-- Product Image -->
                                 
                                 <% if (products[i].variantData && products[i].variantData.productImages && products[i].variantData.productImages.length > 0) { %>
-                                    <img style="height: 350px;" src="/uploads/re-image/<%= products[i].variantData.productImages[0] %>" 
-                                         class="card-img-top" 
+                                    <img style="height: 200px; width: 200px;" src="/uploads/re-image/<%= products[i].variantData.productImages[0] %>" 
+                                         class="card-img-top  ml-4" 
                                          alt="<%= products[i].productName %>">
                                
                                 <% } else { %>

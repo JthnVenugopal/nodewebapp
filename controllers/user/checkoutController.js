@@ -6,66 +6,11 @@ const Product = require("../../models/productSchema");
 const mongoose = require("mongoose");
 const { getUserWithAddresses } = require('../../utils/userUtils');
 
-// const getCheckout = async (req, res) => {
-//   try {
-//     const sessionUser = req.session.user;
-//     const googleUser  = req.user;
-//     const userId = sessionUser || googleUser;
-
-//       const user = await User.findById(userId);
-//       // console.log(user)
-
-
-
-//       if (!user) {
-//           return res.redirect('/login');
-//       }
-      
-//       const cart = await Cart.findOne({ userId: user._id }).populate('items.productId');
-//       //populate-retrieves the full product documents associated with those IDs
-      
-//       const addresses = await Address.find({ userId: user._id });
-
-
-//       let totalAmount = cart.items.reduce((total, item) => total + item.totalPrice, 0);
-
-      
-//       if (req.query.id) {
-//           const product = await Product.findById(req.query.id);
-//           if (!product) {
-//             return res.redirect('/pageNotFound');
-//           }
-//           totalAmount = product.salePrice;
-//           return res.render('checkout', { cart: null, product, addresses, totalAmount,user });
-//         } else {
-//           const cartItems = await Cart.findOne({ userId: user }).populate('items.productId');
-//           if (!cartItems) {
-//             return res.render('checkout', { cart: null, products: [], addresses, totalAmount, product: null ,user});
-//           }
-//           totalAmount = cartItems.items.reduce((sum, item) => sum + item.totalPrice, 0);
-
-
-//           return res.render('checkout', { 
-//             cart: cartItems,
-//              products: cartItems.items, 
-//              addresses:addresses, 
-//              totalAmount,
-//              product: null ,
-//              user});
-//         }
-     
-//   } catch (error) {
-//       console.error('Error loading checkout page:', error);
-//       res.status(500).send('Server Error');
-//   }
-// };
-
-
 
 const getCheckout = async (req, res) => {
   try {
   
-    const userId =req.session.user ||  req.user;
+    const userId =req.session.user.id ||  req.user;
 
     const user = await User.findById(userId);
 
@@ -231,6 +176,7 @@ const getCheckout = async (req, res) => {
 // };
 
 const placeOrder = async (req, res) => {
+
   try {
 
 
@@ -239,21 +185,19 @@ const placeOrder = async (req, res) => {
     console.log("--------------------placeorder--------------------------------");
     
     const { addressId, payment_option, singleProduct, discountInput, couponCodeInput } = req.body;
-    console.log(addressId, payment_option, singleProduct, discountInput, couponCodeInput);
-    const userId = req.session.user || req.user;
 
-    console.log("userId : "+userId._id)
 
-    
-    console.log("------------------------------------------------");
-    
+    // console.log(addressId, payment_option, singleProduct, discountInput, couponCodeInput);
+
+    const userId = req.session.user.id || req.user;
+
     if (!userId) {
       console.log("User not logged in");
       return res.redirect('/login');
     }
      
-    const userAddress = await Address.findOne({ userId: userId._id });
-    console.log("User Address: ", userAddress);
+    const userAddress = await Address.findOne({ userId: userId });
+    // console.log("User Address: ", userAddress);
 
     const selectedAddress = userAddress.address[addressId]
    
