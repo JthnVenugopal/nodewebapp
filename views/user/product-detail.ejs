@@ -173,14 +173,76 @@
                                 </form>
                             <% } %>
 
+
+
+
+                            <% if (variant.quantity === 0) { %>
+                                <h4 style="display: none;"></h4>
+                            <% } else { %>
+
+                                <form id="addToWishlistForm" class="my-3">
+                                    <input type="hidden" name="variantId" value="<%= variant._id %>">
+                                    <input type="hidden" name="productId" value="<%= product._id %>">
+                                    <input type="hidden" name="name" value="<%= product.productName %>">
+                                    <input type="hidden" name="color" value="<%= variant.color %>">
+                                    <button type="button" id="addToWishlistBtn" class="btn btn-warning">Add to Wishlist</button>
+                                </form>
+                                
+                                    
+                                </form>
+                            <% } %>
                             
-                            <form action="/add-to-wishlist" method="POST" id="addToWishlistForm" class="my-3">
-                                <input type="hidden" name="variantId" value="<%= variant._id %>">
-                                <input type="hidden" name="productId" value="<%= product._id %>">
-                                <input type="hidden" name="name" value="<%= product.productName %>">
-                                <input type="hidden" name="color" value="<%= variant.color %>">
-                                <button type="submit" id="addToWishlistBtn" class="btn btn-warning">Add to Wishlist</button>
-                            </form>
+                
+                          
+                            
+                            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                            <script>
+
+
+                            document.getElementById('addToWishlistBtn').addEventListener('click', () => {
+                                const form = document.getElementById('addToWishlistForm');
+                                const formData = {
+                                    variantId: form.querySelector('input[name="variantId"]').value,
+                                    productId: form.querySelector('input[name="productId"]').value,
+                                    name: form.querySelector('input[name="name"]').value,
+                                    color: form.querySelector('input[name="color"]').value,
+                                };
+                            
+                                fetch('/add-to-wishlist', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(formData),
+                                })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error(`HTTP error! Status: ${response.status}`);
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Success!',
+                                            text: data.message || 'Added to wishlist!',
+                                            confirmButtonText: 'OK',
+                                        });
+                                    })
+                                    .catch(err => {
+                                        
+                                        console.error('Fetch error:', err);
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Oops...',
+                                            text: 'Item already exist in your wishlist ! ',
+                                            confirmButtonText: 'OK',
+                                        });
+                                    });
+                            });
+                            </script>
+                            
+
+
+                            
 
                         </div>
 
@@ -481,6 +543,10 @@
                 $(this).val(5);
             }
         });
+
+
+
+
     });
 </script>
 

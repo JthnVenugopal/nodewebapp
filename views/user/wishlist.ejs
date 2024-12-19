@@ -1,7 +1,121 @@
 <%- include("../../views/partials/user/header") %>
-<body>
-<h1>Your Wishlist</h1>
 
+<title>My Wishlist</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: aliceblue;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .wishlist-table {
+    width: 100%;
+  }
+  .wishlist-item img {
+    max-width: 100px;
+    border-radius: 8px;
+  }
+  .wishlist-item-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #fff;
+    background: #dc3545;
+    transition: background 0.3s ease;
+  }
+  .wishlist-item-actions button:hover {
+    background: #c82333;
+  }
+  .empty-message {
+    text-align: center;
+    font-size: 18px;
+    color: #777;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h6>Wishlist</h6>
+    </div>
+
+    <% if (items && items.length > 0) { %>
+      <div class="table-responsive">
+        <table class="table wishlist-table table-bordered">
+          <thead>
+            <tr>
+            
+            </tr>
+          </thead>
+
+
+
+          <tbody>
+           
+
+            <% items.forEach(item => { %>
+              <tr class="wishlist-item">
+                <td>
+                  <img src="/uploads/re-image/<%= item.variant.productImages[0] %>" alt="<%= item.product.productName %>">
+                </td>
+                <td><%= item.product.productName %></td>
+                <td><%= item.variant.color %></td>
+                <td>
+                  <%= item.variant.salePrice > 0 ? `₹${item.variant.salePrice}` : `₹${item.variant.regularPrice}` %>
+                </td>
+
+                <td class="wishlist-item-actions d-flex justify-content-center">
+                  <!-- Remove from Wishlist -->
+                  <form action="/remove-from-wishlist" method="POST">
+                    <input type="hidden" name="wishlistItemId" value="<%= item._id %>">
+                    <button type="submit" class="btn btn-danger" style="font-size: 10px;">Remove</button>
+                  </form>
+              
+                  <!-- Add to Cart -->
+                  <form action="/add-to-cart" method="POST" class="mx-2">
+                    <input type="hidden" name="variantId" value="<%= item.variant._id %>">
+                    <input type="hidden" name="productId" value="<%= item.product._id %>">
+                    <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="price" value="<%= item.variant.salePrice || item.variant.regularPrice %>">
+                    <button type="submit" class="btn btn-primary" style="font-size: 10px;">Add to Cart</button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+              
+
+
+          </tbody>
+
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty-message">
+        <h1>empty</h1>
+      </div>
+    <% } %>
+
+    <div class="text-center mt-5">
+      <a href="/products" class="btn btn-primary">Continue Shopping</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-<%- include("../../views/partials/user/footer") %>
+

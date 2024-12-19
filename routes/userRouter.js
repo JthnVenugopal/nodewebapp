@@ -85,7 +85,7 @@ router.post("/cancelOrder",orderController.cancelOrder);
 //wishlist management---------------------------------------------------------
 router.post('/add-to-wishlist', userIsAuthenticated,wishlistController.addToWishlist);
 router.get("/wishlist", userIsAuthenticated, wishlistController.loadWishlist);
-// router.post('/remove-from-wishlist', userIsAuthenticated, wishlistController.removeFromWishlist);
+router.post('/remove-from-wishlist', userIsAuthenticated, wishlistController.removeFromWishlist);
 
 
 module.exports = router;
