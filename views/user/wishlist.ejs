@@ -92,7 +92,8 @@
                     <input type="hidden" name="productId" value="<%= item.product._id %>">
                     <input type="hidden" name="quantity" value="1">
                     <input type="hidden" name="price" value="<%= item.variant.salePrice || item.variant.regularPrice %>">
-                    <button type="submit" class="btn btn-primary" style="font-size: 10px;">Add to Cart</button>
+                    <input type="hidden" name="wishlistItemId" value="<%= item._id %>"> <!-- Add this -->
+                    <button type="submit" class="btn btn-primary" style="font-size: 10px; background-color: aqua;">Add to Cart</button>
                   </form>
                 </td>
               </tr>
@@ -111,7 +112,7 @@
     <% } %>
 
     <div class="text-center mt-5">
-      <a href="/products" class="btn btn-primary">Continue Shopping</a>
+      <a href="/shop" class="btn btn-primary">Continue Shopping</a>
     </div>
   </div>
 

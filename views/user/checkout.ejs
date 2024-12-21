@@ -170,7 +170,7 @@
 </div>
 
 <!-- Order Form -->
-<div class="text-center mt-4">
+<!-- <div class="text-center mt-4">
     <form id="orderForm" method="POST" action="/placeOrder" class="my-5">
         <div class="payment_option mb-4">
             <h4>Select Payment Method</h4>
@@ -182,6 +182,27 @@
                 <input class="form-check-input" required type="radio" value="online" name="payment_option" id="onlinePayment">
                 <label class="form-check-label" for="onlinePayment">Online Payment</label>
             </div>
+        </div> -->
+
+
+
+        <hr>
+        <hr>
+
+        <div style="display: flex;flex-direction: column; align-items: center;">
+            <h4>Payment Method</h4>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="razorpay" value="razorpay" required>
+            <label class="form-check-label" for="razorPay">RazorPay</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="wallet" value="wallet" required>
+            <label class="form-check-label" for="wallet">Wallet</label>
+        </div>    
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="paymentCOD" value="cod" required>
+            <label class="form-check-label" for="paymentCOD">Cash on Delivery</label>
+        </div>
         </div>
 
         <!-- Hidden Fields -->
@@ -195,8 +216,13 @@
             <input type="hidden" name="singleProduct" value="<%= JSON.stringify(product) %>">
         <% } %>
 
-        <!-- Place Order Button -->
-        <button type="submit" class="btn btn-success btn-sm mt-3" onclick="">Place Order</button>
+        <div class="d-flex justify-content-center my-5">
+            <!-- Place Order Button -->
+
+            <button type="submit" class="btn btn-success btn-sm mt-3" onclick="">Place Order</button>
+
+        </div>
+        
 
 
     </form>

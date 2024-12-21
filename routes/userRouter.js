@@ -9,6 +9,7 @@ const cartController=require("../controllers/user/cartController");
 const checkoutController = require("../controllers/user/checkoutController");
 const orderController = require("../controllers/user/orderController");
 const wishlistController = require("../controllers/user/wishlistController");
+const paymentController = require("../controllers/user/paymentController");
 const { userIsAuthenticated  } = require("../middlewares/auth");
 
 // Path to join home page------------------------------------
@@ -86,6 +87,12 @@ router.post("/cancelOrder",orderController.cancelOrder);
 router.post('/add-to-wishlist', userIsAuthenticated,wishlistController.addToWishlist);
 router.get("/wishlist", userIsAuthenticated, wishlistController.loadWishlist);
 router.post('/remove-from-wishlist', userIsAuthenticated, wishlistController.removeFromWishlist);
+
+// payment management------------------------------------------------------------
+router.get('/razorpay', userIsAuthenticated, paymentController.getRazorpay);
+router.post('/paymentSuccess', userIsAuthenticated, paymentController.razorpaySuccess);
+router.post('/paymentFailed', userIsAuthenticated, paymentController.razorpayFailure);
+router.get('/retry-payment/:orderId', userIsAuthenticated, paymentController.retryRazorpay);
 
 
 module.exports = router;

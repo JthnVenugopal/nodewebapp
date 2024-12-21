@@ -4,6 +4,7 @@ const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
 const Variant = require("../../models/variantSchema");
+const Wishlist = require("../../models/wishlistSchema")
 
 const getCart = async (req, res) => {
   try {
@@ -42,20 +43,305 @@ const getCart = async (req, res) => {
   }
 };
 
-//---------------------------------------------------------------
+/////////////////////////////////////////////////////////////////////
 
+
+
+// const addToCart = async (req, res) => {
+//   try {
+//     const user = req.session.user.id || req.user;
+
+//     if (!user) {
+//       return res.status(401).send('User  not authenticated');
+//     }
+
+//     const { variantId, productId, quantity, size, price } = req.body;
+//     const parsedQuantity = parseInt(quantity);
+
+//     // Find the variant and product
+//     const variant = await Variant.findById(variantId);
+//     const product = await Product.findById(productId);
+
+//     if (!variant || !product) {
+//       return res.status(404).send('Variant or Product not found');
+//     }
+
+//     // Find the user's cart
+//     let cart = await Cart.findOne({ userId: user })
+//     .populate('items.productId')
+//     .populate('items.variantId');
+
+
+//     // If the cart doesn't exist, create a new one
+//     if (!cart) {
+//       cart = new Cart({ userId: user, items: [] });
+//     }
+
+//     // Check if the item already exists in the cart
+//     const existingItemIndex = cart.items.findIndex(item => item.variantId.toString() === variantId);
+
+//     if (existingItemIndex > -1) {
+//       // If the item exists, update the quantity and total price
+//       cart.items[existingItemIndex].quantity += parsedQuantity;
+//       cart.items[existingItemIndex].totalPrice = cart.items[existingItemIndex].quantity * price; // Update total price
+//     } else {
+//       // If the item doesn't exist, add a new item to the cart
+//       cart.items.push({
+//         productId: productId,
+//         variantId: variantId,
+//         quantity: parsedQuantity,
+//         size: size,
+//         totalPrice: price * parsedQuantity,
+//         price: price,
+//       });
+//     }
+
+//     // Save the cart
+//     await cart.save();
+
+//     // Remove the item from the wishlist 
+//     // let wishlist = await Wishlist.findOne({ userId: user }); 
+//     // if (wishlist) { 
+//     //   wishlist.items = wishlist.items.filter(item => item._id.toString() !== wishlistItemId); 
+//     //   await wishlist.save(); }
+
+
+
+//     // Redirect to the cart page to prevent form resubmission
+//     res.redirect('/cart');
+
+//   } catch (error) {
+//     console.error("Error adding to cart:", error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// };
+
+
+// const addToCart = async (req, res) => {
+//   try {
+//     const user = req.session.user?.id || req.user?.id; // Ensure proper user extraction
+
+//     if (!user) {
+//       return res.status(401).send('User not authenticated');
+//     }
+
+//     const { variantId, productId, quantity, size, price } = req.body;
+//     const parsedQuantity = parseInt(quantity);
+
+//     // Find the variant and product
+//     const variant = await Variant.findById(variantId);
+//     const product = await Product.findById(productId);
+
+//     if (!variant || !product) {
+//       return res.status(404).send('Variant or Product not found');
+//     }
+
+//     // Find the user's cart
+//     let cart = await Cart.findOne({ userId: user })
+//       .populate('items.productId')
+//       .populate('items.variantId');
+
+//     // If the cart doesn't exist, create a new one
+//     if (!cart) {
+//       cart = new Cart({ userId: user, items: [] });
+//     }
+
+//     // Check if the item already exists in the cart
+//     const existingItemIndex = cart.items.findIndex(item => 
+//       item.variantId.toString() === variantId && item.productId.toString() === productId
+//     );
+
+//     if (existingItemIndex > -1) {
+//       // If the item exists, update the quantity and total price
+//       cart.items[existingItemIndex].quantity += parsedQuantity;
+//       cart.items[existingItemIndex].totalPrice = cart.items[existingItemIndex].quantity * price; // Update total price
+//     } else {
+//       // If the item doesn't exist, add a new item to the cart
+//       cart.items.push({
+//         productId: productId,
+//         variantId: variantId,
+//         quantity: parsedQuantity,
+//         size: size,
+//         totalPrice: price * parsedQuantity,
+//         price: price,
+//       });
+//     }
+
+//     // Save the cart
+//     await cart.save();
+
+
+//     // Redirect to the cart page to prevent form resubmission
+//     res.redirect('/cart');
+
+//   } catch (error) {
+//     console.error("Error adding to cart:", error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// };
+
+
+// const addToCart = async (req, res) => {
+//   try {
+//     const user = req.session.user?.id || req.user?._id;
+
+//     if (!user) {
+//       return res.status(401).send('User not authenticated');
+//     }
+
+//     const { variantId, productId, quantity, size, price, wishlistItemId } = req.body;
+//     const parsedQuantity = parseInt(quantity);
+
+//     // Find the variant and product
+//     const variant = await Variant.findById(variantId);
+//     const product = await Product.findById(productId);
+
+//     if (!variant || !product) {
+//       return res.status(404).send('Variant or Product not found');
+//     }
+
+//     // Find the user's cart
+//     let cart = await Cart.findOne({ userId: user })
+//       .populate('items.productId')
+//       .populate('items.variantId');
+
+//     // If the cart doesn't exist, create a new one
+//     if (!cart) {
+//       cart = new Cart({ userId: user, items: [] });
+//     }
+
+//     console.log("CART///////////////////"+cart.items)
+
+//     // Function to update existing item
+//     const updateExistingItem = (index) => {
+//       cart.items[index].quantity += parsedQuantity;
+//       cart.items[index].totalPrice = cart.items[index].quantity * price; // Update total price
+//     };
+
+//     // Function to add new item
+//     const addNewItem = () => {
+//       cart.items.push({
+//         productId: productId,
+//         variantId: variantId,
+//         quantity: parsedQuantity,
+//         size: size,
+//         totalPrice: price * parsedQuantity,
+//         price: price,
+//       });
+//     };
+
+//     // Check if the item already exists in the cart
+//     const existingItemIndex = cart.items.findIndex(item =>
+//       item.variantId.toString() === variantId && item.productId.toString() === productId
+//     );
+
+//     if (existingItemIndex > -1) {
+//       updateExistingItem(existingItemIndex);
+//     } else {
+//       addNewItem();
+//     }
+
+//     // Save the cart
+//     await cart.save();
+
+   
+//     // Redirect to the cart page to prevent form resubmission
+//     res.redirect('/cart');
+//   } catch (error) {
+//     console.error("Error adding to cart:", error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// };
+
+// const addToCart = async (req, res) => {
+//   try {
+//     const user = req.session.user?.id || req.user?._id;
+
+//     if (!user) {
+//       return res.status(401).send('User not authenticated');
+//     }
+
+//     const { variantId, productId, quantity, size, price, wishlistItemId } = req.body;
+//     const parsedQuantity = parseInt(quantity);
+
+//     console.log("variantId//////////"+variantId)
+//     console.log("producId//////////"+variantId)
+
+//     // Find the variant and product
+//     const variant = await Variant.findById(variantId);
+//     const product = await Product.findById(productId);
+
+//     if (!variant || !product) {
+//       return res.status(404).send('Variant or Product not found');
+//     }
+
+//     // Find the user's cart
+//     let cart = await Cart.findOne({ userId: user })
+//       .populate('items.productId')
+//       .populate('items.variantId');
+
+//     // If the cart doesn't exist, create a new one
+//     if (!cart) {
+//       cart = new Cart({ userId: user, items: [] });
+//     }
+
+//     console.log("CART:", cart.items);
+
+//     // Function to update existing item
+//     const updateExistingItem = (index) => {
+//       cart.items[index].quantity += parsedQuantity;
+//       cart.items[index].totalPrice = cart.items[index].quantity * price; // Update total price
+//     };
+
+//     // Function to add new item
+//     const addNewItem = () => {
+//       cart.items.push({
+//         productId: productId,
+//         variantId: variantId,
+//         quantity: parsedQuantity,
+//         size: size,
+//         totalPrice: price * parsedQuantity,
+//         price: price,
+//       });
+//     };
+
+//     // Check if the item already exists in the cart
+//     const existingItemIndex = cart.items.findIndex(item =>
+//       item.variantId._id === variantId && item.productId.toString() === productId.toString()
+//     );
+
+//     if (existingItemIndex > -1) {
+//       updateExistingItem(existingItemIndex);
+//     } else {
+//       addNewItem();
+//     }
+
+//     // Save the cart
+//     await cart.save();
+
+   
+//     // Redirect to the cart page to prevent form resubmission
+//     res.redirect('/cart');
+//   } catch (error) {
+//     console.error("Error adding to cart:", error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// };
 
 
 const addToCart = async (req, res) => {
   try {
-    const user = req.session.user.id || req.user;
+    const user = req.session.user?.id || req.user?._id;
 
     if (!user) {
       return res.status(401).send('User  not authenticated');
     }
 
-    const { variantId, productId, quantity, size, price } = req.body;
+    const { variantId, productId, quantity, size, price, wishlistItemId } = req.body;
     const parsedQuantity = parseInt(quantity);
+
+    console.log("variantId//////////" + variantId);
+    console.log("productId//////////" + productId);
 
     // Find the variant and product
     const variant = await Variant.findById(variantId);
@@ -67,24 +353,24 @@ const addToCart = async (req, res) => {
 
     // Find the user's cart
     let cart = await Cart.findOne({ userId: user })
-    .populate('items.productId')
-    .populate('items.variantId');
-
+      .populate('items.productId')
+      .populate('items.variantId');
 
     // If the cart doesn't exist, create a new one
     if (!cart) {
       cart = new Cart({ userId: user, items: [] });
     }
 
-    // Check if the item already exists in the cart
-    const existingItemIndex = cart.items.findIndex(item => item.variantId.toString() === variantId);
+    console.log("CART:", cart.items);
 
-    if (existingItemIndex > -1) {
-      // If the item exists, update the quantity and total price
-      cart.items[existingItemIndex].quantity += parsedQuantity;
-      cart.items[existingItemIndex].totalPrice = cart.items[existingItemIndex].quantity * price; // Update total price
-    } else {
-      // If the item doesn't exist, add a new item to the cart
+    // Function to update existing item
+    const updateExistingItem = (index) => {
+      cart.items[index].quantity += parsedQuantity;
+      cart.items[index].totalPrice = cart.items[index].quantity * price; // Update total price
+    };
+
+    // Function to add new item
+    const addNewItem = () => {
       cart.items.push({
         productId: productId,
         variantId: variantId,
@@ -93,6 +379,18 @@ const addToCart = async (req, res) => {
         totalPrice: price * parsedQuantity,
         price: price,
       });
+    };
+
+    // Check if the item already exists in the cart
+    const existingItemIndex = cart.items.findIndex(item =>
+      item.productId._id.toString() === productId.toString() && 
+      item.variantId._id.toString() === variantId.toString()
+    );
+
+    if (existingItemIndex > -1) {
+      updateExistingItem(existingItemIndex);
+    } else {
+      addNewItem();
     }
 
     // Save the cart
@@ -100,7 +398,6 @@ const addToCart = async (req, res) => {
 
     // Redirect to the cart page to prevent form resubmission
     res.redirect('/cart');
-
   } catch (error) {
     console.error("Error adding to cart:", error);
     res.status(500).send('Internal Server Error');
@@ -108,7 +405,7 @@ const addToCart = async (req, res) => {
 };
 
 
-//-----------------------------------------------------
+///////////////////////////////////////////////////////////////////////
 
 const removeFromCart = async (req, res) => {
   try {
@@ -145,9 +442,6 @@ const removeFromCart = async (req, res) => {
       return res.status(404).send('Variant not found');
     }
 
-    // Add the quantity back to the variant
-    variant.quantity += quantityToRemove;
-    await variant.save();
 
     // Remove the item from the cart
     cart.items.splice(itemIndex, 1);

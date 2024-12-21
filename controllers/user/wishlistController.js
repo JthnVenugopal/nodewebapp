@@ -73,73 +73,6 @@ const addToWishlist = async (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////
 
 
-// const loadWishlist = async (req, res) => {
-//   try {
-//       console.log("-------------------------loadWishlist---------------------------");
-
-//       const userId = req.session.user?.id || req.user?.id;
-
-//       if (!userId) {
-//           return res.status(401).send("Unauthorized. Please log in.");
-//       }
-
-//       const wishlist = await Wishlist.findOne({ userId }).populate("items.product items.variant");
-
-//       // console.log("Wishlist data : //////////////////"+wishlist)
-
-
-//       const {items}  = wishlist
-
-//       // console.log("items data : //////////////////"+items)
-
-//       console.log("////////////////"+wishlist.items.length);
-
-//       if (wishlist.items.length === 0) {
-//         res.redirect('empty-wishlist')
-//     } else{
-
-//       const [{ product, variant }] = wishlist.items;
-
-//     }
-
-
-
-
-        
-      
-    
-    
-      
-
-//       // console.log("Product Data////////////////"+JSON.stringify(product));
-//       // console.log("Variant Data////////////////"+JSON.stringify(variant));
-
-      
-
-
-//       if (!wishlist || wishlist.items.length === 0) {
-//           return res.render("wishlist", {
-//               user: req.session.user || req.user,
-//               items: [],
-//               message: "Your wishlist is empty.",
-//           });
-//       }
-
-//       res.render("wishlist", {
-//           user: req.session.user || req.user,
-//           items: items,
-//           product : product,
-//           variant : variant,
-
-//       });
-
-//   } catch (error) {
-//       console.error("Error in loadWishlist:", error);
-//       res.status(500).send("An error occurred while loading the wishlist.");
-//   }
-// };
-
-
 const loadWishlist = async (req, res) => {
   try {
     console.log("-------------------------loadWishlist---------------------------");
@@ -160,18 +93,18 @@ const loadWishlist = async (req, res) => {
       });
     }
 
-    // For debug purposes
-    console.log("Wishlist data:", wishlist);
+   
+    // console.log("Wishlist data:", wishlist);
 
     const { items } = wishlist;
-    console.log("Items data:", items);
+    // console.log("Items data:", items);
 
     // Destructuring to get product and variant from the first item
     const [{ product, variant }] = items;
 
-    // For debug purposes
-    console.log("Product Data:", JSON.stringify(product));
-    console.log("Variant Data:", JSON.stringify(variant));
+    
+    // console.log("Product Data:", JSON.stringify(product));
+    // console.log("Variant Data:", JSON.stringify(variant));
 
     // Render the wishlist page with the fetched data
     res.render("wishlist", {

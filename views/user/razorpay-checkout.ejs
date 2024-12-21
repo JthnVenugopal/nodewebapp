@@ -1,0 +1,120 @@
+<%- include("../../views/partials/user/header") %>
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Razorpay Payment</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title text-center">Order Details</h4>
+                    <p class="text-center">
+                        <strong>Order ID:</strong> <%= orderId %> <br>
+                        <strong>Total Amount:</strong> ₹<%= finalAmount %>
+                    </p>
+                    <button id="rzp-button" class="btn btn-primary btn-block mt-4">Pay with Razorpay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const options = {
+        key: '<%= razorpayKey %>',
+        amount: '<%= finalAmount * 100 %>',
+        currency: 'INR',
+        name: 'Sole-Haven',
+        description: 'Order Payment',
+        order_id: '<%= razorpayOrderId %>',
+        handler: function (response) {
+            Swal.fire({
+                title: 'Payment Successful!',
+                text: 'Your payment has been successfully processed.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                fetch('/paymentSuccess', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        paymentId: response.razorpay_payment_id,
+                        orderId: '<%= orderId %>',
+                        paymentStatus: 'success'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = `/orderConformed?orderId=${data.orderId}`;
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'We encountered an issue processing your order. Please contact support.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/';
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was an issue completing your payment. Please try again later.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/';
+                    });
+                });
+            });
+        },
+        prefill: {
+            name: '<%= userName %>',
+            email: '<%= userEmail %>',
+            contact: '<%= userPhone %>'
+        },
+        theme: {
+            color: '#222222'
+        }
+    };
+
+    const rzp = new Razorpay(options);
+    document.getElementById('rzp-button').onclick = function (e) {
+        rzp.open();
+        e.preventDefault();
+    };
+
+    rzp.on('payment.failed', function (response) {
+        Swal.fire({
+            title: 'Payment Failed!',
+            text: 'Something went wrong with your payment. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'Go to Home',
+        }).then(() => {
+            fetch('/paymentFailed', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    orderId: '<%= orderId %>'
+                })
+            })
+            .then(() => {
+                window.location.href = '/';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.location.href = '/';
+            });
+        });
+    });
+</script>
+
+<%- include("../../views/partials/user/footer") %>
