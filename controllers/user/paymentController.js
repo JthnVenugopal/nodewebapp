@@ -12,8 +12,17 @@ const Category = require('../../models/categorySchema');
 
 
 
+
 const getRazorpay = async (req, res) => {
   try {
+
+      const user = req.session.user || req.user;
+    
+      console.log("///////getRaazorpay");
+    //   console.log("req.query/////////"+req.query);
+      
+      
+
       const { orderId, razorpayOrderId, razorpayKey, finalAmount, userName, userEmail, userPhone } = req.query;
 
       console.log(orderId,
@@ -31,76 +40,159 @@ const getRazorpay = async (req, res) => {
           finalAmount,
           userName,
           userEmail,
-          userPhone
+          userPhone,
+          user : user,
       });
   } catch (error) {
       res.redirect('/pageNotFound');
   }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+
+// const razorpaySuccess = async (req, res) => {
+//     try {
+
+//         console.log("///////////////razorpay//////////////////");
+        
+//     //    console.log("reqBody/////"+JSON.stringify(req.body));
+       
+//       const { paymentId, orderId, paymentStatus } = req.body;
+//       console.log('Payment ID:', paymentId);
+//       console.log('Order ID:', orderId);
+//       console.log("status//////"+paymentStatus);
+      
+  
+//       const order = await Order.findById({ orderId: orderId });
+
+//       console.log("/////////////order"+order);
+      
+  
+//       if (!order || order===null) {
+//         return res.status(400).json({ success: false, message: 'Order not found' });
+//       }
+  
+//       if (paymentStatus === 'success') {
+//         order.paymentStatus = 'Paid';
+//         order.paymentId = paymentId;
+//         await order.save();
+  
+//         const userId = order.user; // Correct field reference
+//         await Cart.updateOne({ userId }, { $set: { items: [] } });
+  
+//         await User.findByIdAndUpdate(
+//           userId,
+//           { $push: { orderHistory: order._id } },
+//           { new: true }
+//         );
+  
+//         console.log('Ordered Items:', order.orderedItems);
+  
+//         const updateOperations = order.orderedItems.map(item => {
+//           console.log('Item:', item);
+//           const filter = {
+//             _id: item.product,
+//             'sizes.size': item.size
+//           };
+  
+//           console.log('Filter for product update:', filter);
+  
+//           return {
+//             updateOne: {
+//               filter: filter,
+//               update: {
+//                 $inc: { 'sizes.$.quantity': -item.quantity }
+//               }
+//             }
+//           };
+//         });
+  
+//         const result = await Product.bulkWrite(updateOperations);
+//         console.log('BulkWrite result:', result);
+  
+//         return res.json({ success: true, orderId: order._id });
+//       } else {
+//         return res.status(400).json({ success: false, message: 'Payment failed' });
+//       }
+//     } catch (error) {
+//       console.error('Error processing payment:', error);
+//       return res.status(500).json({ success: false, message: 'Internal Server Error' });
+//     }
+//   };
+
 
 const razorpaySuccess = async (req, res) => {
-  try {
+    try {
+      console.log("///////////////razorpay//////////////////");
+      console.log("reqBody/////" + JSON.stringify(req.body));
+  
       const { paymentId, orderId, paymentStatus } = req.body;
       console.log('Payment ID:', paymentId);
       console.log('Order ID:', orderId);
-
+      console.log("status//////" + paymentStatus);
+  
+      // Fetch the order using orderId as a string field
       const order = await Order.findOne({ orderId: orderId });
-
+  
+      console.log("/////////////order", order);
+  
       if (!order) {
-          return res.status(400).json({ success: false, message: 'Order not found' });
+        console.error('Order not found for orderId:', orderId);
+        return res.status(400).json({ success: false, message: 'Order not found' });
       }
-
+  
       if (paymentStatus === 'success') {
-          order.paymentStatus = 'Paid';
-          order.paymentId = paymentId;
-          await order.save();
-
-
-          const userId = order.customer;
-          await Cart.updateOne({ userId }, { $set: { items: [] } });
-
-          await User.findByIdAndUpdate(
-              userId,
-              { $push: { orderHistory: order._id } },
-              { new: true }
-          );
-
-          console.log('orders',order.orderedItems);
-
-          const updateOperations = order.orderedItems.map(item => {
-              console.log('Item:', item);
-              const filter = {
-                  _id: item.product,
-                  'sizes.size': item.size
-              };
-          
-              console.log('Filter for product update:', filter);
-          
-              return {
-                  updateOne: {
-                      filter: filter,
-                      update: {
-                          $inc: { 'sizes.$.quantity': -item.quantity }
-                      }
-                  }
-              };
-          });
-          
-          const result = await Product.bulkWrite(updateOperations);
-          console.log('BulkWrite result:', result);
-          
-
-          return res.json({ success: true, orderId: order._id });
+        order.paymentStatus = 'Paid';
+        order.paymentId = paymentId;
+        await order.save();
+  
+        const userId = order.user; // Correct field reference
+        await Cart.updateOne({ userId }, { $set: { items: [] } });
+  
+        await User.findByIdAndUpdate(
+          userId,
+          { $push: { orderHistory: order._id } },
+          { new: true }
+        );
+  
+        console.log('Ordered Items:', order.orderedItems);
+  
+        const updateOperations = order.orderedItems.map(item => {
+          console.log('Item:', item);
+          const filter = {
+            _id: item.product,
+            'sizes.size': item.size
+          };
+  
+          console.log('Filter for product update:', filter);
+  
+          return {
+            updateOne: {
+              filter: filter,
+              update: {
+                $inc: { 'sizes.$.quantity': -item.quantity }
+              }
+            }
+          };
+        });
+  
+        const result = await Product.bulkWrite(updateOperations);
+        console.log('BulkWrite result:', result);
+  
+        return res.json({ success: true, orderId: order._id });
       } else {
-          return res.status(400).json({ success: false, message: 'Payment failed' });
+        return res.status(400).json({ success: false, message: 'Payment failed' });
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error processing payment:', error);
       return res.status(500).json({ success: false, message: 'Internal Server Error' });
-  }
-};
+    }
+  };
+  
+  
 
+/////////////////////////////////////////////////////////////////////////////
 const razorpayFailure = async (req, res) => {
   try {
       console.log('----------razorpayFailure------------')
@@ -128,6 +220,8 @@ const razorpayFailure = async (req, res) => {
       return res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 };
+
+////////////////////////////////////////////////////////////////////////////
 
 const retryRazorpay = async (req, res) => {
   console.log('------------retryRazorpay--------------');

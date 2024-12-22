@@ -23,6 +23,7 @@
                     <th>Actions</th>
                 </tr>
             </thead>
+
             <tbody>
                 <% items.forEach(item => { %>
                     <tr>
@@ -36,7 +37,11 @@
                         <td><%= item.productId.productName %></td>
                         <td><%= item.variantId.variantCode %></td>
                         <td><%= item.variantId.color %></td>
-                        <td><%= item.quantity %></td>
+                        <td>
+                            
+                            <%= item.quantity %>
+                        
+                        </td>
                         <td>₹<%= item.price.toFixed(2) %></td>
                         <td class="total-price">₹<%= item.totalPrice.toFixed(2) %></td>
 
@@ -51,6 +56,12 @@
                     </tr>
                 <% }); %>
             </tbody>
+
+
+
+
+
+            
         </table>
 
         <div class="text-right mt-3">

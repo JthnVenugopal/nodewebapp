@@ -199,7 +199,7 @@ const changePasswordValid = async (req,res) => {
 const updatePassword = async (req, res) => {
   try {
      
-      const  userId  = req.session.user; // Assuming session contains user details
+      const  userId  = req.session.user.id; // Assuming session contains user details
 
       const { currentPassword, newPassword, confirmPassword } = req.body;
 
@@ -312,36 +312,6 @@ const getResetPassPage = async (req,res) => {
   }
 }
 //------------------------------------------------------------
-// const postNewPassword = async (req,res) => {
-//   try {
-//       const {newPass1, newPass2} = req.body;
-//       const email = req.session.email;
-//       if(newPass1 === newPass2){
-//           const passwordHash = await securePassword(newPass1);
-//           await User.updateOne(
-//               {email:email},
-//               {$set:{password:passwordHash}}
-//           )
-         
-//           // ending session
-//           req.session.destroy(err => {
-//             if (err) {
-//               console.error("Error ending session:", err);
-//               return res.status(500).json({ message: "Could not end session." });
-//             }
-      
-//             // Respond with success message and redirect URL
-//             return res.status(200).json({ message: "Password changed successfully.", redirectUrl: '/login' });
-//           });
-
-//       }else{
-//           res.render("reset-password",{message:"Password do not match"})
-//       }
-//   } catch (error) {
-//     console.error("Error in updating password:", error);
-//     res.redirect("/pageNotFound");
-//   }
-// }
 
 const postNewPassword = async (req, res) => {
   try {
@@ -590,51 +560,40 @@ const deleteAddress = async (req,res) => {
 //------------------------------------------------------------
 
 
-
 const editAddress = async (req, res) => {
   try {
+    console.log("----------------------editAddress----------------------------");
 
-  console.log("----------------------editAddress----------------------------");
+    const userId = req.session.user?.id || req.user?.id;
+    const addressId = req.query.id;
+    console.log("Address ID: " + addressId);
+    console.log("User ID: " + userId);
 
-  const addressId = req.query.id; 
-  console.log("Address ID : "+ addressId)
+    // Find the address by userId and addressId
+    const userAddress = await Address.findOne({ userId: userId, 'address._id': addressId });
+    
+    if (!userAddress) {
+      console.error("Address not found for userId: " + userId + " and addressId: " + addressId);
+      return res.status(404).send("Address not found");
+    }
 
-  const addressData = await Address.findById(addressId)
-  
-  if (!addressData) {
-    return res.status(404).send("Address not found");
-  }
+    // Find the specific address within the user's addresses
+    const selectedAddress = userAddress.address.id(addressId);
+    console.log("Selected Address: ", selectedAddress);
 
-  console.log("Address data: "+addressData);
+    if (!selectedAddress) {
+      console.error("Address not found for ID: " + addressId);
+      return res.status(404).send("Address not found");
+    }
 
-  res.render("edit-address",{
-    address:addressData,
-  })
-
-
-
+    res.render("edit-address", {
+      address: selectedAddress,
+    });
   } catch (error) {
-      console.error("Error in edit address", error);
-      res.status(500).send("Internal Server Error");
+    console.error("Error in edit address", error);
+    res.status(500).send("Internal Server Error");
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //------------------------------------------------------------
 const postEditAddress = async (req,res) => {

@@ -1,8 +1,17 @@
 <%- include("../../views/partials/user/header") %>
 
 <style>
+    body {
+        background-color: #fff0f0;
+    }
+
     #paginationContainer button.active {
         background-color: #007bff;
+        color: white;
+    }
+
+    #paginationContainer button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
         color: white;
     }
 </style>
@@ -20,7 +29,7 @@
             </nav>
         </div>
     </div>
-  
+
     <div class="container mt-4">
         <div class="row">
             <!-- Filters Section -->
@@ -49,6 +58,18 @@
                             <% }) %>
                         </select>
                     </div>
+                    <!-- Price Dropdown -->
+                    <div class="mb-3">
+                        <select name="price" id="price" class="form-select">
+                            <option value="">Select Price Range</option>
+                            <option value="below1000">Below ₹1000</option>
+                            <option value="1000-2000">₹1000 - ₹2000</option>
+                            <option value="2000-3000">₹2000 - ₹3000</option>
+                            <option value="3000-4000">₹3000 - ₹4000</option>
+                            <option value="4000-5000">₹4000 - ₹5000</option>
+                            <option value="above5000">Above ₹5000</option>
+                        </select>
+                    </div>
                     <!-- Sort Dropdown -->
                     <div class="mb-3">
                         <select name="sort" id="sort" class="form-select">
@@ -61,20 +82,10 @@
                             <option value="nameDesc">Name: Z-A</option>
                         </select>
                     </div>
-                    <!-- Price Filter Dropdown -->
-                    <div class="mb-3">
-                        <select name="price" id="price" class="form-select">
-                            <option value="">Select Price Range</option>
-                            <option value="below1000">Below 1000</option>
-                            <option value="1000-2000">1000 - 2000</option>
-                            <option value="2000-3000">2000 - 3000</option>
-                            <option value="3000-4000">3000 - 4000</option>
-                            <option value="4000-5000">4000 - 5000</option>
-                            <option value="above5000">5000 and Above</option>
-                        </select>
+                    <div class="d-flex justify-content-center" style="margin-top: 250px; margin-right: 70px">
+                        <button type="button" class="btn btn-success" id="sortButton" style="font-size: 10px;">Apply Filters</button>
+                        <button type="button" class="btn btn-danger" id="clearFiltersButton" style="font-size: 10px;">Clear Filters</button>
                     </div>
-                    <button type="button" class="btn btn-primary my-5" id="sortButton">Apply Filters</button>
-                    <button type="button" class="btn btn-secondary my-5" id="clearFiltersButton">Clear Filters</button>
                 </form>
             </div>
 
@@ -90,9 +101,9 @@
                              data-price="<%= product.variant.salePrice %>"
                              data-rating="<%= product.averageRating %>">
                             <a href="/productDetails?id=<%= product._id %>">
-                                <div class="card h-100 shadow-sm">
+                                <div class="card h-100 shadow-sm ">
                                     <% if (product.variant.productImages && product.variant.productImages.length > 0) { %>
-                                        <img style="height: 200px; width: 100 %; object-fit: cover;" src="/uploads/re-image/<%= product.variant.productImages[0] %>" class="card-img-top" alt ="<%= product.productName %>">
+                                        <img style="height: 150px; width: 160px; object-fit: cover; margin-left: 20%;" src="/uploads/re-image/<%= product.variant.productImages[0] %>" class="card-img-top" alt ="<%= product.productName %>">
                                     <% } %>
                                     <div class="card-body">
                                         <h5 class="card-title"><%= product.productName %></h5>
@@ -117,7 +128,7 @@
     <%- include("../../views/partials/user/footer") %>
 
     <!-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const filterForm = document.getElementById('filterForm');
             const searchInput = document.getElementById('search');
             const categorySelect = document.getElementById('category');
@@ -140,13 +151,15 @@
             clearFiltersButton.addEventListener('click', clearFilters);
 
             function applyFilters() {
+                currentPage = 1; // Reset to the first page
                 const searchValue = searchInput.value.toLowerCase();
                 const selectedCategory = categorySelect.value;
                 const selectedBrand = brandSelect.value;
                 const selectedPrice = priceSelect.value;
+                const selectedSort = sortSelect.value;
 
                 const productCards = document.querySelectorAll('.product-card');
-                productCards.forEach(card => {
+                const filteredProducts = Array.from(productCards).filter(card => {
                     const productName = card.getAttribute('data-name');
                     const productCategory = card.getAttribute('data-category');
                     const productBrand = card.getAttribute('data-brand');
@@ -161,18 +174,58 @@
                         const ranges = {
                             below1000: productPrice < 1000,
                             '1000-2000': productPrice >= 1000 && productPrice <= 2000,
+                            '2000-3000': productPrice >= 2000 && productPrice <= 3000,
+                            '3000-4000': productPrice >= 3000 && productPrice <= 4000,
+                            '4000-5000': productPrice >= 4000 && productPrice <= 5000,
                             above5000: productPrice > 5000,
                         };
                         if (!ranges[selectedPrice]) isVisible = false;
                     }
 
                     card.style.display = isVisible ? 'block' : 'none';
+                    return isVisible;
                 });
 
-                paginateProducts(Array.from(productCards).filter(card => card.style.display !== 'none'));
+                // Sort the filtered products
+                sortProducts(filteredProducts, selectedSort);
+                // Paginate the sorted products
+                paginateProducts(filteredProducts);
+            }
+
+            function sortProducts(products, selectedSort) {
+                if (!selectedSort) return;
+
+                products.sort((a, b) => {
+                    const aPopularity = parseInt(a.getAttribute('data-pop ularity'));
+                    const bPopularity = parseInt(b.getAttribute('data-popularity'));
+                    const aPrice = parseFloat(a.getAttribute('data-price'));
+                    const bPrice = parseFloat(b.getAttribute('data-price'));
+                    const aRating = parseFloat(a.getAttribute('data-rating'));
+                    const bRating = parseFloat(b.getAttribute('data-rating'));
+                    const aName = a.getAttribute('data-name');
+                    const bName = b.getAttribute('data-name');
+
+                    switch (selectedSort) {
+                        case 'popularity':
+                            return bPopularity - aPopularity; // High to Low
+                        case 'priceAsc':
+                            return aPrice - bPrice; // Low to High
+                        case 'priceDesc':
+                            return bPrice - aPrice; // High to Low
+                        case 'averageRating':
+                            return bRating - aRating; // High to Low
+                        case 'nameAsc':
+                            return aName.localeCompare(bName); // A-Z
+                        case 'nameDesc':
+                            return bName.localeCompare(aName); // Z-A
+                        default:
+                            return 0;
+                    }
+                });
             }
 
             function clearFilters() {
+                currentPage = 1; // Reset to the first page
                 searchInput.value = '';
                 categorySelect.value = '';
                 brandSelect.value = '';
@@ -201,7 +254,7 @@
             function showPage(visibleProducts, page) {
                 const start = (page - 1) * productsPerPage;
                 const end = start + productsPerPage;
-                visibleProducts.forEach ((card, index) => {
+                visibleProducts.forEach((card, index) => {
                     card.style.display = index >= start && index < end ? 'block' : 'none';
                 });
             }
@@ -210,10 +263,8 @@
         });
     </script> -->
 
-
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const filterForm = document.getElementById('filterForm');
             const searchInput = document.getElementById('search');
             const categorySelect = document.getElementById('category');
@@ -232,19 +283,19 @@
             categorySelect.addEventListener('change', applyFilters);
             brandSelect.addEventListener('change', applyFilters);
             priceSelect.addEventListener('change', applyFilters);
-            sortSelect.addEventListener('change', applyFilters);
             sortButton.addEventListener('click', applyFilters);
             clearFiltersButton.addEventListener('click', clearFilters);
     
             function applyFilters() {
+                currentPage = 1; // Reset to the first page
                 const searchValue = searchInput.value.toLowerCase();
                 const selectedCategory = categorySelect.value;
                 const selectedBrand = brandSelect.value;
                 const selectedPrice = priceSelect.value;
                 const selectedSort = sortSelect.value;
     
-                const productCards = Array.from(document.querySelectorAll('.product-card'));
-                const filteredProducts = productCards.filter(card => {
+                const productCards = document.querySelectorAll('.product-card');
+                const filteredProducts = Array.from(productCards).filter(card => {
                     const productName = card.getAttribute('data-name');
                     const productCategory = card.getAttribute('data-category');
                     const productBrand = card.getAttribute('data-brand');
@@ -259,50 +310,63 @@
                         const ranges = {
                             below1000: productPrice < 1000,
                             '1000-2000': productPrice >= 1000 && productPrice <= 2000,
-                            '2000-3000': productPrice >= 2000 && productPrice < 3000,
-                            '3000-4000': productPrice >= 3000 && productPrice < 4000,
-                            '4000-5000': productPrice >= 4000 && productPrice < 5000,
+                            '2000-3000': productPrice >= 2000 && productPrice <= 3000,
+                            '3000-4000': productPrice >= 3000 && productPrice <= 4000,
+                            '4000-5000': productPrice >= 4000 && productPrice <= 5000,
                             above5000: productPrice > 5000,
                         };
                         if (!ranges[selectedPrice]) isVisible = false;
                     }
     
+                    card.style.display = isVisible ? 'block' : 'none';
                     return isVisible;
                 });
     
-                // Sort filtered products
-                if (selectedSort) {
-                    filteredProducts.sort((a, b) => {
-                        const priceA = parseFloat(a.getAttribute('data-price'));
-                        const priceB = parseFloat(b.getAttribute('data-price'));
-                        const ratingA = parseFloat(a.getAttribute('data-rating'));
-                        const ratingB = parseFloat(b.getAttribute('data-rating'));
-                        const nameA = a.getAttribute('data-name');
-                        const nameB = b.getAttribute('data-name');
-    
-                        switch (selectedSort) {
-                            case 'popularity':
-                                return parseInt(b.getAttribute('data-popularity')) - parseInt(a.getAttribute('data-popularity'));
-                            case 'priceAsc':
-                                return priceA - priceB;
-                            case 'priceDesc':
-                                return priceB - priceA;
-                            case 'averageRating':
-                                return ratingB - ratingA;
-                            case 'nameAsc':
-                                return nameA.localeCompare(nameB);
-                            case 'nameDesc':
-                                return nameB.localeCompare(nameA);
-                            default:
-                                return 0;
-                        }
-                    });
-                }
-    
+                // Sort the filtered products
+                sortProducts(filteredProducts, selectedSort);
+                // Paginate the sorted products
                 paginateProducts(filteredProducts);
             }
     
+            function sortProducts(products, selectedSort) {
+                if (!selectedSort) return;
+    
+                products.sort((a, b) => {
+                    const aPopularity = parseInt(a.getAttribute('data-popularity'));
+                    const bPopularity = parseInt(b.getAttribute('data-popularity'));
+                    const aPrice = parseFloat(a.getAttribute('data-price'));
+                    const bPrice = parseFloat(b.getAttribute('data-price'));
+                    const aRating = parseFloat(a.getAttribute('data-rating'));
+                    const bRating = parseFloat(b.getAttribute('data-rating'));
+                    const aName = a.getAttribute('data-name');
+                    const bName = b.getAttribute('data-name');
+    
+                    switch (selectedSort) {
+                        case 'popularity':
+                            return bPopularity - aPopularity; // High to Low
+                        case 'priceAsc':
+                            return aPrice - bPrice; // Low to High
+                        case 'priceDesc':
+                            return bPrice - aPrice; // High to Low
+                        case 'averageRating':
+                            return bRating - aRating; // High to Low
+                        case 'nameAsc':
+                            return aName.localeCompare(bName); // A -Z
+                        case 'nameDesc':
+                            return bName.localeCompare(aName); // Z-A
+                        default:
+                            return 0;
+                    }
+                });
+    
+                // After sorting, update the display of products
+                products.forEach(card => {
+                    productsContainer.appendChild(card); // Re-append sorted cards to the container
+                });
+            }
+    
             function clearFilters() {
+                currentPage = 1; // Reset to the first page
                 searchInput.value = '';
                 categorySelect.value = '';
                 brandSelect.value = '';
@@ -320,9 +384,9 @@
                     button.classList.add('btn', 'btn-light', 'mx-1');
                     if (i === currentPage) button.classList.add('active');
                     button.addEventListener('click', () => {
-                            currentPage = i;
-                            showPage(visibleProducts, i);
-                        });
+                        currentPage = i;
+                        showPage(visibleProducts, i);
+                    });
                     paginationContainer.appendChild(button);
                 }
                 showPage(visibleProducts, currentPage);
@@ -339,7 +403,5 @@
             applyFilters();
         });
     </script>
-
-
 
 </body>

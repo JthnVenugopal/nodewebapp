@@ -5,6 +5,7 @@ const Order = require("../../models/orderSchema");
 const Product = require("../../models/productSchema");
 const mongoose = require("mongoose");
 const { getUserWithAddresses } = require('../../utils/userUtils');
+const Razorpay = require('razorpay');
 
 
 const getCheckout = async (req, res) => {
@@ -62,239 +63,100 @@ const getCheckout = async (req, res) => {
 };
 
 
+////////////////////////////////////////////////////////////////////////////
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_ID,
+  key_secret: process.env.RAZORPAY_SECRET_KEY
+});
 
 
+///////////////////////////////////////////////////////////////////////////
 
-
-// const placeOrder = async (req, res) => {
-//   try {
-//     const { addressId, payment_option, singleProduct, discountInput, couponCodeInput } = req.body;
-    
-//     const userId = req.session.user || req.user;
-
-//     if (!userId) {
-//       console.log("User not logged in");
-//       return res.redirect('/login');
-//     }
-
-//     const user = await getUserWithAddresses(userId); // Use the utility function here
-//     if (!user) {
-//       console.log("User not found");
-//       return res.status(404).send("User not found");
-//     }
-
-//     console.log("User Addresses:", user.address); // Log addresses to debug structure
-
-//     if (!addressId || !mongoose.Types.ObjectId.isValid(addressId)) {
-//       console.error("Invalid or missing addressId:", addressId);
-//       return res.status(400).send("Invalid address selected");
-//     }
-
-//     const selectedAddress = user.address.find(addr => addr._id.toString() === addressId);
-//     if (!selectedAddress) {
-//       console.error("Selected address not found:", addressId);
-//       return res.status(400).send("Selected address not found");
-//     }
-
-//     const cart = await Cart.findOne({ userId }).populate("items.productId");
-//     if (!cart) {
-//       console.error("Cart not found for user:", userId);
-//       return res.status(404).send("Cart not found");
-//     }
-
-//     let totalPrice = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
-//     if (isNaN(totalPrice)) {
-//       console.log("Invalid totalPrice:", totalPrice);
-//       return res.status(400).send("Invalid total price");
-//     }
-
-//     let orderedItems = [];
-//     if (singleProduct) {
-//       const product = JSON.parse(singleProduct);
-//       orderedItems.push({
-//         product: product._id,
-//         quantity: 1,
-//         price: product.salePrice,
-//         regularPrice: product.regularPrice
-//       });
-//       totalPrice = product.salePrice;
-//       await Product.findByIdAndUpdate(product._id, { $inc: { quantity: -1 } });
-//     } else {
-//       const cartItems = cart.items;
-//       orderedItems = cartItems.map(item => ({
-//         product: item.productId._id,
-//         quantity: item.quantity,
-//         price: item.totalPrice / item.quantity,
-//         regularPrice: item.productId.regularPrice
-//       }));
-//       for (const item of cartItems) {
-//         await Product.findByIdAndUpdate(item.productId._id, { $inc: { quantity: -item.quantity } });
-//       }
-//     }
-
-//     let finalAmount = totalPrice - discountInput;
-//     let actualPrice = totalPrice; // or however you define actualPrice
-
-//     const paymentStatus = (payment_option === "Cash on delivery") ? "Pending" : "Not Applicable";
-//     const paymentMethod = payment_option === "COD" ? "Cash on delivery" : payment_option;
-
-//     const newOrder = new Order({
-//       orderedItems,
-//       user: userId,
-//       totalPrice: totalPrice,
-//       actualPrice: actualPrice,
-//       finalAmount: finalAmount,
-//       address: {
-//         house: selectedAddress.house,
-//         place: selectedAddress.place,
-//         city: selectedAddress.city,
-//         state: selectedAddress.state,
-//         landMark: selectedAddress.landMark,
-//         pin: selectedAddress.pin,
-//         contactNo: selectedAddress.phone // Adjust this based on your schema
-//       },
-//       paymentMethod: paymentMethod,
-//       couponCode: couponCodeInput,
-//       discount: discountInput,
-//       couponApplied: Boolean(couponCodeInput && discountInput),
-//       paymentStatus: paymentStatus,
-//       status: "Pending",
-//     });
-
-//     await newOrder.save();
-//     await User.findByIdAndUpdate(userId, { $push: { orderHistory: newOrder._id } });
-
-//     cart.items = [];
-//     await cart.save();
-
-//     res.render("orderConfirmation", { orderId: newOrder._id, user });
-
-//   } catch (error) {
-//     console.error("Error placing order:", error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// };
 
 const placeOrder = async (req, res) => {
-
   try {
 
-
-    // console.log("req: " + JSON.stringify(req.body, null, 2));
-
-    console.log("--------------------placeorder--------------------------------");
-    
-    const { addressId, payment_option, singleProduct, discountInput, couponCodeInput } = req.body;
-
-
-    // console.log(addressId, payment_option, singleProduct, discountInput, couponCodeInput);
-
-    const userId = req.session.user.id || req.user;
+    const user = req.session.user || req.user;
+    const { addressId, payment_option } = req.body;
+    const userId = req.session.user?.id || req.user?._id;
 
     if (!userId) {
-      console.log("User not logged in");
       return res.redirect('/login');
     }
-     
+
+    // Find the selected address
     const userAddress = await Address.findOne({ userId: userId });
-    // console.log("User Address: ", userAddress);
+    const selectedAddress = userAddress?.address.id(addressId);
 
-    const selectedAddress = userAddress.address[addressId]
-   
-    
-    const user = await getUserWithAddresses(userId); // Use the utility function here
-    if (!user) {
-      console.log("User not found");
-      return res.status(404).send("User not found");
-    }
-
-    console.log("User Addresses is :", selectedAddress); // Log addresses to debug structure
-
-    // if (!addressId || !mongoose.Types.ObjectId.isValid(addressId)) {
-    //   console.error("Invalid or missing addressId:", addressId);
-    //   return res.status(400).send("Invalid address selected");
-    // }
-
-    // const selectedAddress = user.address.find(addr => addr._id.toString() === addressId);
-    // console.log("Selected Address:", selectedAddress); // Log selected address for debugging
+    console.log("selected address/////////////////////"+selectedAddress)
 
     if (!selectedAddress) {
-      console.error("Selected address not found:", addressId);
       return res.status(400).send("Selected address not found");
     }
 
+    // Find the user's cart
     const cart = await Cart.findOne({ userId }).populate("items.productId");
     if (!cart) {
-      console.error("Cart not found for user:", userId);
       return res.status(404).send("Cart not found");
     }
 
     let totalPrice = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
-    if (isNaN(totalPrice)) {
-      console.log("Invalid totalPrice:", totalPrice);
-      return res.status(400).send("Invalid total price");
+    let orderedItems = cart.items.map(item => ({
+      product: item.productId._id,
+      quantity: item.quantity,
+      price: item.totalPrice / item.quantity,
+    }));
+
+    // Ensure payment method is valid
+    const validPaymentMethods = ["razorpay", "COD"]; // Add other valid methods as needed
+    if (!validPaymentMethods.includes(payment_option)) {
+      return res.status(400).send("Invalid payment method");
     }
-
-    let orderedItems = [];
-    if (singleProduct) {
-      const product = JSON.parse(singleProduct);
-      orderedItems.push({
-        product: product._id,
-        quantity: 1,
-        price: product.salePrice,
-        regularPrice: product.regularPrice
-      });
-      totalPrice = product.salePrice;
-      await Product.findByIdAndUpdate(product._id, { $inc: { quantity: -1 } });
-    } else {
-      const cartItems = cart.items;
-      orderedItems = cartItems.map(item => ({
-        product: item.productId._id,
-        quantity: item.quantity,
-        price: item.totalPrice / item.quantity,
-        regularPrice: item.productId.regularPrice
-      }));
-      for (const item of cartItems) {
-        await Product.findByIdAndUpdate(item.productId._id, { $inc: { quantity: -item.quantity } });
-      }
-    }
-
-    let finalAmount = totalPrice - discountInput;
-    let actualPrice = totalPrice; // or however you define actualPrice
-
-    const paymentStatus = (payment_option === "Cash on delivery") ? "Pending" : "Not Applicable";
-    const paymentMethod = payment_option === "COD" ? "Cash on delivery" : payment_option;
 
     const newOrder = new Order({
       orderedItems,
       user: userId,
-      totalPrice: totalPrice,
-      actualPrice: actualPrice,
-      finalAmount: finalAmount,
+      totalPrice,
+      finalAmount: totalPrice,
+      actualPrice: totalPrice,
       address: {
-        house: selectedAddress.addressType,
+        house: selectedAddress.addressType, 
         place: selectedAddress.city,
         city: selectedAddress.city,
         state: selectedAddress.state,
         landMark: selectedAddress.landMark,
         pin: selectedAddress.pincode,
-        contactNo: selectedAddress.phone // Adjust this based on your schema
+        contactNo: selectedAddress.phone
       },
-      paymentMethod: paymentMethod,
-      couponCode: couponCodeInput,
-      discount: discountInput,
-      couponApplied: Boolean(couponCodeInput && discountInput),
-      paymentStatus: paymentStatus,
+      paymentMethod: payment_option,
+      paymentStatus: payment_option === "COD" ? "Pending" : "Not Applicable",
       status: "Pending",
     });
 
     await newOrder.save();
-    await User.findByIdAndUpdate(userId, { $push: { orderHistory: newOrder._id } });
+    await Cart.updateOne({ userId }, { $set: { items: [] } });+
 
-    cart.items = [];
-    await cart.save();
+    console.log("newOrder/////////////////////////"+newOrder);
+    
 
-    res.render("orderConfirmation", { orderId: newOrder._id, user });
+    console.log("RAZORPAY DATA///////////////////"+JSON.stringify(razorpay));
+
+    if (payment_option === "razorpay") { 
+      // Create Razorpay order and redirect to Razorpay checkout 
+      const razorpayOrder = await razorpay.orders.create({
+         amount: totalPrice * 100, 
+         currency: 'INR', 
+         receipt: `order_rcptid_${newOrder._id}`,
+         });
+
+         console.log("OrderData//////////////////////"+JSON.stringify(razorpayOrder));
+
+      return res.redirect(`/razorpay?orderId=${newOrder._id}&razorpayOrderId=${razorpayOrder.id}&razorpayKey=${process.env.RAZORPAY_ID}&finalAmount=${totalPrice}&userName=${ user.name}&userEmail=${ user.email }`);
+
+    }
+
+    res.render("orderConfirmation", { orderId: newOrder._id, user: req.user || req.session.user });
 
   } catch (error) {
     console.error("Error placing order:", error);
@@ -304,16 +166,7 @@ const placeOrder = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////////
 
 
 const postAddAddress = async (req, res) => { 

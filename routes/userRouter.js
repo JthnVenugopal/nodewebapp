@@ -16,13 +16,16 @@ const { userIsAuthenticated  } = require("../middlewares/auth");
 router.get("/",userIsAuthenticated, userController.loadHomepage);
 
 //shop management------------------------------------------------
-router.get("/shop",userIsAuthenticated,shopController.loadShoppingPage);
-router.post('/filter',userIsAuthenticated,shopController.filterProduct);
-// router.get('/filterPrice',userIsAuthenticated,shopController.filterByPrice)
-// router.get('/filterPrice',userIsAuthenticated,shopController.searchProducts)
-// router.get('/sortByPrice',userIsAuthenticated ,shopController.sortPrice);
-// router.get('/sortByAlpha',userIsAuthenticated,shopController.sortByAlpha)
-// router.get('/clearFilters',userIsAuthenticated,shopController.clearFilters)
+// router.get("/shop",userIsAuthenticated,shopController.loadShoppingPage);
+// // router.post('/filter',userIsAuthenticated,shopController.filterProduct);
+// // router.get('/filterPrice',userIsAuthenticated,shopController.filterByPrice)
+// // router.get('/filterPrice',userIsAuthenticated,shopController.searchProducts)
+// // router.get('/sortByPrice',userIsAuthenticated ,shopController.sortPrice);
+// // router.get('/sortByAlpha',userIsAuthenticated,shopController.sortByAlpha)
+// // router.get('/clearFilters',userIsAuthenticated,shopController.clearFilters)
+
+router.get("/shop", userIsAuthenticated, shopController.loadShoppingPage); 
+router.post('/sortProducts', userIsAuthenticated, shopController.filterProduct);
 
 //signup----------------------------------------
 router.get("/signup", userController.loadSignup);
@@ -87,6 +90,7 @@ router.post("/cancelOrder",orderController.cancelOrder);
 router.post('/add-to-wishlist', userIsAuthenticated,wishlistController.addToWishlist);
 router.get("/wishlist", userIsAuthenticated, wishlistController.loadWishlist);
 router.post('/remove-from-wishlist', userIsAuthenticated, wishlistController.removeFromWishlist);
+
 
 // payment management------------------------------------------------------------
 router.get('/razorpay', userIsAuthenticated, paymentController.getRazorpay);

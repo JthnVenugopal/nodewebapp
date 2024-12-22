@@ -189,47 +189,70 @@
         <hr>
         <hr>
 
-        <div style="display: flex;flex-direction: column; align-items: center;">
-            <h4>Payment Method</h4>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="paymentMethod" id="razorpay" value="razorpay" required>
-            <label class="form-check-label" for="razorPay">RazorPay</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="paymentMethod" id="wallet" value="wallet" required>
-            <label class="form-check-label" for="wallet">Wallet</label>
-        </div>    
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="paymentMethod" id="paymentCOD" value="cod" required>
-            <label class="form-check-label" for="paymentCOD">Cash on Delivery</label>
-        </div>
-        </div>
 
-        <!-- Hidden Fields -->
-        <input type="hidden" name="cart" value='<%= JSON.stringify(cart) %>'>
-        <input type="hidden" id="totalamount" name="totalPrice" value="<%= totalAmount %>">
-    
-        <input type="hidden" id="selectedAddressId" name="addressId" value="">
-        <input type="hidden" id="discountInput" name="discountInput">
-
-        <% if (product) { %>
-            <input type="hidden" name="singleProduct" value="<%= JSON.stringify(product) %>">
-        <% } %>
-
-        <div class="d-flex justify-content-center my-5">
-            <!-- Place Order Button -->
-
-            <button type="submit" class="btn btn-success btn-sm mt-3" onclick="">Place Order</button>
-
-        </div>
-        
-
-
-    </form>
+        <!-- Order Form --> <div class="text-center mt-4"> <form id="orderForm" method="POST" action="/placeOrder" class="my-5"> <h4>Payment Method</h4> <div class="form-check"> <input class="form-check-input" type="radio" name="payment_option" id="razorpay" value="razorpay" required> <label class="form-check-label" for="razorpay">RazorPay</label> </div> <div class="form-check"> <input class="form-check-input" type="radio" name="payment_option" id="paymentCOD" value="COD" required> <label class="form-check-label" for="paymentCOD">Cash on Delivery</label> </div> <!-- Hidden Fields --> <input type="hidden" name="orderId" id="orderId"> <input type="hidden" name="razorpayOrderId" id="razorpayOrderId"> <input type="hidden" name="razorpayKey" id="razorpayKey"> <input type="hidden" name="finalAmount" id="finalAmount"> <input type="hidden" name="userName" id="userName"> <input type="hidden" name="userEmail" id="userEmail"> <input type="hidden" name="userPhone" id="userPhone"> <input type="hidden" id="selectedAddressId" name="addressId"> <div class="d-flex justify-content-center my-5"> <button type="submit" class="btn btn-success btn-sm mt-3">Place Order</button> </div> </form> </div>
 
 </div>
 
-<!-- <script>
+<%- include("../../views/partials/user/footer") %>
+
+
+<script>
+
+
+
+// Add a click event listener to all radio buttons with the class "address-radio" 
+
+document.querySelectorAll('.address-radio').forEach((radio) => {
+     radio.addEventListener('click', (event) => {
+         // Get the ID of the clicked radio button
+          const addressId = event.target.id; document.getElementById("selectedAddressId").value = addressId; console.log(`User clicked on radio button with ID: ${addressId}`);
+         }); 
+        }); 
+        
+        $(document).ready(function() {
+             // Ensure the selected address is set in the hidden input before submitting 
+             
+             $('#orderForm').submit(function(event) { 
+                const selectedAddress = $('input[name="selectedAddress"]:checked').val();
+                 if (!selectedAddress) { event.preventDefault(); 
+                    alert('Please select an address.'); 
+                    return; } $('#selectedAddressId').val(selectedAddress); 
+                    console.log('Submitting address ID:', selectedAddress);
+
+                    // Populate hidden fields with necessary data 
+                    const orderId = "yourOrderId"; 
+
+                    // Replace with actual order ID 
+                    const razorpayOrderId = "yourRazorpayOrderId"; 
+                    // Replace with actual Razorpay order ID 
+                    const razorpayKey = "yourRazorpayKey"; 
+                    // Replace with actual Razorpay key 
+                    const finalAmount = "yourFinalAmount"; 
+                    // Replace with actual final amount 
+                    const userName = "yourUserName"; 
+                    // Replace with actual user name 
+                    const userEmail = "yourUserEmail"; 
+                    // Replace with actual user email 
+                    const userPhone = "yourUserPhone"; 
+                    // Replace with actual user phone 
+                    $('#orderId').val(orderId);
+                    $('#razorpayOrderId').val(razorpayOrderId);
+                    $('#razorpayKey').val(razorpayKey); 
+                    $('#finalAmount').val(finalAmount); 
+                    $('#userName').val(userName); 
+                    $('#userEmail').val(userEmail); 
+                    $('#userPhone').val(userPhone); });
+                    
+                    // Loader display during order submission
+                    $(document).on('submit', '#orderForm', function() {
+                         $('#orderLoader').show(); // Show the loader
+                         }); 
+                        });
+
+
+
+$(document).ready(function() {
     // Ensure the selected address is set in the hidden input before submitting
     $('#orderForm').submit(function(event) {
         const selectedAddress = $('input[name="selectedAddress"]:checked').val();
@@ -239,62 +262,8 @@
             return;
         }
         $('#selectedAddressId').val(selectedAddress);
-        console.log('Submitting address ID:', selectedAddress); // Log for debugging
-    });
-</script> -->
-
-
-
-
-
-
-<%- include("../../views/partials/user/footer") %>
-
-
-<script>
-
-
-
-
-    // Add a click event listener to all radio buttons with the class "address-radio"
-document.querySelectorAll('.address-radio').forEach((radio) => {
-    radio.addEventListener('click', (event) => {
-        // Get the ID of the clicked radio button
-        const addressId = event.target.id;
-        document.getElementById("selectedAddressId").value = addressId;
-        console.log(`User clicked on radio button with ID: ${addressId}`);
     });
 });
-
-
-
-
-
-$(document).ready(function() {
-    $('#modalAddressForm').submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission
-        var formData = $(this).serialize();
-        $.ajax({
-            type: 'POST',
-            url: '/addAddress',
-            data: formData,
-            success: function(response) {
-                // Clear the form
-                $('#modalAddressForm')[0].reset();
-                // Close the modal
-                $('#addAddressModal').modal('hide');
-                // Refresh the page to load updated addresses
-                location.reload();
-            },
-            error: function(error) {
-                console.log('Error adding address:', error);
-                alert('Failed to add address. Please try again.');
-            }
-        });
-    });
-});
-
-
 
 
 
