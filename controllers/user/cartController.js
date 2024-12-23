@@ -186,8 +186,77 @@ const removeFromCart = async (req, res) => {
   }
 };
 
+
+
+///////////////////////////////////////////////////////////////////////
+
+
+
+
+const updateCartItem = async (req, res) => {
+  try {
+
+    console.log("updateCartItem/////////////////////////////////////////");
+    
+      const { id } = req.params;
+      const { quantity } = req.body;
+
+      console.log('Received request to update quantity for item ID:', id, 'New Quantity:', quantity);
+
+      // Validate quantity
+      if (quantity < 1 || quantity > 5) {
+          return res.status(400).json({ success: false, message: 'Quantity must be between 1 and 5' });
+      }
+
+      // Find the cart and update the quantity
+      const cart = await Cart.findOneAndUpdate(
+          { 'items._id': id },
+          { $set: { 'items.$.quantity': quantity } },
+          { new: true }
+      ).populate('items.productId');
+
+
+      console.log("cartData////"+cart);
+      
+
+      if (!cart) {
+          return res.status(404).json({ success: false, message: 'Cart item not found' });
+      }
+
+      // Find the updated item
+      const updatedItem = cart.items.find(item => item._id.toString() === id);
+      if (!updatedItem) {
+          return res.status(404).json({ success: false, message: 'Updated cart item not found' });
+      }
+
+      console.log("updatedItem///////////////////////////"+updatedItem)
+
+      // Calculate the new total price for the item
+      const newTotalPrice = updatedItem.quantity * updatedItem.price;
+      updatedItem.totalPrice = newTotalPrice;
+
+      console.log("newTotalPrice///////////////////////////"+newTotalPrice)
+
+      // Log the new total price for debugging
+      console.log('New total price for item ID:', id, 'is:', newTotalPrice);
+
+      // Save the updated cart
+      await cart.save();
+
+      // Respond with the new total price
+      res.json({ success: true, newTotalPrice });
+  } catch (error) {
+      console.error('Error updating cart item:', error);
+      res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
+
+//////////////////////////////////////////////////////////////////////
 module.exports = {
   getCart,
   addToCart,
   removeFromCart,
+  updateCartItem,
+  
 };

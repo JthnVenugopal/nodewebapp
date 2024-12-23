@@ -57,7 +57,7 @@ const getOrderDetails = async (req, res) => {
 
 
 
-        console.log("Order detail:", JSON.stringify(detailedOrders));
+        // console.log("Order detail:", JSON.stringify(detailedOrders));
 
         // Render data to the frontend
         res.render("orderDetails", {

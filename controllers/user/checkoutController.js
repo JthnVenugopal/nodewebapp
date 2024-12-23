@@ -74,9 +74,102 @@ const razorpay = new Razorpay({
 ///////////////////////////////////////////////////////////////////////////
 
 
+
+
+// const placeOrder = async (req, res) => {
+//   try {
+//     const user = req.session.user || req.user;
+//     const { addressId, payment_option } = req.body;
+//     const userId = req.session.user?.id || req.user?._id;
+
+//     if (!userId) {
+//       return res.redirect('/login');
+//     }
+
+//     // Find the selected address
+//     const userAddress = await Address.findOne({ userId: userId });
+//     const selectedAddress = userAddress?.address.id(addressId);
+
+//     console.log("Selected Address: ", selectedAddress);
+
+//     if (!selectedAddress) {
+//       return res.status(400).send("Selected address not found");
+//     }
+
+//     // Find the user's cart
+//     const cart = await Cart.findOne({ userId }).populate("items.productId");
+//     if (!cart) {
+//       return res.status(404).send("Cart not found");
+//     }
+
+//     let totalPrice = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
+//     let orderedItems = cart.items.map(item => ({
+//       product: item.productId._id,
+//       quantity: item.quantity,
+//       price: item.totalPrice / item.quantity,
+//     }));
+
+//     // Ensure payment method is valid
+//     const validPaymentMethods = ["razorpay", "COD"]; 
+//     if (!validPaymentMethods.includes(payment_option)) {
+//       return res.status(400).send("Invalid payment method");
+//     }
+
+//     const newOrder = new Order({
+//       orderedItems,
+//       user: userId,
+//       totalPrice,
+//       finalAmount: totalPrice,
+//       actualPrice: totalPrice,
+//       address: {
+//         house: selectedAddress.addressType, 
+//         place: selectedAddress.city,
+//         city: selectedAddress.city,
+//         state: selectedAddress.state,
+//         landMark: selectedAddress.landMark,
+//         pin: selectedAddress.pincode,
+//         contactNo: selectedAddress.phone
+//       },
+//       paymentMethod: payment_option,
+//       paymentStatus: payment_option === "COD" ? "Pending" : "Not Applicable",
+//       status: "Pending",
+//     });
+
+//     await newOrder.save();
+
+//     // Reduce the quantity of each product in the inventory
+//     for (const item of orderedItems) {
+//       await Product.updateOne(
+//         { _id: item.product },
+//         { $inc: { quantity: -item.quantity } }
+//       );
+//     }
+
+//     await Cart.updateOne({ userId }, { $set: { items: [] } });
+
+//     console.log("New Order Created: ", newOrder);
+
+//     if (payment_option === "razorpay") {
+//       const razorpayOrder = await razorpay.orders.create({
+//         amount: totalPrice * 100, 
+//         currency: 'INR', 
+//         receipt: `order_rcptid_${newOrder._id}`,
+//       });
+//       console.log("Razorpay Order Created: ", razorpayOrder);
+
+//       return res.redirect(`/razorpay?orderId=${newOrder._id}&razorpayOrderId=${razorpayOrder.id}&razorpayKey=${process.env.RAZORPAY_ID}&finalAmount=${totalPrice}&userName=${user.name}&userEmail=${user.email}`);
+//     }
+
+//     res.render("orderConfirmation", { orderId: newOrder._id, user: req.user || req.session.user });
+
+//   } catch (error) {
+//     console.error("Error placing order: ", error);
+//     res.status(500).send("Internal Server Error");
+//   }
+// };
+
 const placeOrder = async (req, res) => {
   try {
-
     const user = req.session.user || req.user;
     const { addressId, payment_option } = req.body;
     const userId = req.session.user?.id || req.user?._id;
@@ -89,7 +182,7 @@ const placeOrder = async (req, res) => {
     const userAddress = await Address.findOne({ userId: userId });
     const selectedAddress = userAddress?.address.id(addressId);
 
-    console.log("selected address/////////////////////"+selectedAddress)
+    console.log("Selected Address: ", selectedAddress);
 
     if (!selectedAddress) {
       return res.status(400).send("Selected address not found");
@@ -102,6 +195,10 @@ const placeOrder = async (req, res) => {
     }
 
     let totalPrice = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
+
+    console.log("totalPrice//////////"+totalPrice);
+    
+
     let orderedItems = cart.items.map(item => ({
       product: item.productId._id,
       quantity: item.quantity,
@@ -109,7 +206,7 @@ const placeOrder = async (req, res) => {
     }));
 
     // Ensure payment method is valid
-    const validPaymentMethods = ["razorpay", "COD"]; // Add other valid methods as needed
+    const validPaymentMethods = ["razorpay", "COD"]; 
     if (!validPaymentMethods.includes(payment_option)) {
       return res.status(400).send("Invalid payment method");
     }
@@ -135,31 +232,34 @@ const placeOrder = async (req, res) => {
     });
 
     await newOrder.save();
-    await Cart.updateOne({ userId }, { $set: { items: [] } });+
 
-    console.log("newOrder/////////////////////////"+newOrder);
-    
+    // Reduce the quantity of each product in the inventory
+    for (const item of orderedItems) {
+      await Product.updateOne(
+        { _id: item.product },
+        { $inc: { quantity: -item.quantity } }
+      );
+    }
 
-    console.log("RAZORPAY DATA///////////////////"+JSON.stringify(razorpay));
+    await Cart.updateOne({ userId }, { $set: { items: [] } });
 
-    if (payment_option === "razorpay") { 
-      // Create Razorpay order and redirect to Razorpay checkout 
+    console.log("New Order Created: ", newOrder);
+
+    if (payment_option === "razorpay") {
       const razorpayOrder = await razorpay.orders.create({
-         amount: totalPrice * 100, 
-         currency: 'INR', 
-         receipt: `order_rcptid_${newOrder._id}`,
-         });
+        amount: totalPrice * 100, 
+        currency: 'INR', 
+        receipt: `order_rcptid_${newOrder._id}`,
+      });
+      console.log("Razorpay Order Created: ", razorpayOrder);
 
-         console.log("OrderData//////////////////////"+JSON.stringify(razorpayOrder));
-
-      return res.redirect(`/razorpay?orderId=${newOrder._id}&razorpayOrderId=${razorpayOrder.id}&razorpayKey=${process.env.RAZORPAY_ID}&finalAmount=${totalPrice}&userName=${ user.name}&userEmail=${ user.email }`);
-
+      return res.redirect(`/razorpay?orderId=${newOrder._id}&razorpayOrderId=${razorpayOrder.id}&razorpayKey=${process.env.RAZORPAY_ID}&finalAmount=${totalPrice}&userName=${user.name}&userEmail=${user.email}`);
     }
 
     res.render("orderConfirmation", { orderId: newOrder._id, user: req.user || req.session.user });
 
   } catch (error) {
-    console.error("Error placing order:", error);
+    console.error("Error placing order: ", error);
     res.status(500).send("Internal Server Error");
   }
 };

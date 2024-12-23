@@ -7,10 +7,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
 
 <body>
-
 <div class="container mt-5 my-5" style="height: fit-content;">
     <% if (items.length > 0) { %>
-        <table class="table table-bordered table-hover shadow-sm bg-white rounded">
+        <table class="table table-hover shadow-sm bg-white rounded ">
             <thead class="thead-dark">
                 <tr>
                     <th>Images</th>
@@ -23,7 +22,6 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-
             <tbody>
                 <% items.forEach(item => { %>
                     <tr>
@@ -38,13 +36,18 @@
                         <td><%= item.variantId.variantCode %></td>
                         <td><%= item.variantId.color %></td>
                         <td>
-                            
-                            <%= item.quantity %>
-                        
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-secondary btn-decrease" type="button" data-id="<%= item._id %>">-</button>
+                                </div>
+                                <input type="text" class="form-control text-center quantity-input" value="<%= item.quantity %>" data-id="<%= item._id %>" readonly>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary btn-increase" type="button" data-id="<%= item._id %>">+</button>
+                                </div>
+                            </div>
                         </td>
                         <td>₹<%= item.price.toFixed(2) %></td>
-                        <td class="total-price">₹<%= item.totalPrice.toFixed(2) %></td>
-
+                        <td class="total-price" data-id="<%= item._id %>">₹<%= item.totalPrice.toFixed(2) %></td>
                         <td>
                             <form action="/cart/remove/<%= item._id %>" method="POST" class="d-inline" onsubmit="return confirmRemove(event, this);">
                                 <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Remove Item">
@@ -52,16 +55,9 @@
                                 </button>
                             </form>
                         </td>
-
                     </tr>
                 <% }); %>
             </tbody>
-
-
-
-
-
-            
         </table>
 
         <div class="text-right mt-3">
@@ -93,25 +89,161 @@
 <%- include("../../views/partials/user/footer") %>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+
+
+<!-- <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
 
-    // Calculate total amount
     $(document).ready(function() {
+        updateTotalAmount();
+
+        $('.btn-increase').on('click', function() {
+            const id = $(this).data('id');
+            updateQuantity(id, 1);
+        });
+
+        $('.btn-decrease').on('click', function() {
+            const id = $(this).data('id');
+            updateQuantity(id, -1);
+        });
+    });
+
+    function updateQuantity(id, delta) {
+        const input = $('.quantity-input[data-id="' + id + '"]');
+        let quantity = parseInt(input.val());
+        quantity += delta;
+        if (quantity < 1) quantity = 1; // Set minimum quantity
+        if (quantity > 5) quantity = 5; // Set maximum quantity
+
+        // Update input value
+        input.val(quantity);
+
+        // Send the updated quantity to the server
+        $.ajax({
+            url: '/cart/update/' + id,
+            method: 'POST',
+            data: { quantity: quantity },
+            success: function(response) {
+                if (response.success) {
+                    // Update total price for the item
+                    const totalPriceElement = $('.total-price[data-id="' + id + '"]');
+                    totalPriceElement.text('₹' + response.newTotalPrice.toFixed(2));
+
+                    // Update total amount
+                    updateTotalAmount();
+                } else {
+                    Swal.fire('Error', 'Failed to update cart', 'error');
+                }
+            },
+            error: function() {
+                Swal.fire('Error', 'Failed to update cart', 'error');
+            }
+        });
+    }
+
+    function updateTotalAmount() {
         let totalAmount = 0;
         $('.total-price').each(function() {
             const price = parseFloat($(this).text().replace('₹', '').replace(',', ''));
             totalAmount += price;
         });
         $('#totalAmount').text(totalAmount.toFixed(2));
-    });
-</script>
+    }
 
+    function confirmRemove(event, form) {
+        event.preventDefault(); // Prevent the form from submitting immediately
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, remove it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit(); // Submit the form if confirmed
+            }
+        });
+    }
+</script> -->
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    $(document).ready(function() {
+        updateTotalAmount();
+
+        $('.btn-increase').on('click', function() {
+            const id = $(this).data('id');
+            console.log('Increase button clicked for item ID:', id);
+            updateQuantity(id, 1);
+        });
+
+        $('.btn-decrease').on('click', function() {
+            const id = $(this).data('id');
+            console.log('Decrease button clicked for item ID:', id);
+            updateQuantity(id, -1);
+        });
+    });
+
+    function updateQuantity(id, delta) {
+        const input = $('.quantity-input[data-id="' + id + '"]');
+        let quantity = parseInt(input.val());
+        quantity += delta;
+        if (quantity < 1) quantity = 1; // Set minimum quantity
+        if (quantity > 5) quantity = 5; // Set maximum quantity
+
+        // Update input value
+        input.val(quantity);
+        console.log('Updated quantity for item ID:', id, 'New Quantity:', quantity);
+
+        // Send the updated quantity to the server
+        $.ajax({
+            url: '/cart/update/' + id,
+            method: 'POST',
+            data: { quantity: quantity },
+            success: function(response) {
+                if (response.success) {
+                    console.log('Server responded with new total price:', response.newTotalPrice);
+                    // Update total price for the item
+                    const totalPriceElement = $('.total-price[data-id="' + id + '"]');
+                    totalPriceElement.text('₹' + response.newTotalPrice.toFixed(2));
+
+                    // Update total amount
+                    updateTotalAmount();
+                } else {
+                    console.error('Error:', response.message);
+                    Swal.fire('Error', 'Failed to update cart', 'error');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX request failed:', error);
+                Swal.fire('Error', 'Failed to update cart', 'error');
+            }
+        });
+    }
+
+    function updateTotalAmount() {
+        let totalAmount = 0;
+        $('.total-price').each(function() {
+            const price = parseFloat($(this).text().replace('₹', '').replace(',', ''));
+            totalAmount += price;
+        });
+        console.log('Updated total amount:', totalAmount);
+        $('#totalAmount').text(totalAmount.toFixed(2));
+    }
+
     function confirmRemove(event, form) {
         event.preventDefault(); // Prevent the form from submitting immediately
         Swal.fire({
@@ -130,5 +262,7 @@
         });
     }
 </script>
+
+
 
 </body>

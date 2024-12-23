@@ -16,14 +16,6 @@ const { userIsAuthenticated  } = require("../middlewares/auth");
 router.get("/",userIsAuthenticated, userController.loadHomepage);
 
 //shop management------------------------------------------------
-// router.get("/shop",userIsAuthenticated,shopController.loadShoppingPage);
-// // router.post('/filter',userIsAuthenticated,shopController.filterProduct);
-// // router.get('/filterPrice',userIsAuthenticated,shopController.filterByPrice)
-// // router.get('/filterPrice',userIsAuthenticated,shopController.searchProducts)
-// // router.get('/sortByPrice',userIsAuthenticated ,shopController.sortPrice);
-// // router.get('/sortByAlpha',userIsAuthenticated,shopController.sortByAlpha)
-// // router.get('/clearFilters',userIsAuthenticated,shopController.clearFilters)
-
 router.get("/shop", userIsAuthenticated, shopController.loadShoppingPage); 
 router.post('/sortProducts', userIsAuthenticated, shopController.filterProduct);
 
@@ -76,6 +68,8 @@ router.get("/deleteAddress",userIsAuthenticated,profileController.deleteAddress)
 router.get("/cart",userIsAuthenticated,cartController.getCart);
 router.post("/add-to-cart", userIsAuthenticated, cartController.addToCart);
 router.post('/cart/remove/:cartItemId', cartController.removeFromCart);
+// Route to update cart item
+router.post('/cart/update/:id', cartController.updateCartItem);
 
 //checkout management-------------------------------------------------------
 router.get("/checkout",userIsAuthenticated,checkoutController.getCheckout);
