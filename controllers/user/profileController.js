@@ -122,13 +122,13 @@ const UpdateProfile = async (req, res) => {
 
     const { name, email, phone } = req.body;
       
-      const findUser = await User.findById(user._id);
+      const findUser = await User.findById(user.id);
       if (!findUser) {
           return res.redirect("/pageNotFound");
       }
 
       await User.updateOne(
-          { _id: user._id },
+          { _id: user.id },
           {
               $set: {
                   name,
