@@ -83,7 +83,7 @@
                   <!-- Remove from Wishlist -->
                   <form action="/remove-from-wishlist" method="POST">
                     <input type="hidden" name="wishlistItemId" value="<%= item._id %>">
-                    <button type="submit" class="btn btn-danger" style="font-size: 10px;">Remove</button>
+                    <button type="submit" class="btn btn-danger" style="font-size: 12px;">Remove</button>
                   </form>
               
                   <!-- Add to Cart -->
@@ -93,7 +93,7 @@
                     <input type="hidden" name="quantity" value="1">
                     <input type="hidden" name="price" value="<%= item.variant.salePrice || item.variant.regularPrice %>">
                     <input type="hidden" name="wishlistItemId" value="<%= item._id %>"> <!-- Add this -->
-                    <button type="submit" class="btn btn-primary" style="font-size: 10px; background-color: aqua;">Add to Cart</button>
+                    <button type="submit" class="btn btn-primary" style="font-size: 12px; background-color: aqua;">Add to Cart</button>
                   </form>
                 </td>
               </tr>
@@ -112,7 +112,7 @@
     <% } %>
 
     <div class="text-center mt-5">
-      <a href="/shop" class="btn btn-primary">Continue Shopping</a>
+      <a href="/shop" class="btn btn-primary" style="font-size: 12px;">Continue Shopping</a>
     </div>
   </div>
 

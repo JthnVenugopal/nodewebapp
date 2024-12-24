@@ -145,9 +145,9 @@
                             <h5>Select Size</h5>
                             <div class="sizes-container d-flex flex-wrap mt-3">
                                 <% size.forEach(sizes => { %>
-                                    <div class="size-badge mx-2" data-size="<%= sizes %>">
+                                    <button style="font-size: 12px;" class="size-badge mx-2 btn btn-outline-primary" data-size="<%= sizes %>">
                                         <%= sizes %>
-                                    </div>
+                                    </button>
                                 <% }) %>
                             </div>
                         </div>
@@ -246,10 +246,7 @@
 
                         </div>
 
-                        <div>
-                            <h6 class="my-5">Availability: <span class="in-stock text-success ml-5"><%= variant.quantity %> Items in stock</span></h6>
-                        </div>
-
+                      
                         <style>
                             .custom-quantity-container {
                                 width: 200px; /* Adjust width as needed */
@@ -257,9 +254,9 @@
                         </style>
                         
                         <div class="quantity-selection my-5">
-                            <h5>Select Quantity</h5>
+                        
                             <div class="quantity-container custom-quantity-container d-flex flex-wrap mt-3">
-                                <div  style="width: fit-content;display: flex;">
+                                <div  style="width: fit-content;display: none;">
                                     <button class="btn btn-success" id="decrement-quantity" type="button">-</button>
                                     <input type="number" id="quantity" name="quantity" value="1" min="1" max="5" class="form-control" style="width: 100px;">
                                     <button class="btn btn-success" id="increment-quantity" type="button">+</button>
@@ -328,107 +325,6 @@
 </main>
 
 <%- include("../../views/partials/user/footer") %>
-
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    function changeMainImage(imageSrc) {
-        document.getElementById('mainImage').src = imageSrc;
-    }
-
-    let selectedSize = null;
-
-    $(document).ready(function () {
-        $('.thumbnail').on('click', function () {
-            const imageSrc = $(this).attr('src');
-            $('#mainImage').attr('src', imageSrc);
-            $('.thumbnail').removeClass('active');
-            $(this).addClass('active');
-        });
-
-        $('.image-container').on('mousemove', function (e) {
-            const offsetX = e.offsetX;
-            const offsetY = e.offsetY;
-            const width = $(this).width();
-            const height = $(this).height();
-
-            const xPercent = (offsetX / width) * 100;
-            const yPercent = (offsetY / height) * 100;
-
-            $('#mainImage').css({
-                'transform-origin': `${xPercent}% ${yPercent}%`,
-                'transform': 'scale(1.5)'
-            });
-        });
-
-        $('.image-container').on('mouseleave', function () {
-            $('#mainImage').css({
-                'transform-origin': 'center center',
-                'transform': 'scale(1)'
-            });
-        });
-
-        $('.size-badge').on('click', function () {
-            $('.size-badge').css('background-color', 'white');
-            $('.size-badge').css('color', 'black');
-
-            selectedSize = $(this).data('size');
-
-            $(this).css('background-color', 'DodgerBlue');
-            $(this).css('color', 'white');
-
-            $('#addToCartBtn').prop('disabled', false);
-        });
-
-        $('#addToCartForm').on('submit', function (e) {
-            if (!selectedSize) {
-                e.preventDefault();
-                alert('Please select a size before adding to cart.');
-            } else {
-                $('<input>').attr({
-                    type: 'hidden',
-                    name: 'size',
-                    value: selectedSize
-                }).appendTo('#addToCartForm');
-
-                const quantity = $('#quantity').val();
-                $('input[name="quantity"]').val(quantity);
-            }
-        });
-
-        $('#decrement-quantity').on('click', function () {
-            const quantity = parseInt($('#quantity').val());
-            if (quantity > 1) {
-                $('#quantity').val(quantity - 1);
-            } else {
-                alert('Minimum quantity is 1');
-            }
-        });
-
-        $('#increment-quantity').on('click', function () {
-            const quantity = parseInt($('#quantity').val());
-            if (quantity < 5) {
-                $('#quantity').val(quantity + 1);
-            } else {
-                alert('Maximum quantity is 5');
-            }
-        });
-
-        $('#quantity').on('input', function () {
-            const quantity = $(this).val();
-            if (quantity < 1) {
-                alert('Minimum quantity is 1');
-                $(this).val(1);
-            } else if (quantity > 5) {
-                alert('Maximum quantity is 5');
-                $(this).val(5);
-            }
-        });
-    });
-</script> -->
-
-
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>

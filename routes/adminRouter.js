@@ -10,7 +10,7 @@ const uploads = multer({storage:storage});
 const brandController = require("../controllers/admin/brandController");
 const productController = require("../controllers/admin/productController");
 const orderController  = require("../controllers/admin/orderController");
-
+const couponController = require("../controllers/admin/couponController")
 
 
 
@@ -63,7 +63,9 @@ router.get("/orders",adminAuth,orderController.getOrders);
 router.post("/updateOrderStatus",adminAuth,orderController.updateOrderStatus);
 router.get("/adminOrderDetails",orderController.getAdminOrderDetails);
 
-
+//Coupon Management
+router.get("/coupon",adminAuth,couponController.loadCoupon); 
+router.post("/createCoupon",adminAuth,couponController.createCoupon);
 
 
 

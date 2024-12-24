@@ -3,25 +3,38 @@
 <title>Checkout</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
-
 <style>
-
-#loader, #orderLoader {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-}
-
-
+    #loader, #orderLoader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+    }
+    .address-box {
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .address-type-badge {
+        padding: 5px 10px;
+        border-radius: 3px;
+        color: #fff;
+        font-weight: bold;
+    }
+    .address-type-badge.home {
+        background-color: #28a745;
+    }
+    .address-type-badge.work {
+        background-color: #007bff;
+    }
+    .address-type-badge.other {
+        background-color: #ffc107;
+    }
 </style>
 
-
 <body>
-
-   
-
     <div class="container mt-5">
         <% if (cart && cart.items.length > 0) { %>
             <table class="table table-bordered table-hover shadow-sm bg-white rounded">
@@ -48,6 +61,21 @@
                             <td>₹<%= item.totalPrice %></td>
                         </tr>
                     <% }); %>
+                    
+                    <!-- Coupon Section -->
+                    <tr>
+                        <th>Coupon Code</th>
+                        <td colspan="2">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" id="applyCoupon">Apply</button>
+                                </div>
+                            </div>
+                            <small id="couponMessage" class="form-text text-muted"></small>
+                        </td>
+                    </tr>
+
                     <tr>
                         <th>SubTotal</th>
                         <td colspan="2">₹<%= totalAmount.toLocaleString() %></td>
@@ -62,6 +90,7 @@
                     </tr>
                 </tbody>
             </table>
+
         <% } else { %>
             <div class="alert alert-warning text-center shadow-sm rounded p-4">
                 <h5>Your cart is empty.</h5>
@@ -71,19 +100,11 @@
         <% } %>
     </div>
 
-  
-    <!-- Button to Open the Modal -->
-    <div class="text-center mt-4">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
-            Add New Address
-        </button>
-    </div>
-
     <!-- Modal -->
     <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog" aria-labelledby="addAddressModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class=" modal-header">
                     <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -93,15 +114,15 @@
                     <form id="modalAddressForm" method="POST" action="#">
                         <div class="form-group">
                             <label for="modalAddressType">Address Type</label>
-                            <input type="text" class="form-control" id="modalAddressType" name="addressType" >
+                            <input type="text" class="form-control" id="modalAddressType" name="addressType">
                         </div>
                         <div class="form-group">
                             <label for="modalName">Name</label>
-                            <input type="text" class="form-control" id="modalName" name="name" >
+                            <input type="text" class="form-control" id="modalName" name="name">
                         </div>
                         <div class="form-group">
                             <label for="modalCity">City</label>
-                            <input type="text" class="form-control" id="modalCity" name="city" >
+                            <input type="text" class="form-control" id="modalCity" name="city">
                         </div>
                         <div class="form-group">
                             <label for="modalLandMark">Landmark</label>
@@ -109,7 +130,7 @@
                         </div>
                         <div class="form-group">
                             <label for="modalState">State</label>
-                            <input type="text" class="form-control" id="modalState" name="state" >
+                            <input type="text" class="form-control" id="modalState" name="state">
                         </div>
                         <div class="form-group">
                             <label for="modalPincode">Pincode</label>
@@ -117,7 +138,7 @@
                         </div>
                         <div class="form-group">
                             <label for="modalPhone">Phone</label>
-                            <input type="number" class="form-control" id="modalPhone" name="phone" >
+                            <input type="number" class="form-control" id="modalPhone" name="phone">
                         </div>
                         <div class="form-group">
                             <label for="modalAltPhone">Alternate Phone</label>
@@ -130,143 +151,119 @@
         </div>
     </div>
 
-   
-    
-<!-- Displaying Addresses -->
-<div class="container mt-4" id="addresses-container">
-    <% addresses.forEach((address, index) => { %>
-        <% address.address.forEach((addr, addrIndex) => { %>
-            <div class="address-box mb-3">
-                <input type="radio" name="selectedAddress" id="<%= addrIndex %>" value="<%= addr._id %>" class="address-radio">
-                <label class="address-label" for="address-<%= index %>-<%= addrIndex %>">
-                    <div class="address-type-badge <%= addr.addressType.toLowerCase() %>">
-                        <%= addr.addressType %>
-                    </div>
-
-                    <div class="address-content">
-                        <div class="name-section">
-                            <h6 class="mb-2"><%= addr.name %></h6>
+    <!-- Displaying Addresses -->
+    <div class="container mt-4" id="addresses-container">
+        <% addresses.forEach((address, index) => { %>
+            <% address.address.forEach((addr, addrIndex) => { %>
+                <div class="address-box mb-3">
+                    <input type="radio" name="selectedAddress" id="<%= addrIndex %>" value="<%= addr._id %>" class="address-radio">
+                    <label class="address-label" for="address-<%= index %>-<%= addrIndex %>">
+                        <div class="address-type-badge <%= addr.addressType.toLowerCase() %>">
+                            <%= addr.addressType %>
                         </div>
-                        <div class="address-details">
-                            <% if (addr.landMark) { %>
-                                <p class="landmark"><i class="fi-rs-marker me-2"></i><%= addr.landMark %></p>
-                            <% } %>
-                            <p class="location"><%= addr.city %>, <%= addr.state %> <%= addr.pincode %></p>
-                            <div class="contact-info">
-                                <p class="phone">
-                                    <i class="fi-rs-phone-call me-2"></i>
-                                    <%= addr.phone %>
-                                    <% if (addr.altPhone) { %>
-                                        <span class="alt-phone">/ <%= addr.altPhone %></span>
-                                    <% } %>
-                                </p>
+                        <div class="address-content">
+                            <div class="name-section">
+                                <h6 class="mb-2"><%= addr.name %></h6>
+                            </div>
+                            <div class="address-details">
+                                <% if (addr.landMark) { %>
+                                    <p class="landmark"><i class="fi-rs-marker me-2"></i><%= addr.landMark %></p>
+                                <% } %>
+                                <p class="location"><%= addr.city %>, <%= addr.state %> <%= addr.pincode %></p>
+                                <div class="contact-info">
+                                    <p class="phone">
+                                        <i class="fi-rs-phone-call me-2"></i>
+                                        <%= addr.phone %>
+                                        <% if (addr.altPhone) { %>
+                                            <span class="alt-phone">/ <%= addr.altPhone %></span>
+                                        <% } %>
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </label>
-            </div>
+                    </label>
+                </div>
+            <% }); %>
         <% }); %>
-    <% }); %>
-</div>
+    </div>
 
-<!-- Order Form -->
-<!-- <div class="text-center mt-4">
-    <form id="orderForm" method="POST" action="/placeOrder" class="my-5">
-        <div class="payment_option mb-4">
-            <h4>Select Payment Method</h4>
-            <div class="form-check mb-2">
-                <input class="form-check-input" required type="radio" value="COD" name="payment_option" id="cashOnDelivery" checked>
-                <label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
+    <!-- Button to Open the Modal -->
+    <div class="text-center mt-4">
+        <button style="font-size: 12px;" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
+            Add New Address
+        </button>
+    </div>
+
+    <!-- Order Form -->
+    <div class="text-center mt-4">
+        <form id="orderForm" method="POST" action="/placeOrder" class="my-5">
+            <h4>Payment Method</h4>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="payment_option" id="razorpay" value="razorpay" required>
+                <label class="form-check-label" for="razorpay">RazorPay</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" required type="radio" value="online" name="payment_option" id="onlinePayment">
-                <label class="form-check-label" for="onlinePayment">Online Payment</label>
+                <input class="form-check-input" type="radio" name="payment_option" id="paymentCOD" value="COD" required>
+                <label class="form-check-label" for="paymentCOD">Cash on Delivery</label>
             </div>
-        </div> -->
+            <!-- Hidden Fields -->
+            <input type="hidden" name="orderId" id="orderId">
+            <input type="hidden" name="razorpayOrderId" id="razorpayOrderId">
+            <input type="hidden" name="razorpayKey" id="razorpayKey">
+            <input type="hidden" name="finalAmount" id="finalAmount">
+            <input type="hidden" name="userName" id="userName">
+            <input type="hidden" name="userEmail" id="userEmail">
+            <input type="hidden" name="userPhone" id="userPhone">
+            <input type="hidden" id="selectedAddressId" name="addressId">
+            <div class="d-flex justify-content-center my-5">
+                <button type="submit" class="btn btn-success btn-sm mt-3">Place Order</button>
+            </div>
+        </form>
+    </div>
 
+    <%- include("../../views/partials/user/footer") %>
 
+    <script>
+        // Add a click event listener to all radio buttons with the class "address-radio"
+        document.querySelectorAll('.address-radio').forEach((radio) => {
+            radio.addEventListener('click', (event) => {
+                const addressId = event.target.value;
+                document.getElementById("selectedAddressId").value = addressId;
+                console.log(`User  clicked on radio button with ID: ${addressId}`);
+            });
+        });
 
-        <hr>
-        <hr>
-
-
-        <!-- Order Form --> <div class="text-center mt-4"> <form id="orderForm" method="POST" action="/placeOrder" class="my-5"> <h4>Payment Method</h4> <div class="form-check"> <input class="form-check-input" type="radio" name="payment_option" id="razorpay" value="razorpay" required> <label class="form-check-label" for="razorpay">RazorPay</label> </div> <div class="form-check"> <input class="form-check-input" type="radio" name="payment_option" id="paymentCOD" value="COD" required> <label class="form-check-label" for="paymentCOD">Cash on Delivery</label> </div> <!-- Hidden Fields --> <input type="hidden" name="orderId" id="orderId"> <input type="hidden" name="razorpayOrderId" id="razorpayOrderId"> <input type="hidden" name="razorpayKey" id="razorpayKey"> <input type="hidden" name="finalAmount" id="finalAmount"> <input type="hidden" name="userName" id="userName"> <input type="hidden" name="userEmail" id="userEmail"> <input type="hidden" name="userPhone" id="userPhone"> <input type="hidden" id="selectedAddressId" name="addressId"> <div class="d-flex justify-content-center my-5"> <button type="submit" class="btn btn-success btn-sm mt-3">Place Order</button> </div> </form> </div>
-
-</div>
-
-<%- include("../../views/partials/user/footer") %>
-
-
-<script>
-
-
-
-// Add a click event listener to all radio buttons with the class "address-radio" 
-
-document.querySelectorAll('.address-radio').forEach((radio) => {
-     radio.addEventListener('click', (event) => {
-         // Get the ID of the clicked radio button
-          const addressId = event.target.id; document.getElementById("selectedAddressId").value = addressId; console.log(`User clicked on radio button with ID: ${addressId}`);
-         }); 
-        }); 
-        
         $(document).ready(function() {
-             // Ensure the selected address is set in the hidden input before submitting 
-             
-             $('#orderForm').submit(function(event) { 
+            // Ensure the selected address is set in the hidden input before submitting
+            $('#orderForm').submit(function(event) {
                 const selectedAddress = $('input[name="selectedAddress"]:checked').val();
-                 if (!selectedAddress) { event.preventDefault(); 
-                    alert('Please select an address.'); 
-                    return; } $('#selectedAddressId').val(selectedAddress); 
-                    console.log('Submitting address ID:', selectedAddress);
+                if (!selectedAddress) {
+                    event.preventDefault();
+                    alert('Please select an address.');
+                    return;
+                }
+                $('#selectedAddressId').val(selectedAddress);
+            });
 
-                    // Populate hidden fields with necessary data 
-                    const orderId = "yourOrderId"; 
+            // Coupon application logic
+            $('#applyCoupon').click(function() {
+                const couponCode = $('#couponCode').val();
+                // Simulate coupon validation and discount calculation
+                if (couponCode === "DISCOUNT10") {
+                    const discount = totalAmount * 0.10; // 10% discount
+                    const newTotal = totalAmount - discount;
+                    $('#discount').html(`₹ ${discount.toLocaleString()}`);
+                    $('#finalAmount').html(`₹ ${newTotal.toLocaleString()}`);
+                    $('#couponMessage').text('Coupon applied successfully!').css('color', 'green');
+                } else {
+                    $('#couponMessage').text('Invalid coupon code.').css('color', 'red');
+                }
+            });
 
-                    // Replace with actual order ID 
-                    const razorpayOrderId = "yourRazorpayOrderId"; 
-                    // Replace with actual Razorpay order ID 
-                    const razorpayKey = "yourRazorpayKey"; 
-                    // Replace with actual Razorpay key 
-                    const finalAmount = "yourFinalAmount"; 
-                    // Replace with actual final amount 
-                    const userName = "yourUserName"; 
-                    // Replace with actual user name 
-                    const userEmail = "yourUserEmail"; 
-                    // Replace with actual user email 
-                    const userPhone = "yourUserPhone"; 
-                    // Replace with actual user phone 
-                    $('#orderId').val(orderId);
-                    $('#razorpayOrderId').val(razorpayOrderId);
-                    $('#razorpayKey').val(razorpayKey); 
-                    $('#finalAmount').val(finalAmount); 
-                    $('#userName').val(userName); 
-                    $('#userEmail').val(userEmail); 
-                    $('#userPhone').val(userPhone); });
-                    
-                    // Loader display during order submission
-                    $(document).on('submit', '#orderForm', function() {
-                         $('#orderLoader').show(); // Show the loader
-                         }); 
-                        });
-
-
-
-$(document).ready(function() {
-    // Ensure the selected address is set in the hidden input before submitting
-    $('#orderForm').submit(function(event) {
-        const selectedAddress = $('input[name="selectedAddress"]:checked').val();
-        if (!selectedAddress) {
-            event.preventDefault();
-            alert('Please select an address.');
-            return;
-        }
-        $('#selectedAddressId').val(selectedAddress);
-    });
-});
-
-
-
+            // Loader display during order submission
+            $(document).on('submit', '#orderForm', function() {
+                $('#orderLoader').show(); // Show the loader
+            });
+        });
     </script>
-
-
+</body>

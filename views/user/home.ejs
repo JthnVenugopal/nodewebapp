@@ -1,12 +1,9 @@
 <%- include("../partials/user/header") %>
 
 <style>
-    body {
-        background-color: #ffefef;
-    }
-
+   
     .fashion-banner {
-        background: linear-gradient(to right, #4facfe, #00f2fe);
+       
         padding: 50px 20px;
         text-align: center;
         border-radius: 10px;
@@ -133,7 +130,7 @@
                                         <% } %>
     
                                         <!-- Product Details -->
-                                        <div class="card-body text-center">
+                                        <div class="card-body text-center" style="z-index: 5;">
                                             <h5 class="card-title text-truncate"><%= products[i].productName %></h5>
     
                                             <% const { variantData } = products[i]; %>

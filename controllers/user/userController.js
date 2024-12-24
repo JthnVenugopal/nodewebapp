@@ -80,12 +80,65 @@ const pageNotFound = async (req,res) => {
 // };
 
 
+// const loadHomepage = async (req, res, next) => {
+//   try {
+//     let userData = req.session.user || req.user;
+
+//     const currentPage = parseInt(req.query.page) || 1;
+//     const productsPerPage =8;
+
+//     const categories = await Category.find({ isListed: true });
+
+//     // Fetch all products that are not blocked
+//     let products = await Product.find({ isBlocked: false });
+
+//     // Pagination
+//     const totalProducts = products.length;
+//     const totalPages = Math.ceil(totalProducts / productsPerPage);
+//     const startIndex = (currentPage - 1) * productsPerPage;
+//     products = products.slice(startIndex, startIndex + productsPerPage);
+
+//     // Fetch variant data for each product
+//     const productsWithVariants = await Promise.all(products.map(async (product) => {
+//       const variantData = await Variant.findById(product.variant); 
+
+//       return {
+//         ...product.toObject(), // Convert Mongoose document to plain object
+//         variantData: variantData || null // Include variant data or null if not found
+//       };
+//     }));
+
+
+    
+
+   
+
+//     res.locals.user = userData;
+
+//     console.log("home page rendering...");
+
+//     // Render homepage with user, product data
+//     return res.render("home", {
+//       user: userData,
+//       products: productsWithVariants,
+//       currentPage,
+//       totalPages,
+//       sortBy: req.query.sortBy || 'name',
+//       categories: categories,
+//     });
+//   } catch (error) {
+//     console.log("Error loading homepage:", error);
+//     next(error);
+//   }
+// };
+
+
 const loadHomepage = async (req, res, next) => {
   try {
     let userData = req.session.user || req.user;
 
     const currentPage = parseInt(req.query.page) || 1;
-    const productsPerPage =8;
+    const productsPerPage = 8;
 
     const categories = await Category.find({ isListed: true });
 
@@ -100,7 +153,7 @@ const loadHomepage = async (req, res, next) => {
 
     // Fetch variant data for each product
     const productsWithVariants = await Promise.all(products.map(async (product) => {
-      const variantData = await Variant.findById(product.variant); 
+      const variantData = await Variant.findById(product.variant);
 
       return {
         ...product.toObject(), // Convert Mongoose document to plain object
@@ -108,14 +161,14 @@ const loadHomepage = async (req, res, next) => {
       };
     }));
 
-
-    
-
-   
-
     res.locals.user = userData;
 
     console.log("home page rendering...");
+
+    // Set headers to prevent caching of the login page
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
 
     // Render homepage with user, product data
     return res.render("home", {

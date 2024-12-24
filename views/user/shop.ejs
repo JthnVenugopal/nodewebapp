@@ -2,7 +2,32 @@
 
 <style>
     body {
-        background-color: #fff0f0;
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+    }
+
+    .breadcrumb {
+        background-color: transparent;
+    }
+
+    .page-header {
+        margin-bottom: 20px;
+    }
+
+    .filter-section {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-card {
+        transition: transform 0.2s;
+    }
+
+    .product-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
 
     #paginationContainer button.active {
@@ -11,8 +36,32 @@
     }
 
     #paginationContainer button:hover {
-        background-color: #0056b3; /* Darker blue on hover */
+        background-color: #0056b3;
         color: white;
+    }
+
+    .btn-custom {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .filter-button {
+        margin-top: 20px;
+    }
+
+    .list-group-item {
+        cursor: pointer;
+    }
+
+    .list-group-item.active {
+        background-color: #007bff;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .filter-section {
+            margin-bottom: 20px;
+        }
     }
 </style>
 
@@ -30,66 +79,66 @@
         </div>
     </div>
 
-    <div class="container mt-4">
+    <div class="container my-5">
         <div class="row">
             <!-- Filters Section -->
-            <div class="col-lg-3 d-flex flex-column">
+            <div class="col-lg-3 d-flex flex-column filter-section" style="font-size: 20px;">
                 <h5 class="my-2">Filter Products</h5>
                 <form id="filterForm">
                     <!-- Search Bar -->
                     <div class="mb-3">
-                        <input type="text" name="search" id="search" class="form-control form-control-sm" placeholder="Search Products" />
+                        <input type="text" name="search" id="search" class="form-control form-control-sm" placeholder="Search Products" aria-label="Search Products" />
                     </div>
-                    <br><br>
-                    <!-- Category Dropdown -->
-                    <div class="mb-3">
-                        <select name="category" id="category" class="form-select">
-                            <option value="">Select Category</option>
+                    <!-- Category List -->
+                    <div class="mb-3" >
+                        <label for="categoryList" class="form-label " >Select Category</label>
+                        <ul id="categoryList" class="list-group" >
+                            <li class="list-group-item active" data-value="">All Categories</li>
                             <% categories.forEach(category => { %>
-                                <option value="<%= category._id %>"><%= category.name %></option>
+                                <li class="list-group-item" data-value="<%= category._id %>"><%= category.name %></li>
                             <% }) %>
-                        </select>
+                        </ul>
                     </div>
-                    <br><br>
-                    <!-- Brand Dropdown -->
+                    <!-- Brand List -->
                     <div class="mb-3">
-                        <select name="brand" id="brand" class="form-select">
-                            <option value="">Select Brand</option>
+                        <label for="brandList" class="form-label">Select Brand</label>
+                        <ul id="brandList" class="list-group">
+                            <li class="list-group-item active" data-value="">All Brands</li>
                             <% brands.forEach(brand => { %>
-                                <option value="<%= brand._id %>"><%= brand.brandName %></option>
+                                <li class="list-group-item" data-value="<%= brand._id %>"><%= brand.brandName %></li>
                             <% }) %>
-                        </select>
+                        </ul>
                     </div>
-                    <br><br>
-                    <!-- Price Dropdown -->
+                    <!-- Price List -->
                     <div class="mb-3">
-                        <select name="price" id="price" class="form-select">
-                            <option value="">Select Price Range</option>
-                            <option value="below1000">Below ₹1000</option>
-                            <option value="1000-2000">₹1000 - ₹2000</option>
-                            <option value="2000-3000">₹2000 - ₹3000</option>
-                            <option value="3000-4000">₹3000 - ₹4000</option>
-                            <option value="4000-5000">₹4000 - ₹5000</option>
-                            <option value="above5000">Above ₹5000</option>
-                        </select>
+                        <label for="priceList" class="form-label">Select Price Range</label>
+                        <ul id="priceList" class="list-group">
+                            <li class="list-group-item active" data-value="">All Prices</li>
+                            <li class="list-group-item" data-value="below1000">Below ₹1000</li>
+                            <li class="list-group-item" data-value="1000-2000">₹1000 - ₹2000</li>
+                            <li class="list-group-item" data-value="2000-3000">₹2000 - ₹3000</li>
+                            <li class="list-group-item" data-value="3000-4000">₹3000 - ₹4000</li>
+                            <li class="list-group-item" data-value ="4000-5000">₹4000 - ₹5000</li>
+                            <li class="list-group-item" data-value="above5000">Above ₹5000</li>
+                        </ul>
                     </div>
-                    <br><br>
-                    <!-- Sort Dropdown -->
+                    <!-- Sort List -->
                     <div class="mb-3">
-                        <select name="sort" id="sort" class="form-select">
-                            <option value="">Sort</option>
-                            <option value="popularity">Popularity</option>
-                            <option value="priceAsc">Price: Low to High</option>
-                            <option value="priceDesc">Price: High to Low</option>
-                            <option value="averageRating">Average Ratings</option>
-                            <option value="nameAsc">Name: A-Z</option>
-                            <option value="nameDesc">Name: Z-A</option>
-                        </select>
+                        <label for="sortList" class="form-label">Sort By</label>
+                        <ul id="sortList" class="list-group">
+                            <li class="list-group-item active" data-value="">Default</li>
+                            <li class="list-group-item" data-value="popularity">Popularity</li>
+                            <li class="list-group-item" data-value="priceAsc">Price: Low to High</li>
+                            <li class="list-group-item" data-value="priceDesc">Price: High to Low</li>
+                            <li class="list-group-item" data-value="averageRating">Average Ratings</li>
+                            <li class="list-group-item" data-value="nameAsc">Name: A-Z</li>
+                            <li class="list-group-item" data-value="nameDesc">Name: Z-A</li>
+                        </ul>
                     </div>
-                   
-                    <div class="d-flex justify-content-center" style="margin-top: 100px; margin-right: 70px">
-                        <button type="button" class="btn btn-success" id="sortButton" style="font-size: 10px;">Apply Filters</button>
-                        <button type="button" class="btn btn-danger" id="clearFiltersButton" style="font-size: 10px;">Clear Filters</button>
+                    <div class="d-flex justify-content-center filter-button">
+                        <button type="button" class="btn btn-success btn-custom" id="sortButton">Apply Filters</button>
+                        <hr>
+                        <button type="button" class="btn btn-danger btn-custom" id="clearFiltersButton">Clear Filters</button>
                     </div>
                 </form>
             </div>
@@ -106,7 +155,7 @@
                              data-price="<%= product.variant.salePrice %>"
                              data-rating="<%= product.averageRating %>">
                             <a href="/productDetails?id=<%= product._id %>">
-                                <div class="card h-100 shadow-sm ">
+                                <div class="card h-100 shadow-sm">
                                     <% if (product.variant.productImages && product.variant.productImages.length > 0) { %>
                                         <img style="height: 150px; width: 160px; object-fit: cover; margin-left: 20%;" src="/uploads/re-image/<%= product.variant.productImages[0] %>" class="card-img-top" alt ="<%= product.productName %>">
                                     <% } %>
@@ -132,182 +181,83 @@
 
     <%- include("../../views/partials/user/footer") %>
 
-    <!-- <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const filterForm = document.getElementById('filterForm');
-            const searchInput = document.getElementById('search');
-            const categorySelect = document.getElementById('category');
-            const brandSelect = document.getElementById('brand');
-            const sortSelect = document.getElementById('sort');
-            const priceSelect = document.getElementById('price');
-            const sortButton = document.getElementById('sortButton');
-            const clearFiltersButton = document.getElementById('clearFiltersButton');
-            const productsContainer = document.getElementById('productsContainer');
-            const paginationContainer = document.getElementById('paginationContainer');
-            let currentPage = 1;
-            const productsPerPage = 9;
-
-            // Event listeners for filters
-            searchInput.addEventListener('input', applyFilters);
-            categorySelect.addEventListener('change', applyFilters);
-            brandSelect.addEventListener('change', applyFilters);
-            priceSelect.addEventListener('change', applyFilters);
-            sortButton.addEventListener('click', applyFilters);
-            clearFiltersButton.addEventListener('click', clearFilters);
-
-            function applyFilters() {
-                currentPage = 1; // Reset to the first page
-                const searchValue = searchInput.value.toLowerCase();
-                const selectedCategory = categorySelect.value;
-                const selectedBrand = brandSelect.value;
-                const selectedPrice = priceSelect.value;
-                const selectedSort = sortSelect.value;
-
-                const productCards = document.querySelectorAll('.product-card');
-                const filteredProducts = Array.from(productCards).filter(card => {
-                    const productName = card.getAttribute('data-name');
-                    const productCategory = card.getAttribute('data-category');
-                    const productBrand = card.getAttribute('data-brand');
-                    const productPrice = parseFloat(card.getAttribute('data-price'));
-
-                    let isVisible = true;
-
-                    if (searchValue && !productName.includes(searchValue)) isVisible = false;
-                    if (selectedCategory && productCategory !== selectedCategory) isVisible = false;
-                    if (selectedBrand && productBrand !== selectedBrand) isVisible = false;
-                    if (selectedPrice) {
-                        const ranges = {
-                            below1000: productPrice < 1000,
-                            '1000-2000': productPrice >= 1000 && productPrice <= 2000,
-                            '2000-3000': productPrice >= 2000 && productPrice <= 3000,
-                            '3000-4000': productPrice >= 3000 && productPrice <= 4000,
-                            '4000-5000': productPrice >= 4000 && productPrice <= 5000,
-                            above5000: productPrice > 5000,
-                        };
-                        if (!ranges[selectedPrice]) isVisible = false;
-                    }
-
-                    card.style.display = isVisible ? 'block' : 'none';
-                    return isVisible;
-                });
-
-                // Sort the filtered products
-                sortProducts(filteredProducts, selectedSort);
-                // Paginate the sorted products
-                paginateProducts(filteredProducts);
-            }
-
-            function sortProducts(products, selectedSort) {
-                if (!selectedSort) return;
-
-                products.sort((a, b) => {
-                    const aPopularity = parseInt(a.getAttribute('data-pop ularity'));
-                    const bPopularity = parseInt(b.getAttribute('data-popularity'));
-                    const aPrice = parseFloat(a.getAttribute('data-price'));
-                    const bPrice = parseFloat(b.getAttribute('data-price'));
-                    const aRating = parseFloat(a.getAttribute('data-rating'));
-                    const bRating = parseFloat(b.getAttribute('data-rating'));
-                    const aName = a.getAttribute('data-name');
-                    const bName = b.getAttribute('data-name');
-
-                    switch (selectedSort) {
-                        case 'popularity':
-                            return bPopularity - aPopularity; // High to Low
-                        case 'priceAsc':
-                            return aPrice - bPrice; // Low to High
-                        case 'priceDesc':
-                            return bPrice - aPrice; // High to Low
-                        case 'averageRating':
-                            return bRating - aRating; // High to Low
-                        case 'nameAsc':
-                            return aName.localeCompare(bName); // A-Z
-                        case 'nameDesc':
-                            return bName.localeCompare(aName); // Z-A
-                        default:
-                            return 0;
-                    }
-                });
-            }
-
-            function clearFilters() {
-                currentPage = 1; // Reset to the first page
-                searchInput.value = '';
-                categorySelect.value = '';
-                brandSelect.value = '';
-                sortSelect.value = '';
-                priceSelect.value = '';
-                applyFilters();
-            }
-
-            function paginateProducts(visibleProducts) {
-                const totalPages = Math.ceil(visibleProducts.length / productsPerPage);
-                paginationContainer.innerHTML = '';
-                for (let i = 1; i <= totalPages; i++) {
-                    const button = document.createElement('button');
-                    button.textContent = i;
-                    button.classList.add('btn', 'btn-light', 'mx-1');
-                    if (i === currentPage) button.classList.add('active');
-                    button.addEventListener('click', () => {
-                        currentPage = i;
-                        showPage(visibleProducts, i);
-                    });
-                    paginationContainer.appendChild(button);
-                }
-                showPage(visibleProducts, currentPage);
-            }
-
-            function showPage(visibleProducts, page) {
-                const start = (page - 1) * productsPerPage;
-                const end = start + productsPerPage;
-                visibleProducts.forEach((card, index) => {
-                    card.style.display = index >= start && index < end ? 'block' : 'none';
-                });
-            }
-
-            applyFilters();
-        });
-    </script> -->
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const filterForm = document.getElementById('filterForm');
             const searchInput = document.getElementById('search');
-            const categorySelect = document.getElementById('category');
-            const brandSelect = document.getElementById('brand');
-            const sortSelect = document.getElementById('sort');
-            const priceSelect = document.getElementById('price');
+            const categoryList = document.getElementById('categoryList');
+            const brandList = document.getElementById('brandList');
+            const sortList = document.getElementById('sortList');
+            const priceList = document.getElementById('priceList');
             const sortButton = document.getElementById('sortButton');
             const clearFiltersButton = document.getElementById('clearFiltersButton');
             const productsContainer = document.getElementById('productsContainer');
             const paginationContainer = document.getElementById('paginationContainer');
             let currentPage = 1;
             const productsPerPage = 9;
-    
+
             // Event listeners for filters
             searchInput.addEventListener('input', applyFilters);
-            categorySelect.addEventListener('change', applyFilters);
-            brandSelect.addEventListener('change', applyFilters);
-            priceSelect.addEventListener('change', applyFilters);
-            sortButton.addEventListener('click', applyFilters);
+            categoryList.addEventListener('click', handleCategoryClick);
+            brandList.addEventListener('click', handleBrandClick);
+            priceList.addEventListener('click', handlePriceClick);
+            sortList.addEventListener('click', handleSortClick);
+ sortButton.addEventListener('click', applyFilters);
             clearFiltersButton.addEventListener('click', clearFilters);
-    
+
+            function handleCategoryClick(event) {
+                if (event.target.classList.contains('list-group-item')) {
+                    const selectedValue = event.target.getAttribute('data-value');
+                    Array.from(categoryList.children).forEach(item => item.classList.remove('active'));
+                    event.target.classList.add('active');
+                }
+                applyFilters();
+            }
+
+            function handleBrandClick(event) {
+                if (event.target.classList.contains('list-group-item')) {
+                    const selectedValue = event.target.getAttribute('data-value');
+                    Array.from(brandList.children).forEach(item => item.classList.remove('active'));
+                    event.target.classList.add('active');
+                }
+                applyFilters();
+            }
+
+            function handlePriceClick(event) {
+                if (event.target.classList.contains('list-group-item')) {
+                    const selectedValue = event.target.getAttribute('data-value');
+                    Array.from(priceList.children).forEach(item => item.classList.remove('active'));
+                    event.target.classList.add('active');
+                }
+                applyFilters();
+            }
+
+            function handleSortClick(event) {
+                if (event.target.classList.contains('list-group-item')) {
+                    const selectedValue = event.target.getAttribute('data-value');
+                    Array.from(sortList.children).forEach(item => item.classList.remove('active'));
+                    event.target.classList.add('active');
+                }
+                applyFilters();
+            }
+
             function applyFilters() {
                 currentPage = 1; // Reset to the first page
                 const searchValue = searchInput.value.toLowerCase();
-                const selectedCategory = categorySelect.value;
-                const selectedBrand = brandSelect.value;
-                const selectedPrice = priceSelect.value;
-                const selectedSort = sortSelect.value;
-    
+                const selectedCategory = categoryList.querySelector('.active').getAttribute('data-value');
+                const selectedBrand = brandList.querySelector('.active').getAttribute('data-value');
+                const selectedPrice = priceList.querySelector('.active').getAttribute('data-value');
+                const selectedSort = sortList.querySelector('.active').getAttribute('data-value');
+
                 const productCards = document.querySelectorAll('.product-card');
                 const filteredProducts = Array.from(productCards).filter(card => {
                     const productName = card.getAttribute('data-name');
                     const productCategory = card.getAttribute('data-category');
                     const productBrand = card.getAttribute('data-brand');
                     const productPrice = parseFloat(card.getAttribute('data-price'));
-    
+
                     let isVisible = true;
-    
+
                     if (searchValue && !productName.includes(searchValue)) isVisible = false;
                     if (selectedCategory && productCategory !== selectedCategory) isVisible = false;
                     if (selectedBrand && productBrand !== selectedBrand) isVisible = false;
@@ -322,20 +272,20 @@
                         };
                         if (!ranges[selectedPrice]) isVisible = false;
                     }
-    
+
                     card.style.display = isVisible ? 'block' : 'none';
                     return isVisible;
                 });
-    
+
                 // Sort the filtered products
                 sortProducts(filteredProducts, selectedSort);
                 // Paginate the sorted products
                 paginateProducts(filteredProducts);
             }
-    
+
             function sortProducts(products, selectedSort) {
                 if (!selectedSort) return;
-    
+
                 products.sort((a, b) => {
                     const aPopularity = parseInt(a.getAttribute('data-popularity'));
                     const bPopularity = parseInt(b.getAttribute('data-popularity'));
@@ -345,7 +295,7 @@
                     const bRating = parseFloat(b.getAttribute('data-rating'));
                     const aName = a.getAttribute('data-name');
                     const bName = b.getAttribute('data-name');
-    
+
                     switch (selectedSort) {
                         case 'popularity':
                             return bPopularity - aPopularity; // High to Low
@@ -359,27 +309,27 @@
                             return aName.localeCompare(bName); // A -Z
                         case 'nameDesc':
                             return bName.localeCompare(aName); // Z-A
-                        default:
+ default:
                             return 0;
                     }
                 });
-    
+
                 // After sorting, update the display of products
                 products.forEach(card => {
                     productsContainer.appendChild(card); // Re-append sorted cards to the container
                 });
             }
-    
+
             function clearFilters() {
                 currentPage = 1; // Reset to the first page
                 searchInput.value = '';
-                categorySelect.value = '';
-                brandSelect.value = '';
-                sortSelect.value = '';
-                priceSelect.value = '';
+                Array.from(categoryList.children).forEach(item => item.classList.remove('active'));
+                Array.from(brandList.children).forEach(item => item.classList.remove('active'));
+                Array.from(priceList.children).forEach(item => item.classList.remove('active'));
+                Array.from(sortList.children).forEach(item => item.classList.remove('active'));
                 applyFilters();
             }
-    
+
             function paginateProducts(visibleProducts) {
                 const totalPages = Math.ceil(visibleProducts.length / productsPerPage);
                 paginationContainer.innerHTML = '';
@@ -396,7 +346,7 @@
                 }
                 showPage(visibleProducts, currentPage);
             }
-    
+
             function showPage(visibleProducts, page) {
                 const start = (page - 1) * productsPerPage;
                 const end = start + productsPerPage;
@@ -404,7 +354,7 @@
                     card.style.display = index >= start && index < end ? 'block' : 'none';
                 });
             }
-    
+
             applyFilters();
         });
     </script>
