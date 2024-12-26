@@ -1,0 +1,166 @@
+<%- include("../../views/partials/admin/header") %>
+
+<style>
+  .pagination {
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: #333;
+  }
+
+  .active {
+    color: #fff;
+    background-color: #007bff;
+  }
+
+  .btn:hover {
+    background-color: #ddd;
+  }
+
+  .table-spacing th,
+  .table-spacing td {
+    padding-left: 80px;
+  }
+</style>
+
+<div class="content-header row">
+  <div class="d-flex justify-content-center align-items-center">
+    <h2 class="content-title card-title">Sales Report</h2>
+  </div>
+</div>
+
+<div class="card mb-4" style="margin-left: 18%; width: 80%;">
+  <header class="card-header" ">
+    <div class="row gx-3 ">
+      <div class="col-lg-2 col-6 col-md-3">
+        <select class="form-select" onchange="location.href='/admin/salesReport?day=' + this.value">
+          <% if (locals.salesToday) { %>
+            <option value="salesToday" selected>salesToday</option>
+          <% } else if (locals.salesWeekly) { %>
+            <option value="salesWeekly" selected>salesWeekly</option>
+          <% } else if (locals.salesMonthly) { %>
+            <option value="salesMonthly" selected>salesMonthly</option>
+          <% } else if (locals.salesYearly) { %>
+            <option value="salesYearly" selected>salesYearly</option>
+          <% } %>
+        </select>
+      </div>
+      <div class="col-md-2 col-6">
+        <input type="date" id="selectedDate" class="form-control" value="<%= locals.date ? date : '' %>" onchange="dateWiseFilter()" />
+      </div>
+      <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+        <a href="" id="createSalesReport" class="btn btn-primary mb-2">Generate PDF</a>
+        <a href="" id="downloadExcelReport" class="btn btn-primary mb-2">Download Excel</a>
+      </div>
+    </div>
+  </header>
+</div>
+
+<div class="right mt-5 container" style="margin-left: 18%; width: 80%;">
+  <table id="salesTable" class="table table-hover">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Data ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Product</th>
+        <th scope="col">Date</th>
+        <th scope="col">Payment</th>
+        <th scope="col">Status</th>
+        <th scope="col" class="text-end">Total Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% let grandTotal = 0; %>
+      <% for (let i = 0; i < salesReport.length; i++) { %>
+        <tr>
+          <td><%= i + 1 + ((currentPage - 1) * limit) %></td>
+          <td><%= salesReport[i]._id %></td>
+          <td><b><%= salesReport[i].name || 'N/A' %></b></td>
+          <td><b><%= salesReport[i].product || 'N/A' %></b></td>
+          <td><%= salesReport[i].date || 'N/A' %></td>
+          <td><%= salesReport[i].payment || 'N/A' %></td>
+          <td><%= salesReport[i].status || 'N/A' %></td>
+          <td class="text-end"><%= salesReport[i].totalSales %></td>
+        </tr>
+        <% grandTotal += salesReport[i].totalSales; %>
+      <% } %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="7" class="text-end"><b>Grand Total:</b></td>
+        <td class="text-end"><b><%= grandTotal %></b></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <% if (totalPages) { %>
+    <div class="pagination">
+      <% if (currentPage > 1) { %>
+        <button class="btn btn-sm" onclick="location.href='?page=<%= currentPage - 1 %>'">Previous</button>
+      <% } %>
+      <% for (let page = 1; page <= totalPages; page++) { %>
+        <button class="btn btn-sm <%= currentPage === page ? 'active' : '' %>" onclick="location.href='?page=<%= page %>'"><%= page %></button>
+      <% } %>
+      <% if (currentPage < totalPages) { %>
+        <button class="btn btn-sm" onclick="location.href='?page=<%= currentPage + 1 %>'">Next</button>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+  document.getElementById("createSalesReport").addEventListener("click", async (event) => {
+    event.preventDefault();
+    const salesTable = document.getElementById("salesTable");
+    const salesData = [];
+    let grandTotal = 0;
+
+    for (const row of salesTable.querySelector("tbody").rows) {
+      const dataId = row.cells[1].textContent.trim();
+      const name = row.cells[2].textContent;
+      const date = row.cells[4].textContent;
+      let totalAmount = parseFloat(row.cells[7].textContent.trim().replace(/[^0-9]/g, ""), 10);
+      grandTotal += totalAmount;
+
+      salesData.push({ dataId, name, date, totalAmount });
+    }
+
+    salesData.push({ dataId: "Grand Total", name: "", date: "", totalAmount: grandTotal });
+
+    try {
+      const response = await fetch("/admin/generatePdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(salesData),
+      });
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "report.pdf";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  });
+
+  function dateWiseFilter() {
+    const selectedDate = document.getElementById("selectedDate").value;
+    window.location.href = `/admin/dateWiseFilter?date=${selectedDate}`;
+  }
+</script>
+
+<%- include("../../views/partials/admin/footer") %>

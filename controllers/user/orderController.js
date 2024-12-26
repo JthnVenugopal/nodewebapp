@@ -5,82 +5,9 @@ const User = require("../../models/userSchema");
 const mongoose = require('mongoose');
 const Variant = require("../../models/variantSchema")
 
-//-----------------------------------------------------------------------------------
-
-// const getOrderDetails = async (req, res) => {
-//     try {
-
-//         console.log("-----------------------------------getOrderDetails --------------------------------------");
-
-//         // Identify user from Google or session
-//         const user = req.user || req.session.user;
-//         const userId = user.id;
-
-//         if (!userId) {
-//             throw new Error("User is not logged in.");
-//         }
-
-//         // Fetch user data
-//         const userData = await User.findOne({ _id: userId }).select("name email orderHistory").lean();
-
-//         console.log("userData/////////////"+JSON.stringify(userData));
-        
-
-//         if (!userData) {
-//             throw new Error("User not found.");
-//         }
-
-//         const { name, email, orderHistory } = userData;
-
-//         console.log("orderHistory/////////////"+JSON.stringify(orderHistory));
-
-//         // Fetch orders based on orderHistory IDs
-//         const orders = await Order.find({ _id: { $in: orderHistory } }).lean();
-
-//         console.log("Orders///////////////"+orders);
-        
-
-//         // Fetch product and variant details for each order
-//         const detailedOrders = await Promise.all(
-//             orders.map(async (order) => {
-//                 const detailedItems = await Promise.all(
-//                     order.orderedItems.map(async (item) => {
-//                         const product = await Product.findById(item.product).lean();
-//                         const variant = await Variant.findById(product.variant).lean();
-//                         return {
-//                             ...item,
-//                             productDetails: product || {},
-//                             variantDetails: variant || {}, // Include variant details
-//                         };
-//                     })
-//                 );
-
-//                 return {
-//                     ...order,
-//                     orderedItems: detailedItems,
-//                     deliveryAddress: order.address // Include delivery address
-//                 };
-//             })
-//         );
+//////////////////////////////////////////////////////////////////////////
 
 
-
-//         // console.log("Order detail:", JSON.stringify(detailedOrders));
-
-//         // Render data to the frontend
-//         res.render("orderDetails", {
-//             name,
-//             email,
-//             orderDetails: detailedOrders,
-//             user,
-//         });
-//     } catch (error) {
-//         console.error("Error fetching order details:", error.message);
-//         res.status(500).render("pageNotFound", {
-//             message: error.message || "Failed to fetch order details.",
-//         });
-//     }
-// };
 
 const getOrderDetails = async (req, res) => {
     try {
@@ -169,7 +96,7 @@ const getOrderDetails = async (req, res) => {
 
 
 
-//------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 
 const cancelOrder = async (req, res) => {
     try {
@@ -199,7 +126,7 @@ const cancelOrder = async (req, res) => {
 
 
 
-
+//////////////////////////////////////////////////////////////////////////
 
 
 module.exports = {

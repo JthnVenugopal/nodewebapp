@@ -49,7 +49,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        window.location.href = `/orderConformed?orderId=${data.orderId}`;
+                        window.location.href = `/orderConfirmed?orderId=${data.orderId}`;
                     } else {
                         Swal.fire({
                             title: 'Error!',

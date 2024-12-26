@@ -1,0 +1,251 @@
+<%- include("../../views/partials/admin/header") %>
+<style>
+  .col-md-3 {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin: 10px;
+  }
+
+  .error-message {
+    color: red;
+    margin-top: 5px;
+  }
+
+  .form-label {
+    margin-bottom: 8px;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  .d-grid {
+    margin-top: 20px;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+</style>
+
+<section class="content-main">
+  <div class="content-header  d-flex justify-content-center">
+    <div class=" p-3">
+      <h2 class="content-title card-title">Coupons - Edit</h2>
+    </div>
+  </div>
+
+
+
+  <div class="card" style="width:80% ;margin-left: 15%;">
+    <div class="card-body">
+      <div class="row  d-flex justify-content-center">
+        <div class="col-md-12">
+          <form id="coupon-form" method="post" action="/admin/updateCoupon">
+            <input type="hidden" id="coupon-id" value="<%= findCoupon._id %>" />
+            
+            <div class="mb-4">
+              <label for="coupon-code" class="form-label">Coupon Code</label>
+              <input type="text" id="coupon-code" value="<%= findCoupon.code %>" name="couponCode" placeholder="Type here" class="form-control" readonly />
+              <div id="error-coupon-code" class="error-message"></div>
+            </div>
+
+            <div class="mb-4">
+              <label for="min-purchase" class="form-label">Minimum Purchase Amount</label>
+              <input type="number" id="min-purchase" value="<%= findCoupon.minPurchaseAmount %>" name="minPurchaseAmount" placeholder="Type here" class="form-control" readonly />
+              <div id="error-min-purchase" class="error-message"></div>
+            </div>
+
+            <div class="mb-4">
+              <label for="max-purchase" class="form-label">Maximum Purchase Amount</label>
+              <input type="number" id="max-purchase" value="<%= findCoupon.maxPurchaseAmount %>" name="maxPurchaseAmount" placeholder="Type here" class="form-control" readonly />
+              <div id="error-max-purchase" class="error-message"></div>
+            </div>
+
+            <div class="mb-4">
+              <label for="startingDate" class="form-label">Start Date</label>
+              <input type="date" name="startDate" class="form-control" required id="startingDate" value="<%= findCoupon.startDate.toISOString().split('T')[0] %>" />
+              <div id="error-start-date" class="error-message"></div>
+            </div>
+
+            <div class="mb-4">
+              <label for="expiringDate" class="form-label">End Date</label>
+              <input type="date" name="endDate" class="form-control" id="expiringDate" required value="<%= findCoupon.endDate.toISOString().split('T')[0] %>" />
+              <div id="error-end-date" class="error-message"></div>
+            </div>
+
+            <div class="mb-4">
+              <label for="discount-type" class="form-label">Discount Type</label>
+              <select name="discountType" class="form-control" required>
+                <option value="fixed" <%= findCoupon.discountType === 'fixed' ? 'selected' : '' %>>Fixed Amount</option>
+                <option value="percentage" <%= findCoupon.discountType === 'percentage' ? 'selected' : '' %>>Percentage</option>
+              </select>
+              <div id="error-discount-type" class="error-message"></div>
+            </div>
+
+            <div class="mb-4">
+              <label for="discount-value" class ="form-label">Discount Value</label>
+              <input type="number" id="discount-value" name="discountValue" placeholder="Type here" class="form-control" value="<%= findCoupon.discountValue %>" />
+              <div id="error-discount-value" class="error-message"></div>
+            </div>
+
+            <div class="mb-4">
+              <label for="usage-limit" class="form-label">Usage Limit</label>
+              <input type="number" id="usage-limit" name="usageLimit" placeholder="Type here" class="form-control" value="<%= findCoupon.usageLimit %>" />
+              <div id="error-usage-limit" class="error-message"></div>
+            </div>
+
+            <div class="mb-4">
+              <label for="description" class="form-label">Description</label>
+              <textarea id="description" name="description" placeholder="Type here" class="form-control"><%= findCoupon.description %></textarea>
+              <div id="error-description" class="error-message"></div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary mt-20">Update Coupon</button>
+            </div>
+            <div id="err-msg" class="error-message"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  function setDefaultStartDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    let month = (today.getMonth() + 1).toString().padStart(2, "0");
+    let day = today.getDate().toString().padStart(2, "0");
+    document.getElementById("startingDate").value = `${year}-${month}-${day}`;
+  }
+
+  function setDefaultEndDate() {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const year = tomorrow.getFullYear();
+    let month = (tomorrow.getMonth() + 1).toString().padStart(2, "0");
+    let day = tomorrow.getDate().toString().padStart(2, "0");
+    document.getElementById("expiringDate").value = `${year}-${month}-${day}`;
+  }
+
+  document.getElementById("coupon-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    if (validateForm()) {
+      updateCoupon();
+    }
+  });
+
+  function validateForm() {
+    document.querySelectorAll(".error-message").forEach((element) => (element.innerHTML = ""));
+    const sDate = document.getElementsByName("startDate")[0].value;
+    const eDate = document.getElementsByName("endDate")[0].value;
+    const sDateObj = new Date(sDate);
+    const eDateObj = new Date(eDate);
+    const todayDateObj = new Date();
+    todayDateObj.setHours(0, 0, 0, 0);
+
+    if (sDateObj > eDateObj) {
+      document.getElementById("error-end-date").innerHTML = "End date should be after the start date";
+      return false;
+    }
+
+    if (sDateObj < todayDateObj) {
+      document.getElementById("error-start-date").innerHTML = "Starting date should be greater than or equal to today's date";
+      return false;
+    }
+
+    let name = document.getElementsByName("couponCode")[0].value;
+    const nameRegex = /^[A-Za-z0-9]{1,50}$/;
+
+    if (!nameRegex.test(name)) {
+      document.getElementById("error-coupon-code").innerHTML = "Coupon Code should only contain alphanumeric characters and be between 1 to 50 characters.";
+      return false;
+    }
+
+    const discountValueInput = document.getElementsByName("discountValue")[0];
+    const discountValue = discountValueInput.value.trim() !== "" ? parseInt(discountValueInput.value) : NaN;
+
+    if (isNaN(discountValue)) {
+      document.getElementById("error-discount-value").innerHTML = "Please enter a valid numeric value for Discount Value";
+      return false;
+    }
+
+    if (discountValue < 0) {
+      document.getElementById("error-discount-value").innerHTML = "Discount Value must be a positive number";
+      return false;
+    }
+
+    return true;
+  }
+
+  function updateCoupon() {
+  $.ajax({
+    url: "/admin/updateCoupon",
+    method: "post",
+    data: {
+      couponId: document.getElementById("coupon-id").value,
+      couponCode: document.getElementById("coupon-code").value,
+      minPurchaseAmount: document.getElementById("min-purchase").value,
+      maxPurchaseAmount: document.getElementById("max-purchase").value,
+      startDate: document.getElementById("startingDate").value,
+      endDate: document.getElementById("expiringDate").value,
+      discountType: document.getElementsByName("discountType")[0].value,
+      discountValue: document.getElementById("discount-value").value,
+      usageLimit: document.getElementById("usage-limit").value,
+      description: document.getElementById("description").value,
+    },
+    success: function(response) {
+      console.log("Server response:", response);
+      if (response.success) {
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: response.message,
+          confirmButtonText: "OK",
+        }).then(() => {
+          window.location.href = "/admin/coupon"; // Redirect to the coupon page
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: response.message,
+          confirmButtonText: "OK",
+        });
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error("AJAX error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to update the coupon. Please try again!",
+        confirmButtonText: "OK",
+      });
+    },
+  });
+}
+
+
+</script>
+<%- include("../../views/partials/admin/footer") %>

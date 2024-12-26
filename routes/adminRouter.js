@@ -66,9 +66,11 @@ router.get("/adminOrderDetails",orderController.getAdminOrderDetails);
 //Coupon Management
 router.get("/coupon",adminAuth,couponController.loadCoupon); 
 router.post("/createCoupon",adminAuth,couponController.createCoupon);
+router.get("/editCoupon",adminAuth,couponController.editCoupon);
+router.post("/updateCoupon",adminAuth,couponController.updateCoupon);
+router.post("/deleteCoupon", adminAuth, couponController.deleteCoupon);
 
-
-
-
+//Sales Report Management
+router.get("/salesReport",adminAuth,orderController.getSalesReport);
 
 module.exports = router;

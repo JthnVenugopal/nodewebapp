@@ -79,6 +79,7 @@ router.post("/addAddress2",userIsAuthenticated,checkoutController.postAddAddress
 //order management---------------------------------------------
 router.get("/orderDetails",orderController.getOrderDetails);
 router.post("/cancelOrder",orderController.cancelOrder);
+router.get('/orderConfirmed', userIsAuthenticated, checkoutController.getOrderConfirmed);
 
 //wishlist management---------------------------------------------------------
 router.post('/add-to-wishlist', userIsAuthenticated,wishlistController.addToWishlist);
