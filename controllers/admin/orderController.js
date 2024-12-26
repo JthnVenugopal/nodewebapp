@@ -105,78 +105,12 @@ const getAdminOrderDetails = async (req, res) => {
     }
 };
 
-/////////////////////////////////////////////////
 
-const getSalesReport = async (req, res) => {
-    try {
-        const { filterType, startDate, endDate, page = 1, limit = 10 } = req.query; // Default to page 1 and limit 10
-        let matchCriteria = { status: "Delivered" };
-
-        // Determine the date range based on filterType
-        if (filterType === 'salesToday') {
-            const today = new Date();
-            matchCriteria.createdOn = {
-                $gte: new Date(today.setHours(0, 0, 0, 0)),
-                $lt: new Date(today.setHours(23, 59, 59, 999))
-            };
-        } else if (filterType === 'salesWeekly') {
-            const startOfWeek = new Date();
-            startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-            matchCriteria.createdOn = {
-                $gte: startOfWeek,
-                $lt: new Date()
-            };
-        } else if (filterType === 'salesMonthly') {
-            const startOfMonth = new Date();
-            startOfMonth.setDate(1);
-            matchCriteria.createdOn = {
-                $gte: startOfMonth,
-                $lt: new Date()
-            };
-        } else if (filterType === 'salesYearly') {
-            const startOfYear = new Date(new Date().getFullYear(), 0, 1);
-            matchCriteria.createdOn = {
-                $gte: startOfYear,
-                $lt: new Date()
-            };
-        } else if (startDate && endDate) {
-            matchCriteria.createdOn = {
-                $gte: new Date(startDate),
-                $lt: new Date(endDate)
-            };
-        }
-
-        // Get total count of records
-        const totalCount = await Order.countDocuments(matchCriteria);
-        const totalPages = Math.ceil(totalCount / limit);
-
-        // Fetch the sales report with pagination
-        const salesReport = await Order.aggregate([
-            { $match: matchCriteria },
-            {
-                $group: {
-                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdOn" } },
-                    totalSales: { $sum: "$totalAmount" }
-                }
-            },
-            { $sort: { _id: 1 } }, // Sort by date
-            { $skip: (page - 1) * limit }, // Skip records for pagination
-            { $limit: limit } // Limit the number of records returned
-        ]);
-
-        res.render('salesReport', { salesReport, filterType, startDate, endDate, totalPages, currentPage: page, limit });
-        
-    } catch (error) {
-        console.error("Error fetching sales report:", error);
-        res.redirect('/pageNotFound');
-    }
-}
-
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////
 module.exports = {
     getOrders,
     updateOrderStatus,
     getAdminOrderDetails,
-    getSalesReport,
+    
 
 };

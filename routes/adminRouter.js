@@ -10,7 +10,8 @@ const uploads = multer({storage:storage});
 const brandController = require("../controllers/admin/brandController");
 const productController = require("../controllers/admin/productController");
 const orderController  = require("../controllers/admin/orderController");
-const couponController = require("../controllers/admin/couponController")
+const couponController = require("../controllers/admin/couponController");
+const salesController = require("../controllers/admin/salesController");
 
 
 
@@ -71,6 +72,12 @@ router.post("/updateCoupon",adminAuth,couponController.updateCoupon);
 router.post("/deleteCoupon", adminAuth, couponController.deleteCoupon);
 
 //Sales Report Management
-router.get("/salesReport",adminAuth,orderController.getSalesReport);
+router.get("/salesReport",adminAuth,salesController.getSalesPage); 
+router.get('/filterSales', adminAuth, salesController.applyFilter);
+router.get('/downloadSalesPDF', adminAuth, salesController.downloadSalesPDF);
+router.get('/downloadSalesExcel', adminAuth, salesController.downloadSalesExcel);
+
+
+
 
 module.exports = router;
