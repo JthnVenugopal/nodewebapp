@@ -127,7 +127,20 @@ const applyCoupon = async (req, res) => {
   }
 };
 
+//////////////////////////////////////////////////////////////////////////
 
+const removeCoupon = async (req, res) => {
+  try {
+    // Logic to handle coupon removal
+    // For example, you might clear the coupon from the user's session or database
+
+    // Assuming coupon removal is successful
+    return res.json({ success: true });
+  } catch (error) {
+    console.error('Error removing coupon:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -136,7 +149,6 @@ const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_ID,
   key_secret: process.env.RAZORPAY_SECRET_KEY
 });
-
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -296,7 +308,10 @@ else { userAddress.address.push(newAddress);
 
 
 
-  } catch (error) { console.error("Error adding address", error); res.status(500).send("Internal Server Error"); } };
+  } catch (error) { console.error("Error adding address", error); 
+    res.status(500).send("Internal Server Error");
+   } 
+};
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -322,6 +337,8 @@ module.exports = {
   placeOrder,
   postAddAddress,
   getOrderConfirmed,
-  applyCoupon
+  applyCoupon,
+  removeCoupon,
+
 
 }

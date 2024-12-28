@@ -100,5 +100,6 @@ router.get('/wallet', userIsAuthenticated, walletController.getWalletPage)
 
 //Coupon management-------------------------------------------------------------
 router.get('/apply-coupon', userIsAuthenticated, checkoutController.applyCoupon);
+router.get('/remove-coupon', userIsAuthenticated, checkoutController.removeCoupon);
 
 module.exports = router;
