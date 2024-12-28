@@ -35,6 +35,7 @@
 </style>
 
 <body>
+
     <div class="container mt-5">
         <% if (cart && cart.items.length > 0) { %>
             <table class="table table-bordered table-hover shadow-sm bg-white rounded">
@@ -62,12 +63,18 @@
                         </tr>
                     <% }); %>
                     
-                    <!-- Coupon Section -->
+
+            <!-- Coupon Section -->
                     <tr>
                         <th>Coupon Code</th>
                         <td colspan="2">
                             <div class="input-group">
-                                <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code">
+                                <select class="form-control" id="couponCode">
+                                    <option value="">Select a coupon</option>
+                                    <% coupons.forEach(coupon => { %>
+                                        <option value="<%= coupon.code %>"><%= coupon.code %> - <%= coupon.description %></option>
+                                    <% }); %>
+                                </select>
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" id="applyCoupon">Apply</button>
                                 </div>
@@ -75,6 +82,9 @@
                             <small id="couponMessage" class="form-text text-muted"></small>
                         </td>
                     </tr>
+
+
+
 
                     <tr>
                         <th>SubTotal</th>
@@ -281,6 +291,36 @@
             });
         });
     });
+</script>
+
+
+
+
+<script>
+    document.getElementById('applyCoupon').addEventListener('click', () => {
+    const couponCode = document.getElementById('couponCode').value;
+    const couponMessage = document.getElementById('couponMessage');
+
+    if (couponCode) {
+        // Apply the coupon code logic here, for example, make an API call to validate the coupon
+        fetch(`/apply-coupon?code=${couponCode}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    couponMessage.textContent = `Coupon applied! Discount: ${data.discount}`;
+                    // Update the total amount on the page
+                } else {
+                    couponMessage.textContent = 'Invalid coupon code';
+                }
+            })
+            .catch(error => {
+                console.error('Error applying coupon:', error);
+                couponMessage.textContent = 'Error applying coupon';
+            });
+    } else {
+        couponMessage.textContent = 'Please select a coupon';
+    }
+});
 </script>
 
 </body>

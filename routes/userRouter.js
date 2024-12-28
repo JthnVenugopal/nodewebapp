@@ -98,5 +98,7 @@ router.get('/retry-payment/:orderId', userIsAuthenticated, paymentController.ret
 //wallet management-------------------------------------------------------------
 router.get('/wallet', userIsAuthenticated, walletController.getWalletPage)
 
+//Coupon management-------------------------------------------------------------
+router.get('/apply-coupon', userIsAuthenticated, checkoutController.applyCoupon);
 
 module.exports = router;

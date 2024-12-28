@@ -6,7 +6,9 @@ const Product = require("../../models/productSchema");
 const mongoose = require("mongoose");
 const { getUserWithAddresses } = require('../../utils/userUtils');
 const Razorpay = require('razorpay');
+const Coupon = require("../../models/couponSchema");
 
+//////////////////////////////////////////////////////////////////////////
 
 const getCheckout = async (req, res) => {
   try {
@@ -28,6 +30,11 @@ const getCheckout = async (req, res) => {
           select: 'productImages salePrice',
         },
       });
+
+      const coupon = await Coupon.find({ status: "Active" });
+
+      console.log("Coupon/////////////", coupon);
+      
 
     const addresses = await Address.find({ userId: user._id });
     let totalAmount = cart.items.reduce((total, item) => total + item.totalPrice, 0);
@@ -53,6 +60,8 @@ const getCheckout = async (req, res) => {
         totalAmount,
         product: null,
         user,
+        coupons: coupon,
+
       });
     }
 
@@ -63,7 +72,66 @@ const getCheckout = async (req, res) => {
 };
 
 
-////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+
+const applyCoupon = async (req, res) => {
+  try {
+
+    console.log("applyCoupon////////////////////////");
+    
+    const couponCode = req.query.code;
+
+    console.log("couponCode-"+couponCode);
+    
+
+    if (!couponCode) {
+      return res.status(400).json({ success: false, message: 'Coupon code is required' });
+    }
+
+    // Fetch the coupon from the database
+    const coupon = await Coupon.findOne({ code: couponCode });
+
+    if (!coupon) {
+      return res.status(404).json({ success: false, message: 'Invalid coupon code' });
+    }
+
+    // Validate coupon status
+    if (coupon.status !== 'Active') {
+      return res.status(400).json({ success: false, message: 'Coupon is not active' });
+    }
+
+    // Validate coupon usage limit
+    if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
+      return res.status(400).json({ success: false, message: 'Coupon usage limit reached' });
+    }
+
+    // Validate coupon date range
+    const currentDate = new Date();
+    if (currentDate < coupon.startDate || currentDate > coupon.endDate) {
+      return res.status(400).json({ success: false, message: 'Coupon is not valid at this time' });
+    }
+
+    // Assuming the coupon has a discount field that holds the discount value
+    const discount = coupon.discountValue;
+
+    // Perform any additional validation or business logic here
+
+    // Increment the used count if coupon is valid
+    coupon.usedCount += 1;
+    await coupon.save();
+
+    return res.status(200).json({ success: true, discount, message: 'Coupon applied successfully' });
+  } catch (error) {
+    console.error('Error applying coupon:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+module.exports = applyCoupon;
+
+
+
+//////////////////////////////////////////////////////////////////////////
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_ID,
@@ -233,7 +301,7 @@ module.exports = {
   getCheckout,
   placeOrder,
   postAddAddress,
-  getOrderConfirmed
-
+  getOrderConfirmed,
+  applyCoupon
 
 }
