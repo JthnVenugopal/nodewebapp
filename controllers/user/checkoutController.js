@@ -33,7 +33,7 @@ const getCheckout = async (req, res) => {
 
       const coupon = await Coupon.find({ status: "Active" });
 
-      console.log("Coupon/////////////", coupon);
+      // console.log("Coupon/////////////", coupon);
       
 
     const addresses = await Address.find({ userId: user._id });
@@ -127,7 +127,6 @@ const applyCoupon = async (req, res) => {
   }
 };
 
-module.exports = applyCoupon;
 
 
 
@@ -141,21 +140,29 @@ const razorpay = new Razorpay({
 
 //////////////////////////////////////////////////////////////////////////
 
+
 const placeOrder = async (req, res) => {
   try {
+
+    console.log("placeOrder////////////////////////");
+
+    // console.log("req.body//////////", req.body);
+    
+    
     const user = req.session.user || req.user;
-    const { addressId, payment_option } = req.body;
+    const { addressId, payment_option, appliedCouponCode } = req.body; // Include appliedCouponCode
     const userId = req.session.user?.id || req.user?._id;
 
     if (!userId) {
       return res.redirect('/login');
     }
 
+
     // Find the selected address
     const userAddress = await Address.findOne({ userId: userId });
     const selectedAddress = userAddress?.address.id(addressId);
 
-    console.log("Selected Address: ", selectedAddress);
+    // console.log("Selected Address: ", selectedAddress);
 
     if (!selectedAddress) {
       return res.status(400).send("Selected address not found");
@@ -169,8 +176,22 @@ const placeOrder = async (req, res) => {
 
     let totalPrice = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
 
-    console.log("totalPrice//////////"+totalPrice);
-    
+    console.log("totalPrice//////////" + totalPrice);
+
+    let discount = 0;
+    if (appliedCouponCode) {
+      const coupon = await Coupon.findOne({ code: appliedCouponCode, status: 'Active' });
+
+      console.log("applied-coupon//////////", coupon);
+
+      if (coupon) {
+        discount = coupon.discountValue;
+      } else {
+        return res.status(400).send("Invalid coupon code");
+      }
+    }
+
+    const finalAmount = totalPrice - discount;
 
     let orderedItems = cart.items.map(item => ({
       product: item.productId._id,
@@ -179,7 +200,7 @@ const placeOrder = async (req, res) => {
     }));
 
     // Ensure payment method is valid
-    const validPaymentMethods = ["razorpay", "COD"]; 
+    const validPaymentMethods = ["razorpay", "COD"];
     if (!validPaymentMethods.includes(payment_option)) {
       return res.status(400).send("Invalid payment method");
     }
@@ -188,10 +209,11 @@ const placeOrder = async (req, res) => {
       orderedItems,
       user: userId,
       totalPrice,
-      finalAmount: totalPrice,
+      discount, // Save the discount value
+      finalAmount, // Save the final amount after applying discount
       actualPrice: totalPrice,
       address: {
-        house: selectedAddress.addressType, 
+        house: selectedAddress.addressType,
         place: selectedAddress.city,
         city: selectedAddress.city,
         state: selectedAddress.state,
@@ -220,13 +242,13 @@ const placeOrder = async (req, res) => {
 
     if (payment_option === "razorpay") {
       const razorpayOrder = await razorpay.orders.create({
-        amount: totalPrice * 100, 
-        currency: 'INR', 
+        amount: finalAmount * 100, // Use the final amount after discount
+        currency: 'INR',
         receipt: `order_rcptid_${newOrder._id}`,
       });
       console.log("Razorpay Order Created: ", razorpayOrder);
 
-      return res.redirect(`/razorpay?orderId=${newOrder._id}&razorpayOrderId=${razorpayOrder.id}&razorpayKey=${process.env.RAZORPAY_ID}&finalAmount=${totalPrice}&userName=${user.name}&userEmail=${user.email}`);
+      return res.redirect(`/razorpay?orderId=${newOrder._id}&razorpayOrderId=${razorpayOrder.id}&razorpayKey=${process.env.RAZORPAY_ID}&finalAmount=${finalAmount}&userName=${user.name}&userEmail=${user.email}`);
     }
 
     res.render("orderConfirmation", { orderId: newOrder._id, user: req.user || req.session.user });
@@ -236,8 +258,6 @@ const placeOrder = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
-
-
 
 //////////////////////////////////////////////////////////////////////////
 

@@ -225,6 +225,7 @@
             <input type="hidden" name="userEmail" id="userEmail">
             <input type="hidden" name="userPhone" id="userPhone">
             <input type="hidden" id="selectedAddressId" name="addressId">
+            <input type="hidden" id="appliedCouponCode" name="appliedCouponCode"> 
             <div class="d-flex justify-content-center my-5">
                 <button type="submit" class="btn btn-success btn-sm mt-3">Place Order</button>
             </div>
@@ -267,7 +268,7 @@
     </script>
 
 
-
+<!-- modalAddressForm -->
 <script>
     $(document).ready(function() {
         // Handle form submission
@@ -319,6 +320,47 @@
             });
     } else {
         couponMessage.textContent = 'Please select a coupon';
+    }
+});
+</script>
+
+
+<script>
+    document.getElementById('applyCoupon').addEventListener('click', () => {
+    const couponCode = document.getElementById('couponCode').value;
+    const couponMessage = document.getElementById('couponMessage');
+    const discountElement = document.getElementById('discount');
+    const finalAmountElement = document.getElementById('finalAmount');
+    let totalAmount = parseFloat(finalAmountElement.textContent.replace(/[^0-9.-]+/g, ""));
+    
+    if (couponCode) {
+        fetch(`/apply-coupon?code=${couponCode}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const discount = data.discount;
+                    couponMessage.textContent = `Coupon applied! Discount: ₹${discount}`;
+                    discountElement.innerHTML = `<em>₹${discount}</em>`;
+
+                    const newTotalAmount = totalAmount - discount;
+                    finalAmountElement.textContent = `₹${newTotalAmount.toLocaleString()}`;
+                    appliedCouponCode.value = couponCode; 
+                } else {
+                    couponMessage.textContent = 'Invalid coupon code';
+                    discountElement.innerHTML = `<em>₹ 0</em>`;
+                    finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error applying coupon:', error);
+                couponMessage.textContent = 'Error applying coupon';
+                discountElement.innerHTML = `<em>₹ 0</em>`;
+                finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
+            });
+    } else {
+        couponMessage.textContent = 'Please select a coupon';
+        discountElement.innerHTML = `<em>₹ 0</em>`;
+        finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
     }
 });
 </script>
