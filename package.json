@@ -26,6 +26,7 @@
     "pdfkit": "^0.15.2",
     "razorpay": "^2.9.5",
     "sharp": "^0.33.5",
+    "stream-buffers": "^3.0.3",
     "sweetalert": "^2.1.2",
     "uuid": "^11.0.3"
   }

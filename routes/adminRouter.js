@@ -16,6 +16,8 @@ const salesController = require("../controllers/admin/salesController");
 
 
 
+
+
 router.get("/pageerror",adminController.pageerror);//Error management
 
 router.get("/login",adminController.loadLogin)

@@ -61,22 +61,26 @@
                                             <a href="/admin/adminOrderDetails?id=<%= order._id %>">View Details</a>
                                         </td>
                                         <td>
-                                            <select class="form-select order-status" data-order-id="<%= order.orderId %>">
-                                                <option value="Pending" <%=order.status==='Pending' ? 'selected' : '' %>
-                                                    >Pending</option>
-                                                <option value="Processing" <%=order.status==='Processing' ? 'selected' : ''
-                                                    %>>Processing</option>
-                                                <option value="Shipped" <%=order.status==='Shipped' ? 'selected' : '' %>
-                                                    >Shipped</option>
-                                                <option value="Delivered" <%=order.status==='Delivered' ? 'selected' : '' %>
-                                                    >Delivered</option>
-                                                <option value="Cancelled" <%=order.status==='Cancelled' ? 'selected' : '' %>
-                                                    >Cancelled</option>
-                                                <option value="Return Requested" <%=order.status==='Return Requested'
-                                                    ? 'selected' : '' %>>Return Requested</option>
-                                                <option value="Returned" <%=order.status==='Returned' ? 'selected' : '' %>
-                                                    >Returned</option>
-                                            </select>
+
+        <select class="form-select order-status" data-order-id="<%= order.orderId %>">
+
+            <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %> <%= (order.status === 'Shipped' || order.status === 'Cancelled') ? 'disabled' : '' %>>Pending</option>
+        
+            <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %> <%= (order.status === 'Shipped' || order.status === 'Cancelled') ? 'disabled' : '' %>>Processing</option>
+        
+            <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+        
+            <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %> <%= (order.status === 'Shipped' || order.status === 'Cancelled') ? 'disabled' : '' %>>Delivered</option>
+        
+            <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+        
+            <option value="Return Requested" <%= order.status === 'Return Requested' ? 'selected' : '' %> <%= (order.status !== 'Shipped') ? 'disabled' : '' %>>Return Requested</option>
+        
+            <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %> <%= (order.status !== 'Shipped') ? 'disabled' : '' %>>Returned</option>
+            
+        </select>
+                    
+
                                         </td>
                                     </tr>
                                     <% }); %>

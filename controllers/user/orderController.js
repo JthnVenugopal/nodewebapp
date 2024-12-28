@@ -8,176 +8,6 @@ const Variant = require("../../models/variantSchema")
 //////////////////////////////////////////////////////////////////////////
 
 
-
-// const getOrderDetails = async (req, res) => {
-//     try {
-//       console.log("////////////getOrderDetails////////////////");
-  
-//       // Identify user from Google or session
-//       const user = req.user || req.session.user;
-//       const userId = req.user.id || req.session.user.id;
-      
-//       if (!userId) {
-//         throw new Error("User is not logged in.");
-//       }
-  
-//       // Fetch user data
-//       const userData = await User.findOne({ _id: userId }).select("name email orderHistory").lean();
-//       // console.log("userData/////////////" + JSON.stringify(userData));
-  
-//       if (!userData) {
-//         throw new Error("User not found.");
-//       }
-  
-//       const { name, email, orderHistory } = userData;
-//       // console.log("orderHistory/////////////" + JSON.stringify(orderHistory));
-  
-//       // Fetch orders based on orderHistory IDs
-//       const orders = await Order.find({ _id: { $in: orderHistory } }).lean();
-//       console.log("Orders///////////////" + orders);
-  
-//       // Fetch product and variant details for each order
-//       const detailedOrders = await Promise.all(
-//         orders.map(async (order) => {
-//           const detailedItems = await Promise.all(
-//             order.orderedItems.map(async (item) => {
-//               const product = await Product.findById(item.product).lean();
-//               console.log('Fetched product for item:', item, 'Product:', product);
-  
-//               if (!product) {
-//                 console.error('Product not found for item:', item);
-//                 throw new Error(`Product not found for item ${item._id}`);
-//               }
-  
-//               const variant = await Variant.findById(product.variant).lean();
-//               console.log('Fetched variant for product:', product, 'Variant:', variant);
-  
-//               if (!variant) {
-//                 console.error('Variant not found for product:', product);
-//                 throw new Error(`Variant not found for product ${product._id}`);
-//               }
-  
-//               return {
-//                 ...item,
-//                 productDetails: product,
-//                 variantDetails: variant, // Include variant details
-//               };
-//             })
-//           );
-  
-//           return {
-//             ...order,
-//             orderedItems: detailedItems,
-//             deliveryAddress: order.address // Include delivery address
-//           };
-//         })
-//       );
-  
-//       // Log the detailed orders for debugging
-//       // console.log("Order detail:", JSON.stringify(detailedOrders));
-  
-//       // Render data to the frontend
-//       res.render("orderDetails", {
-//         name,
-//         email,
-//         orderDetails: detailedOrders,
-//         user,
-//       });
-//     } catch (error) {
-//       console.error("Error fetching order details:", error.message);
-//       res.status(500).render("pageNotFound", {
-//         message: error.message || "Failed to fetch order details.",
-//       });
-//     }
-//   };
-  
-// const getOrderDetails = async (req, res) => {
-//   try {
-//     console.log("////////////getOrderDetails////////////////");
-
-//     // Identify user from Google or session
-//     const user = req.user || req.session.user;
-//     const userId = user?.id;
-
-//     if (!userId) {
-//       throw new Error("User is not logged in.");
-//     }
-
-//     // Fetch user data
-//     const userData = await User.findById(userId).lean();
-//     console.log("userData:", JSON.stringify(userData));
-
-//     if (!userData) {
-//       throw new Error("User not found.");
-//     }
-
-//     const { name, email, orderHistory } = userData;
-//     console.log("orderHistory:", JSON.stringify(orderHistory));
-
-//     // Fetch orders based on orderHistory IDs
-//     const orders = await Order.find({ _id: { $in: orderHistory } }).lean();
-//     console.log("Orders:", orders);
-
-//     if (orders.length === 0) {
-//       throw new Error("No orders found.");
-//     }
-
-//     // Fetch product and variant details for each order
-//     const detailedOrders = await Promise.all(
-//       orders.map(async (order) => {
-//         const detailedItems = await Promise.all(
-//           order.orderedItems.map(async (item) => {
-//             const product = await Product.findById(item.product).lean();
-//             console.log('Fetched product for item:', item, 'Product:', product);
-
-//             if (!product) {
-//               console.error('Product not found for item:', item);
-//               throw new Error(`Product not found for item ${item._id}`);
-//             }
-
-//             const variant = await Variant.findById(product.variant).lean();
-//             console.log('Fetched variant for product:', product, 'Variant:', variant);
-
-//             if (!variant) {
-//               console.error('Variant not found for product:', product);
-//               throw new Error(`Variant not found for product ${product._id}`);
-//             }
-
-//             return {
-//               ...item,
-//               productDetails: product,
-//               variantDetails: variant, // Include variant details
-//             };
-//           })
-//         );
-
-//         return {
-//           ...order,
-//           orderedItems: detailedItems,
-//           deliveryAddress: order.address // Include delivery address
-//         };
-//       })
-//     );
-
-//     // Log the detailed orders for debugging
-//     console.log("Order details:", JSON.stringify(detailedOrders));
-
-//     // Render data to the frontend
-//     res.render("orderDetails", {
-//       name,
-//       email,
-//       orderDetails: detailedOrders,
-//       user,
-//     });
-//   } catch (error) {
-//     console.error("Error fetching order details:", error.message);
-//     res.status(500).render("pageNotFound", {
-//       message: error.message || "Failed to fetch order details.",
-//     });
-//   }
-// };
-
-
 const getOrderDetails = async (req, res) => {
   try {
     console.log("////////////getOrderDetails////////////////");
@@ -187,39 +17,40 @@ const getOrderDetails = async (req, res) => {
     const userId = user?.id;
 
     if (!userId) {
-      throw new Error("User is not logged in.");
+      throw new Error("User  is not logged in.");
     }
 
-    // Fetch user data
-    const userData = await User.findById(userId).lean();
-    console.log("userData:", JSON.stringify(userData));
+    // Fetch orders directly using userId
+    const orders = await Order.find({ user: userId }).lean();
 
-    if (!userData) {
-      throw new Error("User not found.");
-    }
+    console.log("Orders:", JSON.stringify(orders));
 
-    const { name, email, orderHistory } = userData;
-    console.log("orderHistory:", JSON.stringify(orderHistory));
-
-    // Fetch all orders based on orderHistory IDs
-    const orders = await Order.find({ _id: { $in: orderHistory } }).lean();
-    console.log("Orders:", orders);
-
-    if (orders.length === 0) {
-      throw new Error("No orders found.");
+    // If no orders found, render with a message
+    if (!orders || orders.length === 0) {
+      return res.render("orderDetails", {
+        name: user.name,
+        email: user.email,
+        orderDetails: [],
+        user,
+        message: "No orders found."
+      });
     }
 
     // Fetch product and variant details for each order
     const detailedOrders = await Promise.all(
       orders.map(async (order) => {
+        console.log("Processing order:", order);
+
         const detailedItems = await Promise.all(
           order.orderedItems.map(async (item) => {
+            console.log("Processing item:", item);
+
             const product = await Product.findById(item.product).lean();
             console.log('Fetched product for item:', item, 'Product:', product);
 
             if (!product) {
               console.error('Product not found for item:', item);
-              throw new Error(`Product not found for item ${item._id}`);
+              return null;
             }
 
             const variant = await Variant.findById(product.variant).lean();
@@ -227,7 +58,7 @@ const getOrderDetails = async (req, res) => {
 
             if (!variant) {
               console.error('Variant not found for product:', product);
-              throw new Error(`Variant not found for product ${product._id}`);
+              return null;
             }
 
             return {
@@ -240,8 +71,9 @@ const getOrderDetails = async (req, res) => {
 
         return {
           ...order,
-          orderedItems: detailedItems,
-          deliveryAddress: order.address // Include delivery address
+          orderedItems: detailedItems.filter(item => item !== null),
+          deliveryAddress: order.address, // Include delivery address
+          paymentMethod: order.paymentMethod // Log payment method for debugging
         };
       })
     );
@@ -251,8 +83,8 @@ const getOrderDetails = async (req, res) => {
 
     // Render data to the frontend
     res.render("orderDetails", {
-      name,
-      email,
+      name: user.name,
+      email: user.email,
       orderDetails: detailedOrders,
       user,
     });
@@ -283,6 +115,7 @@ const cancelOrder = async (req, res) => {
 
         // Update order status to 'Cancelled'
         orderDetails.status = 'Cancelled';
+        
         await orderDetails.save();
         console.log("Order cancelled successfully:", orderId);
 

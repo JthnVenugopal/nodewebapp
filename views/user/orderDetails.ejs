@@ -70,46 +70,43 @@
 
         <% orderDetails.forEach(order => { %>
             <div class="order-table shadow-sm p-4 rounded" id="order-box-<%= order._id %>">
-               
-
-              
-
-                <!-- Total Price -->
                 <h4 class="text-center my-2"><strong>Total Price:</strong> ₹<%= order.totalPrice %></h4>
 
-                <!-- Estimated Delivery -->
                 <% if (order.status !== "Cancelled") { %>
                     <p class="text-center"><strong>Estimated Delivery:</strong> Dec 12, 2024</p>
                 <% } %>
 
-                <!-- Delivery Address -->
                 <div class="delivery-address">
                     <h4 class="text-center my-2">Delivery Address:</h4>
                     <h5 class="text-center my-2"><%= order.deliveryAddress.house %>, <%= order.deliveryAddress.place %>, <%= order.deliveryAddress.city %>, <%= order.deliveryAddress.state %>, <%= order.deliveryAddress.pin %></h5>
                 </div>
 
-                <!-- Order Items Table -->
                 <table class="table table-bordered table-striped mt-4">
                     <thead class="thead-light">
                         <tr>
+                            <th>Product Image</th>
                             <th>Product Name</th>
-                            <th>order-ID</th>
-                            <th>Price per item</th>
+                            <th>Ordered Size</th>
+                            <th>Order ID</th>
+                            <th>Price per Item</th>
+                            <th>Payment Method</th>
                             <th>Payment Status</th>
-                            <th>Order status </th>
-                            
+                            <th>Order Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% order.orderedItems.forEach(item => { %> 
                             <tr>  
+                                <td>
+                                    <img src="<%= item.variantDetails.productImages[0] %>" alt="<%= item.productDetails.productName %>" class="product-image" />
+                                </td>
                                 <td><%= item.productDetails.productName %></td> 
+                                <td><%= item.size ? item.size.join(', ') : 'N/A' %></td>
                                 <td><%= order.orderId %></td> 
                                 <td>₹<%= item.price %></td> 
+                                <td><%= order.paymentMethod %></td>
                                 <td>
-
                                     <p class="text-center">
-                                
                                         <% if (order.status === "Cancelled") { %>
                                             <span class="badge bg-warning">Refunded</span>
                                         <% } else if (order.status === "Delivered") { %>
@@ -118,8 +115,6 @@
                                             <span class="badge bg-success"><%= order.paymentStatus %></span>
                                         <% } %>
                                     </p>
-
-
                                 </td>
                                 <td>
                                     <p class="text-center">
@@ -137,9 +132,7 @@
                     </tbody>
                 </table>           
 
-
-                <div class=" mx-5 d-flex justify-content-center">
-
+                <div class="mx-5 d-flex justify-content-center">
                     <% if (order.status === "Cancelled") { %> 
                         <span class="text-muted">Order Cancelled</span>
                     <% } else if (order.status === "Delivered") { %>
@@ -147,28 +140,14 @@
                     <% } else { %> 
                         <button class="btn btn-danger btn-sm" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
                     <% } %>
-
-
                 </div>
-               
-
-
-
             </div>
-
-
-       
-
-
-
         <% }) %>
-
     </div>
 </body>
 
 <%- include("../../views/partials/user/footer") %>
 
-<!-- Bootstrap JS and Popper.js -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -204,7 +183,7 @@
                 })
                 .then((data) => {
                     Swal.fire('Cancelled!', data.message, 'success').then(() => {
-                        location.reload(); // Reload page after successful cancellation
+                        location.reload();
                     });
                 })
                 .catch((error) => {

@@ -271,13 +271,16 @@
                         <th>Coupons Applied</th>
                     </tr>
                 </thead>
+
+                <%//onsole.log("Recent Sales frontend"+JSON.stringify(recentSales)) %>
+
                 <tbody id="salesTableBody">
                     <% if (recentSales.length === 0) { %>
                         <tr><td colspan="5">No sales records found.</td></tr>
                     <% } else { %>
                         <% recentSales.forEach(sale => { %>
                             <tr>
-                                <td><%= new Date(sale.createdOn).toLocaleDateString() %></td>
+                                <td><%= new Date(sale.createdAt).toLocaleDateString() %></td>
                                 <td><%= sale.orderId.slice(-6) %></td>
                                 <td>₹<%= sale.finalAmount.toFixed(2) %></td>
                                 <td>₹<%= sale.discount ? sale.discount.toFixed(2) : '0.00' %></td>

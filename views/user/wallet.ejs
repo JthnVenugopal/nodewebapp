@@ -1,0 +1,198 @@
+<%- include("../../views/partials/user/header", { user: user }) %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>User Wallet</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .sidebar {
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 20px;
+            height: 100%;
+            position: sticky;
+            top: 0;
+            min-height: 100vh;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .sidebar .profile img {
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar .menu li {
+            margin: 15px 0;
+        }
+
+        .sidebar .menu a {
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            padding: 10px;
+        }
+
+        .sidebar .menu a.active {
+            font-weight: bold;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .sidebar .menu a i {
+            margin-right: 10px;
+        }
+
+        .logout button {
+            background-color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .logout a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .content {
+            padding: 40px;
+            background-color: #ffffff;
+            flex-grow: 1;
+        }
+
+        .wallet-overview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e0e0e0;
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-history {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-history th, .transaction-history td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .transaction-history tbody tr:hover {
+            background: #f1f1f1;
+        }
+
+        .transaction-history td:nth-child(3) {
+            font-weight: bold;
+        }
+
+        .transaction-history td[data-amount^="-"] {
+            color: #e74c3c;
+        }
+
+        .transaction-history td[data-amount^="+"] {
+            color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <% if (user) { %>
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="profile text-center py-4">
+                    <h4>Hello <%= user.name %></h4>
+                    
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/userProfile"><i class="fas fa-user"></i> Account Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/orderDetails"><i class="fas fa-box"></i> My Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/show-address"><i class="fas fa-map-marker-alt"></i> Manage Addresses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/wallet"><i class="fas fa-wallet"></i> Wallet</a>
+                    </li>
+                </ul>
+           
+            </nav>
+            
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h2>Your Wallet</h2>
+                </div>
+                <div class="wallet-overview">
+                    <h3>Your Balance: ₹<span id="balance"><%= user.wallet.balance %></span></h3>
+                </div>
+                <div class="transaction-history">
+                    <h3>Transaction History</h3>
+                    <% if (user.wallet.transactions && user.wallet.transactions.length > 0) { %>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% user.wallet.transactions.reverse().forEach(transaction => { %>
+                            <tr>
+                                <td><%= new Date(transaction.date).toLocaleDateString() %></td>
+                                <td><%= transaction.description %></td>
+                                <td data-amount="<%= transaction.amount %>">
+                                    <%= transaction.amount >= 0 ? "+" : "" %>₹<%= transaction.amount %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                    <% } else { %>
+                    <p>No transactions found.</p>
+                    <% } %>
+                </div>
+            </main>
+        </div>
+    </div>
+    <% } %>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+<%- include("../../views/partials/user/footer") %>

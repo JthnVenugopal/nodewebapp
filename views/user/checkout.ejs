@@ -245,20 +245,9 @@
                 $('#selectedAddressId').val(selectedAddress);
             });
 
-            // Coupon application logic
-            $('#applyCoupon').click(function() {
-                const couponCode = $('#couponCode').val();
-                // Simulate coupon validation and discount calculation
-                if (couponCode === "DISCOUNT10") {
-                    const discount = totalAmount * 0.10; // 10% discount
-                    const newTotal = totalAmount - discount;
-                    $('#discount').html(`₹ ${discount.toLocaleString()}`);
-                    $('#finalAmount').html(`₹ ${newTotal.toLocaleString()}`);
-                    $('#couponMessage').text('Coupon applied successfully!').css('color', 'green');
-                } else {
-                    $('#couponMessage').text('Invalid coupon code.').css('color', 'red');
-                }
-            });
+
+            
+  
 
             // Loader display during order submission
             $(document).on('submit', '#orderForm', function() {
@@ -266,4 +255,32 @@
             });
         });
     </script>
+
+
+
+<script>
+    $(document).ready(function() {
+        // Handle form submission
+        $('#modalAddressForm').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = $(this).serialize(); // Serialize form data
+
+            $.ajax({
+                type: 'POST',
+                url: '/addAddress',
+                data: formData,
+                success: function(response) {
+                    // Reload the page to reflect the new address
+                    location.reload();
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    alert('Failed to add address. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+
 </body>

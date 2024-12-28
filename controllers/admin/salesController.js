@@ -12,108 +12,115 @@ const fs = require('fs');
 
 /////////////////////////////////////////////////////////////////
 
+
+
 const getSalesPage = async (req, res) => {
-  try {
-      const recentSales = await Order.find()
-          .sort({ createdOn: -1 })
-          .limit(10)
-          .select('orderId finalAmount discount couponApplied createdOn');
+    try {
 
-      const totalSalesCount = recentSales.length;
-      const overallOrderAmount = recentSales.reduce((sum, order) => sum + order.finalAmount, 0);
-      const totalDiscount = recentSales.reduce((sum, order) => sum + (order.discount || 0), 0);
-      const couponsDeduction = recentSales.filter(order => order.couponApplied).length;
-      const today = new Date().toISOString().split('T')[0];
+        console.log("///////////////getSalesPage//////////////");
+       
 
-      res.render('sales', {
-          recentSales,
-          totalSalesCount,
-          overallOrderAmount,
-          totalDiscount,
-          couponsDeduction,
-          startDate: today,
-          endDate: today
-      });
-  } catch (error) {
-      console.error("Error fetching sales data:", error.message);
-      res.status(500).send("Internal Server Error");
-  }
+        // Fetch only delivered orders and populate product details
+        const recentSales = await Order.find({ status: 'Delivered' }) // Adjust the field name and value as necessary
+            .sort({ createdAt: -1 }) // Use createdAt for sorting if you want the latest orders
+            .limit(10)
+            .select('orderId finalAmount discount couponApplied createdAt orderedItems') // Include orderedItems
+            .populate('orderedItems.product', 'name price') // Populate product details
+            .lean(); // Use lean() for better performance if you don't need Mongoose documents
+
+        // console.log("recentSales////////////// : ", recentSales);
+
+        // console.log("orderedItems////////////// : ",JSON.stringify(recentSales[0].orderedItems))
+        
+        
+        const totalSalesCount = recentSales.length;
+        const overallOrderAmount = recentSales.reduce((sum, order) => sum + order.finalAmount, 0);
+        const totalDiscount = recentSales.reduce((sum, order) => sum + (order.discount || 0), 0);
+        const couponsDeduction = recentSales.filter(order => order.couponApplied).length;
+        const today = new Date().toISOString().split('T')[0];
+
+        res.render('sales', {
+            recentSales,
+            totalSalesCount,
+            overallOrderAmount,
+            totalDiscount,
+            couponsDeduction,
+            startDate: today,
+            endDate: today
+        });
+    } catch (error) {
+        console.error("Error fetching sales data:", error.message);
+        res.status(500).send("Internal Server Error");
+    }
 };
 
 //////////////////////////////////////////////////////////////
 
+
+
 const applyFilter = async (req, res) => {
-  try {
-      const { startDate, endDate, presetRange } = req.query;
+    try {
+        console.log("///////////////applyFilter//////////////");
+        
+        const { startDate, endDate, presetRange } = req.query;
+        console.log("req.query : ", req.query);
+        
+        let filter = {};
+        const today = new Date();
+        
+        // Set default dates if not provided
+        let filterStartDate = startDate ? new Date(startDate) : new Date(today.setDate(today.getDate() - 7)); // Default to last 7 days
+        let filterEndDate = endDate ? new Date(endDate) : new Date(today);
 
-      let filter = {};
-      const today = new Date();
+        // Validate dates
+        if (isNaN(filterStartDate.getTime()) || isNaN(filterEndDate.getTime())) {
+            return res.status(400).send("Invalid date format");
+        }
 
+        if (filterStartDate > filterEndDate) {
+            return res.status(400).send("Start date cannot be after end date");
+        }
 
-      let filterStartDate = startDate || today.toISOString().split('T')[0];
-      let filterEndDate = endDate || today.toISOString().split('T')[0];
+        // Create a new date object for the end date to avoid mutating the original
+        const endDateWithTime = new Date(filterEndDate);
+        endDateWithTime.setHours(23, 59, 59, 999);
 
-      if (startDate && endDate) {
-          filter.createdOn = {
-              $gte: new Date(startDate),
-              $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)),
-          };
-      } else if (presetRange) {
-          switch (presetRange) {
-              case '1-day':
-                  filter.createdOn = {
-                      $gte: new Date(today.setDate(today.getDate() - 1)),
-                      $lte: new Date(),
-                  };
-                  break;
-              case '7-days':
-                  filter.createdOn = {
-                      $gte: new Date(today.setDate(today.getDate() - 7)),
-                      $lte: new Date(),
-                  };
-                  break;
-              case '1-month':
-                  filter.createdOn = {
-                      $gte: new Date(today.setMonth(today.getMonth() - 1)),
-                      $lte: new Date(),
-                  };
-                  break;
-              default:
-                  break;
-          }
-      }
+        filter.createdAt = {
+            $gte: filterStartDate,
+            $lte: endDateWithTime,
+        };
 
-      const filteredSales = await Order.find(filter)
-          .sort({ createdOn: -1 })
-          .select('orderId finalAmount discount couponApplied createdOn');
+        const filteredSales = await Order.find(filter)
+            .sort({ createdAt: -1 })
+            .select('orderId finalAmount discount couponApplied createdAt');
 
-      const totalSalesCount = filteredSales.length;
-      const overallOrderAmount = filteredSales.reduce((sum, order) => sum + order.finalAmount, 0);
-      const totalDiscount = filteredSales.reduce((sum, order) => sum + (order.discount || 0), 0);
-      const couponsDeduction = filteredSales.filter(order => order.couponApplied).length;
+        console.log('filteredSales :', filteredSales);
+  
+        const totalSalesCount = filteredSales.length;
+        const overallOrderAmount = filteredSales.reduce((sum, order) => sum + order.finalAmount, 0);
+        const totalDiscount = filteredSales.reduce((sum, order) => sum + (order.discount || 0), 0);
+        const couponsDeduction = filteredSales.filter(order => order.couponApplied).length;
 
-      console.log('filterdSales :', filteredSales)
-
-      res.render('sales', {
-          startDate: filterStartDate,
-          endDate: filterEndDate,
-          recentSales: filteredSales,
-          totalSalesCount,
-          overallOrderAmount,
-          totalDiscount,
-          couponsDeduction,
-      });
-  } catch (error) {
-      console.error("Error applying filter:", error.message);
-      res.status(500).send("Internal Server Error");
-  }
+        res.render('sales', {
+            startDate: filterStartDate.toISOString().split('T')[0],
+            endDate: filterEndDate.toISOString().split('T')[0],
+            recentSales: filteredSales,
+            totalSalesCount,
+            overallOrderAmount,
+            totalDiscount,
+            couponsDeduction,
+        });
+    } catch (error) {
+        console.error("Error applying filter:", error.message);
+        res.status(500).send("Internal Server Error");
+    }
 };
 
 
 const calculateStats = async (startDate, endDate) => {
   try {
       const orders = await Order.find({
-          createdOn : { $gte: new Date(startDate), $lte: new Date(endDate) }
+          createdAt : { $gte: new Date(startDate), $lte: new Date(endDate) }
       });
 
       console.log(`Found ${orders.length} orders between ${startDate} and ${endDate}`);
@@ -155,7 +162,7 @@ const downloadSalesPDF = async (req, res) => {
       console.log('End Date:', endDate);
 
       const orders = await Order.find({
-          createdOn: { $gte: start, $lte: end },
+          createdAt: { $gte: start, $lte: end }
       }).populate('orderedItems.product');
       
       console.log(orders);
@@ -193,7 +200,7 @@ const generatePDF = async (res, orders, dateFilter, startDate, endDate) => {
   const stats = await calculateStats(startDate, endDate);
 
   const addHeader = (includeSummary) => {
-      doc.fontSize(16).text('Sales Report - Sole Heaven IN', { align: 'center' });
+      doc.fontSize(16).text('Sales Report - BuyHive', { align: 'center' });
       doc.moveDown();
 
       doc.fontSize(12).text(`Date Range: ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`, { align: 'center' });
@@ -277,7 +284,14 @@ const generatePDF = async (res, orders, dateFilter, startDate, endDate) => {
           doc.fontSize(8)
               .text(si++, 30, fixedY, { continued: false, width: 10 })
               .text(order.orderId?.toString().slice(-6) || 'N/A', 60, fixedY, { continued: false, width: 60 })
-              .text(order.createdOn ? order.createdOn.toLocaleString() : 'N/A', 140, fixedY, { continued: false, width: 60 })
+
+
+
+              .text(order.createdAt ? order.createdAt.toISOString().split('T')[0] : 'N/A', 140, fixedY,
+              
+              
+              
+              { continued: false, width: 60 })
               .text(item.product.productName || 'N/A', 220, fixedY, { continued: false, width: 60 })
               .text(order.address.name.toString() || 'N/A', 290, fixedY, { continued: false, width: 60 })
               .text(item.product.color || 'N/A', 380, fixedY, { continued: false, width: 60 })
@@ -357,7 +371,7 @@ const downloadSalesExcel = async (req, res) => {
       }
 
       const orders = await Order.find({
-          createdOn: { $gte: start, $lte: end },
+          createdAt: { $gte: start, $lte: end }
       }).populate('orderedItems.product');
 
       const workbook = new ExcelJS.Workbook();
@@ -390,7 +404,7 @@ const downloadSalesExcel = async (req, res) => {
               const row = worksheet.addRow({
                   si: si++,
                   orderId: order.orderId?.toString().slice(-6) || 'N/A',
-                  date: order.createdOn ? order.createdOn.toLocaleString() : 'N/A',
+                  date: order.createdAt ? order.createdAt.toISOString().split('T')[0] : 'N/A',
                   product: item.product.productName || 'N/A',
                   sku: item.product._id.toString().slice(-6) || 'N/A',
                   color: item.product.color || 'N/A',

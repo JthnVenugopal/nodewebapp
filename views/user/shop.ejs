@@ -90,9 +90,9 @@
                         <input type="text" name="search" id="search" class="form-control form-control-sm" placeholder="Search Products" aria-label="Search Products" />
                     </div>
                     <!-- Category List -->
-                    <div class="mb-3" >
-                        <label for="categoryList" class="form-label " >Select Category</label>
-                        <ul id="categoryList" class="list-group" >
+                    <div class="mb-3">
+                        <label for="categoryList" class="form-label">Select Category</label>
+                        <ul id="categoryList" class="list-group">
                             <li class="list-group-item active" data-value="">All Categories</li>
                             <% categories.forEach(category => { %>
                                 <li class="list-group-item" data-value="<%= category._id %>"><%= category.name %></li>
@@ -116,9 +116,9 @@
                             <li class="list-group-item active" data-value="">All Prices</li>
                             <li class="list-group-item" data-value="below1000">Below ₹1000</li>
                             <li class="list-group-item" data-value="1000-2000">₹1000 - ₹2000</li>
-                            <li class="list-group-item" data-value="2000-3000">₹2000 - ₹3000</li>
+                            <li class="list-group-item" data-value="2000-3000">₹2000 - ₹3000</ li>
                             <li class="list-group-item" data-value="3000-4000">₹3000 - ₹4000</li>
-                            <li class="list-group-item" data-value ="4000-5000">₹4000 - ₹5000</li>
+                            <li class="list-group-item" data-value="4000-5000">₹4000 - ₹5000</li>
                             <li class="list-group-item" data-value="above5000">Above ₹5000</li>
                         </ul>
                     </div>
@@ -135,9 +135,6 @@
                             <li class="list-group-item" data-value="nameDesc">Name: Z-A</li>
                         </ul>
                     </div>
-
-                
-
                 </form>
             </div>
 
@@ -151,7 +148,8 @@
                              data-name="<%= product.productName.toLowerCase() %>"
                              data-popularity="<%= product.popularity %>"
                              data-price="<%= product.variant.salePrice %>"
-                             data-rating="<%= product.averageRating %>">
+                             data-rating="<%= product.averageRating %>"
+                             data-created-at="<%= product.createdAt %>"> <!-- Added created-at attribute -->
                             <a href="/productDetails?id=<%= product._id %>">
                                 <div class="card h-100 shadow-sm">
                                     <% if (product.variant.productImages && product.variant.productImages.length > 0) { %>
@@ -187,12 +185,15 @@
             const brandList = document.getElementById('brandList');
             const sortList = document.getElementById('sortList');
             const priceList = document.getElementById('priceList');
-            const sortButton = document.getElementById('sortButton');
-            const clearFiltersButton = document.getElementById('clearFiltersButton');
             const productsContainer = document.getElementById('productsContainer');
             const paginationContainer = document.getElementById('paginationContainer');
             let currentPage = 1;
             const productsPerPage = 9;
+
+            // Sort products by created-at date on page load
+            const productCards = Array.from(document.querySelectorAll('.product-card'));
+            productCards.sort((a, b) => new Date(b.getAttribute('data-created-at')) - new Date(a.getAttribute('data-created-at')));
+            productCards.forEach(card => productsContainer.appendChild(card)); // Re-append sorted cards
 
             // Event listeners for filters
             searchInput.addEventListener('input', applyFilters);
@@ -200,12 +201,9 @@
             brandList.addEventListener('click', handleBrandClick);
             priceList.addEventListener('click', handlePriceClick);
             sortList.addEventListener('click', handleSortClick);
- sortButton.addEventListener('click', applyFilters);
-            clearFiltersButton.addEventListener('click', clearFilters);
 
             function handleCategoryClick(event) {
                 if (event.target.classList.contains('list-group-item')) {
-                    const selectedValue = event.target.getAttribute('data-value');
                     Array.from(categoryList.children).forEach(item => item.classList.remove('active'));
                     event.target.classList.add('active');
                 }
@@ -214,7 +212,6 @@
 
             function handleBrandClick(event) {
                 if (event.target.classList.contains('list-group-item')) {
-                    const selectedValue = event.target.getAttribute('data-value');
                     Array.from(brandList.children).forEach(item => item.classList.remove('active'));
                     event.target.classList.add('active');
                 }
@@ -223,7 +220,6 @@
 
             function handlePriceClick(event) {
                 if (event.target.classList.contains('list-group-item')) {
-                    const selectedValue = event.target.getAttribute('data-value');
                     Array.from(priceList.children).forEach(item => item.classList.remove('active'));
                     event.target.classList.add('active');
                 }
@@ -232,7 +228,6 @@
 
             function handleSortClick(event) {
                 if (event.target.classList.contains('list-group-item')) {
-                    const selectedValue = event.target.getAttribute('data-value');
                     Array.from(sortList.children).forEach(item => item.classList.remove('active'));
                     event.target.classList.add('active');
                 }
@@ -245,10 +240,8 @@
                 const selectedCategory = categoryList.querySelector('.active').getAttribute('data-value');
                 const selectedBrand = brandList.querySelector('.active').getAttribute('data-value');
                 const selectedPrice = priceList.querySelector('.active').getAttribute('data-value');
-                const selectedSort = sortList.querySelector('.active').getAttribute('data-value');
 
-                const productCards = document.querySelectorAll('.product-card');
-                const filteredProducts = Array.from(productCards).filter(card => {
+                const filteredProducts = productCards.filter(card => {
                     const productName = card.getAttribute('data-name');
                     const productCategory = card.getAttribute('data-category');
                     const productBrand = card.getAttribute('data-brand');
@@ -275,57 +268,7 @@
                     return isVisible;
                 });
 
-                // Sort the filtered products
-                sortProducts(filteredProducts, selectedSort);
-                // Paginate the sorted products
                 paginateProducts(filteredProducts);
-            }
-
-            function sortProducts(products, selectedSort) {
-                if (!selectedSort) return;
-
-                products.sort((a, b) => {
-                    const aPopularity = parseInt(a.getAttribute('data-popularity'));
-                    const bPopularity = parseInt(b.getAttribute('data-popularity'));
-                    const aPrice = parseFloat(a.getAttribute('data-price'));
-                    const bPrice = parseFloat(b.getAttribute('data-price'));
-                    const aRating = parseFloat(a.getAttribute('data-rating'));
-                    const bRating = parseFloat(b.getAttribute('data-rating'));
-                    const aName = a.getAttribute('data-name');
-                    const bName = b.getAttribute('data-name');
-
-                    switch (selectedSort) {
-                        case 'popularity':
-                            return bPopularity - aPopularity; // High to Low
-                        case 'priceAsc':
-                            return aPrice - bPrice; // Low to High
-                        case 'priceDesc':
-                            return bPrice - aPrice; // High to Low
-                        case 'averageRating':
-                            return bRating - aRating; // High to Low
-                        case 'nameAsc':
-                            return aName.localeCompare(bName); // A -Z
-                        case 'nameDesc':
-                            return bName.localeCompare(aName); // Z-A
- default:
-                            return 0;
-                    }
-                });
-
-                // After sorting, update the display of products
-                products.forEach(card => {
-                    productsContainer.appendChild(card); // Re-append sorted cards to the container
-                });
-            }
-
-            function clearFilters() {
-                currentPage = 1; // Reset to the first page
-                searchInput.value = '';
-                Array.from(categoryList.children).forEach(item => item.classList.remove('active'));
-                Array.from(brandList.children).forEach(item => item.classList.remove('active'));
-                Array.from(priceList.children).forEach(item => item.classList.remove('active'));
-                Array.from(sortList.children).forEach(item => item.classList.remove('active'));
-                applyFilters();
             }
 
             function paginateProducts(visibleProducts) {
