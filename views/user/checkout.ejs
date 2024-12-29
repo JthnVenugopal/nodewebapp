@@ -77,7 +77,7 @@
                                 </select>
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" id="applyCoupon">Apply</button>
-                                    <button class="btn btn-danger" id="removeCoupon" style="display: none;">Remove</button>
+                                    <a href=""><button  class="btn btn-danger" id="removeCoupon" style="display: none;">Remove</button></a>
                                 </div>
                             </div>
                             <small id="couponMessage" class="form-text text-muted"></small>
@@ -368,7 +368,7 @@
 });
 </script>
 
-<script>
+<!-- <script>
     document.getElementById('removeCoupon').addEventListener('click', () => {
     const couponMessage = document.getElementById('couponMessage');
     const discountElement = document.getElementById('discount');
@@ -395,6 +395,6 @@
             couponMessage.textContent = 'Error removing coupon';
         });
 });
-</script>
+</script> -->
 
 </body>

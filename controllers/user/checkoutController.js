@@ -129,18 +129,30 @@ const applyCoupon = async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////
 
-const removeCoupon = async (req, res) => {
-  try {
-    // Logic to handle coupon removal
-    // For example, you might clear the coupon from the user's session or database
+// const removeCoupon = async (req, res) => {
+//   try {
+//     // Logic to handle coupon removal
+//     // For example, you might clear the coupon from the user's session or database
 
-    // Assuming coupon removal is successful
-    return res.json({ success: true });
+//     // Assuming coupon removal is successful
+//     return res.json({ success: true });
+
+
+//   } catch (error) {
+//     console.error('Error removing coupon:', error);
+//     return res.status(500).json({ success: false, message: 'Server error' });
+//   }
+// };
+
+const removeCoupon= async (req, res) => {
+  try {
+      // Logic to handle coupon removal
+      req.session.coupon = null; // Example: removing the coupon from session
   } catch (error) {
-    console.error('Error removing coupon:', error);
-    return res.status(500).json({ success: false, message: 'Server error' });
+      console.error('Error removing coupon:', error);
+      return res.status(500).json({ success: false, message: 'Server error' });
   }
-};
+}
 
 
 //////////////////////////////////////////////////////////////////////////
