@@ -300,6 +300,7 @@ if (!validPaymentMethods.includes(payment_option)) {
 if (payment_option === "wallet") {
   const userWallet = await Wallet.findOne({ userId: req.session.user.id }).exec();
 
+  console.log("userWallet//////////", userWallet);
   
 
   if (!userWallet || userWallet.balance < finalAmount) {
@@ -341,6 +342,10 @@ if (payment_option === "wallet") {
     });
 
     await newOrder.save();
+
+
+    console.log("newOrder//////////", newOrder);
+
 
     // Reduce the quantity of each product in the inventory
     for (const item of orderedItems) {

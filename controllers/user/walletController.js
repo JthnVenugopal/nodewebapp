@@ -16,10 +16,18 @@ const getWalletPage = async (req, res) => {
       const userData = req.session.user || req.user;
       const userId = req.session.user.id || req.session.user._id;
       
-      const user = await User.findById(userId).populate('wallet');
-      console.log(user.wallet)
+      const wallet = await Wallet.findOne({userId: userId});
+
+      console.log('wallet////////////////////:', wallet);
+
+      console.log("userData:", userData);
       
-      res.render('wallet', { user: user , });
+      
+      res.render('wallet', { 
+        user: userData ,
+        wallet: wallet,
+       });
+
   } catch (error) {
       console.error(error);
       res.status(500).send("Error occurred while loading wallet page.");

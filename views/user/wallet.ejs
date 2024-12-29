@@ -125,12 +125,11 @@
 <body>
     <% if (user) { %>
     <div class="container">
-        <div class="row">
+        <div class="row ">
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
-                <div class="profile text-center py-4">
-                    <h4>Hello <%= user.name %></h4>
-                    
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar ">
+                <div class="profile text-center py-4 mr-5">
+                    <h6><%= user.name %></h6>
                 </div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
@@ -146,20 +145,19 @@
                         <a class="nav-link active" href="/wallet"><i class="fas fa-wallet"></i> Wallet</a>
                     </li>
                 </ul>
-           
             </nav>
             
             <!-- Main Content -->
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 " style="margin-top: 5%;">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h2>Your Wallet</h2>
                 </div>
                 <div class="wallet-overview">
-                    <h3>Your Balance: ₹<span id="balance"><%= user.wallet.balance %></span></h3>
+                    <h3>Your Balance: ₹<span id="balance"><%= wallet.balance %></span></h3>
                 </div>
                 <div class="transaction-history">
                     <h3>Transaction History</h3>
-                    <% if (user.wallet.transactions && user.wallet.transactions.length > 0) { %>
+                    <% if (wallet.transactions && wallet.transactions.length > 0) { %>
                     <table class="table table-hover">
                         <thead>
                             <tr>
@@ -169,12 +167,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% user.wallet.transactions.reverse().forEach(transaction => { %>
+                            <% wallet.transactions.reverse().forEach(transaction => { %>
                             <tr>
-                                <td><%= new Date(transaction.date).toLocaleDateString() %></td>
+                                <td><%= new Date(transaction._id.getTimestamp()).toLocaleDateString() %></td>
                                 <td><%= transaction.description %></td>
-                                <td data-amount="<%= transaction.amount %>">
-                                    <%= transaction.amount >= 0 ? "+" : "" %>₹<%= transaction.amount %>
+                                <td class="text-danger" data-amount="<%= transaction.amount %>">
+                                    <%= transaction.amount >= 0 ? "-" : "" %>₹<%= transaction.amount %>
                                 </td>
                             </tr>
                             <% }) %>

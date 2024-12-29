@@ -68,12 +68,15 @@
             orderDetails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         %>
 
+
+         <%//console.log("orderDetails---------"+JSON.stringify(orderDetails))%>
+
         <% orderDetails.forEach(order => { %>
             <div class="order-table shadow-sm p-4 rounded" id="order-box-<%= order._id %>">
                 <h4 class="text-center my-2"><strong>Total Price:</strong> ₹<%= order.totalPrice %></h4>
 
                 <% if (order.status !== "Cancelled") { %>
-                    <p class="text-center"><strong>Estimated Delivery:</strong> Dec 12, 2024</p>
+                    <p class="text-center"><strong>Estimated Delivery:</strong> <%= estimatedDeliveryDate %></p>
                 <% } %>
 
                 <div class="delivery-address">
@@ -84,9 +87,8 @@
                 <table class="table table-bordered table-striped mt-4">
                     <thead class="thead-light">
                         <tr>
-                            <th>Product Image</th>
-                            <th>Product Name</th>
-                            <th>Ordered Size</th>
+                            
+                            <th>Product Name</th>                           
                             <th>Order ID</th>
                             <th>Price per Item</th>
                             <th>Payment Method</th>
@@ -97,11 +99,9 @@
                     <tbody>
                         <% order.orderedItems.forEach(item => { %> 
                             <tr>  
-                                <td>
-                                    <img src="<%= item.variantDetails.productImages[0] %>" alt="<%= item.productDetails.productName %>" class="product-image" />
-                                </td>
+                                
                                 <td><%= item.productDetails.productName %></td> 
-                                <td><%= item.size ? item.size.join(', ') : 'N/A' %></td>
+                                
                                 <td><%= order.orderId %></td> 
                                 <td>₹<%= item.price %></td> 
                                 <td><%= order.paymentMethod %></td>
