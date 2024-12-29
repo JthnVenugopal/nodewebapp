@@ -3,6 +3,12 @@ const {Schema} = mongoose;
 const {v4:uuidv4} = require("uuid");
 
 const walletSchema = new mongoose.Schema({
+
+        userId: { 
+            type: Schema.Types.ObjectId, 
+            ref: "User",
+            required: true
+         },
    
         balance: {
             type:Number,

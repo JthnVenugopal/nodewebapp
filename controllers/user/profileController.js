@@ -24,6 +24,7 @@ function generateOtp(){
   return Math.floor(100000 + Math.random()*900000).toString();
 }
 //------------------------------------------------------------
+
 async function sendVerificationEmail(email,otp){
   try{
      
@@ -55,6 +56,7 @@ async function sendVerificationEmail(email,otp){
         return false;
   }
 }
+
 //------------------------------------------------------------
 
 const userProfile = async (req, res) => {
@@ -63,7 +65,7 @@ const userProfile = async (req, res) => {
     // console.log("req.user:", req.user);
     // console.log("req.session:", req.session);
 
-    const userId = req.session?.user?.id || req?.user?.id;
+    const userId = req.session?.user?.id || req?.user?.id || req.session.user._id;
     if (!userId) {
       throw new Error("User ID not found in session or request.");
     }
@@ -343,6 +345,7 @@ const postNewPassword = async (req, res) => {
 };
 
 //------------------------------------------------------------
+
 const getForgotPassPage = async (req,res) => {
   try {
       const googleUser  = req.user; 
@@ -359,7 +362,9 @@ const getForgotPassPage = async (req,res) => {
       res.redirect("/pageNotfound");
   }
 }
+
 //------------------------------------------------------------
+
 const forgotEmailValid = async (req,res) => {
   try {
       const {email} = req.body;
@@ -386,7 +391,9 @@ const forgotEmailValid = async (req,res) => {
       res.redirect("/pageNotFound");
   }
 }
+
 //------------------------------------------------------------
+
 const verifyForgotPassOtp = async (req,res) => {
   try {
       const enteredOtp = req.body.otp;
@@ -528,6 +535,7 @@ const postAddAddress1 = async (req, res) => {
       res.status(500).send("Internal Server Error");
   }
 }
+
 //------------------------------------------------------------
 
 const deleteAddress = async (req,res) => {
@@ -557,6 +565,7 @@ const deleteAddress = async (req,res) => {
       res.redirect("/pageNotFound");
   }
 }
+
 //------------------------------------------------------------
 
 
@@ -596,6 +605,7 @@ const editAddress = async (req, res) => {
 };
 
 //------------------------------------------------------------
+
 const postEditAddress = async (req,res) => {
   try {
       const data = req.body;
@@ -629,6 +639,7 @@ const postEditAddress = async (req,res) => {
       res.redirect("/pageNotFound");
   }
 }
+
 //------------------------------------------------------------
 
 module.exports = {

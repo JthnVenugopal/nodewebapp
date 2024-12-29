@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const { getUserWithAddresses } = require('../../utils/userUtils');
 const Razorpay = require('razorpay');
 const Coupon = require("../../models/couponSchema");
+const Wallet = require("../../models/walletSchema");
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -289,11 +290,34 @@ const placeOrder = async (req, res) => {
       price: item.totalPrice / item.quantity,
     }));
 
-    // Ensure payment method is valid
-    const validPaymentMethods = ["razorpay", "COD"];
-    if (!validPaymentMethods.includes(payment_option)) {
-      return res.status(400).send("Invalid payment method");
-    }
+   // Ensure payment method is valid
+const validPaymentMethods = ["razorpay", "COD", "wallet"];
+if (!validPaymentMethods.includes(payment_option)) {
+  return res.status(400).send("Invalid payment method");
+}
+
+// Wallet Payment Handling
+if (payment_option === "wallet") {
+  const userWallet = await Wallet.findOne({ userId: req.session.user.id }).exec();
+
+  
+
+  if (!userWallet || userWallet.balance < finalAmount) {
+    return res.status(400).send("Insufficient wallet balance");
+  }
+
+  // Deduct the final amount from the user's wallet
+  userWallet.balance -= finalAmount;
+
+  // Add the transaction to the wallet's transaction history
+  userWallet.transactions.push({
+    type: "debit",
+    amount: finalAmount,
+    description: "Order payment"
+  });
+
+  await userWallet.save();
+}
 
     const newOrder = new Order({
       orderedItems,
@@ -351,45 +375,46 @@ const placeOrder = async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////
 
+
 const postAddAddress = async (req, res) => { 
   console.log("-------------------------postaddress");
   try { 
-    const userId = req.session.user || req.user; 
+    const userId = req.session.user.id || req.user.id; 
     const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body; 
     if (!userId) { 
       return res.status(401).send('User not authenticated');
-     } 
-const user = await User.findById(userId);
-if (!user) {
-  return res.status(404).send('User not found'); 
-} 
+    } 
 
-const newAddress = {
-    addressType, name, city, landMark, state, pincode, phone, altPhone 
-  };
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send('User not found'); 
+    } 
+
+    const newAddress = {
+      addressType, name, city, landMark, state, pincode, phone, altPhone 
+    };
+
+    const userAddress = await Address.findOne({ userId: userId });
   
-  const userAddress = await Address.findOne({ userId: user._id });
-  
-  if (!userAddress) { 
-    const newAddressEntry = new Address({ userId: user._id, address: [newAddress], });
-    console.log("-------------------------1");
+    if (!userAddress) { 
+      const newAddressEntry = new Address({ userId: user._id, address: [newAddress] });
+      console.log("-------------------------1");
+      await newAddressEntry.save(); 
+    } else { 
+      userAddress.address.push(newAddress);
+      console.log("-------------------------2");
+      await userAddress.save(); 
+    } 
     
-    await newAddressEntry.save(); } 
-    
-else { userAddress.address.push(newAddress);
-  console.log("-------------------------2");
-    await userAddress.save(); } 
-    
-    res.render('/checkout',{
-    newAddress : newAddress
-    });
+    // Send a success response with a message
+    res.json({ success: true, message: 'Address added successfully' });
 
-
-
-  } catch (error) { console.error("Error adding address", error); 
+  } catch (error) { 
+    console.error("Error adding address", error); 
     res.status(500).send("Internal Server Error");
-   } 
+  } 
 };
+
 
 //////////////////////////////////////////////////////////////////////////
 

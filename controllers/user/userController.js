@@ -8,6 +8,7 @@ const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
 const passport = require("passport")
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const Wallet = require("../../models/walletSchema");
 
 //-------------------------------------------------------
 
@@ -20,118 +21,6 @@ const pageNotFound = async (req,res) => {
 }
 
 //-------------------------------------------------------
-
-// const loadHomepage = async (req, res, next) => {
-//   try {
-
-//     let userData = req.session.user || req.user;
-  
-//     const currentPage = parseInt(req.query.page) || 1;
-//     const productsPerPage = 12; 
-
-//     const categories = await Category.find({ isListed: true });
-
-//     let products = await Product.find({
-//       isBlocked: false
-//     });
-
-    
-
-//     const [{variant}] = products;
-    
-//     const variantData = await Variant.findById(variant)
-    
-//     const {salePrice,quantity,productImages} = variantData
-
-//     console.log("VData "+variantData)
-    
-//     const totalProducts = products.length;
-
-
-//     //pagination
-//     const totalPages = Math.ceil(totalProducts / productsPerPage);
-//     // Slice the product data to only include the products for the current page
-//     const startIndex = (currentPage - 1) * productsPerPage;
-//     products = products.slice(startIndex, startIndex + productsPerPage);
-
-    
-
-    
-
-//   res.locals.user = userData;
-
-//    console.log("home page rendering...");
-   
-      
-//       // Render homepage with user, product data
-//       return res.render("home", {
-//         user: userData,
-//         products: products,
-//         currentPage,
-//         totalPages,
-//         sortBy: req.query.sortBy || 'name' ,
-//         variants : variantData,
-        
-//       })
-//   } catch (error) {
-//     console.log("Error loading homepage:", error);
-//     next(error);
-//   }
-// };
-
-
-// const loadHomepage = async (req, res, next) => {
-//   try {
-//     let userData = req.session.user || req.user;
-
-//     const currentPage = parseInt(req.query.page) || 1;
-//     const productsPerPage =8;
-
-//     const categories = await Category.find({ isListed: true });
-
-//     // Fetch all products that are not blocked
-//     let products = await Product.find({ isBlocked: false });
-
-//     // Pagination
-//     const totalProducts = products.length;
-//     const totalPages = Math.ceil(totalProducts / productsPerPage);
-//     const startIndex = (currentPage - 1) * productsPerPage;
-//     products = products.slice(startIndex, startIndex + productsPerPage);
-
-//     // Fetch variant data for each product
-//     const productsWithVariants = await Promise.all(products.map(async (product) => {
-//       const variantData = await Variant.findById(product.variant); 
-
-//       return {
-//         ...product.toObject(), // Convert Mongoose document to plain object
-//         variantData: variantData || null // Include variant data or null if not found
-//       };
-//     }));
-
-
-    
-
-   
-
-//     res.locals.user = userData;
-
-//     console.log("home page rendering...");
-
-//     // Render homepage with user, product data
-//     return res.render("home", {
-//       user: userData,
-//       products: productsWithVariants,
-//       currentPage,
-//       totalPages,
-//       sortBy: req.query.sortBy || 'name',
-//       categories: categories,
-//     });
-//   } catch (error) {
-//     console.log("Error loading homepage:", error);
-//     next(error);
-//   }
-// };
-
 
 const loadHomepage = async (req, res, next) => {
   try {
@@ -185,10 +74,6 @@ const loadHomepage = async (req, res, next) => {
   }
 };
 
-
-
-
-
 //------------------------------------------------------
 const loadSignup = async (req,res) => {
   try{
@@ -209,6 +94,7 @@ const loadShopping = async (req,res) => {
   }
 }
 //------------------------------------------------------------
+
 function generateOtp(){
   return Math.floor(100000 + Math.random()*900000).toString();
 }
@@ -247,6 +133,7 @@ async function sendVerificationEmail(email,otp){
   }
 }
 //---------------------------------------------------------------
+
 const signup = async (req,res) => {
   try{
      const {name, email,phone, password, confirmPassword} = req.body;
@@ -304,6 +191,7 @@ const securePassword = async (password)=>{
   }
 }
 //-----------------------------------------------------
+
 const verifyOtp =  async(req,res)=>{
     
   try{
@@ -323,6 +211,13 @@ const verifyOtp =  async(req,res)=>{
 
       await saveUserData.save();
 
+      // Create wallet for the user
+      const newWallet = new Wallet({
+        userId: saveUserData._id,
+      });
+
+      await newWallet.save();
+
       // Store user data in session
       req.session.user = { _id: saveUserData._id, 
                            name: saveUserData.name, 
@@ -339,6 +234,7 @@ const verifyOtp =  async(req,res)=>{
       res.status(500).json({success:false,message:"An error occured"})
   }
 }
+
 //----------------------------------------------------
 
 const resendOtp = async (req,res)=>{

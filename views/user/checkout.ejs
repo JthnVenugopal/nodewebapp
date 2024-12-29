@@ -1,4 +1,12 @@
 <%- include("../../views/partials/user/header") %>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+      
+      
+</head>
 
 <title>Checkout</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
@@ -123,7 +131,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="modalAddressForm" method="POST" action="#">
+
+                <form id="modalAddressForm" method="POST" action="/addAddress2">
                     <div class="form-group">
                         <label for="modalAddressType">Address Type</label>
                         <input type="text" class="form-control" id="modalAddressType" name="addressType">
@@ -158,6 +167,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
+
             </div>
         </div>
     </div>
@@ -346,6 +356,8 @@
 
 <!-- Include SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 <!-- //////////////////////////////////////////////// -->
 <!-- address selection -->
 <script>
@@ -381,146 +393,62 @@
     });
 </script>
 <!-- //////////////////////////////////////////////// -->
+
 <!-- modalAddressForm -->
+<!-- Include SweetAlert CSS and JS -->
 <script>
     $(document).ready(function() {
-        // Handle form submission
-        $('#modalAddressForm').submit(function(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            const formData = $(this).serialize(); // Serialize form data
-
-            $.ajax({
-                type: 'POST',
-                url: '/addAddress',
-                data: formData,
-                success: function(response) {
-                    // Reload the page to reflect the new address
-                    location.reload();
-                },
-                error: function(error) {
-                    console.error('Error:', error);
-                    alert('Failed to add address. Please try again.');
-                }
-            });
-        });
+      // Handle form submission
+      $('#modalAddressForm').submit(function(event) {
+          event.preventDefault(); // Prevent default form submission
+  
+          const formData = $(this).serialize(); // Serialize form data
+          console.log("Form data:", formData); // Debugging line
+  
+          $.ajax({
+              type: 'POST',
+              url: '/addAddress2',
+              data: formData,
+              success: function(response) {
+                  console.log("Response received:", response); // Debugging line
+                  if (response.success) {
+                      // Show success message and reload the page
+                      Swal.fire({
+                          title: 'Success',
+                          text: response.message,
+                          icon: 'success',
+                          confirmButtonText: 'OK'
+                      }).then((result) => {
+                          if (result.isConfirmed) {
+                              location.reload();
+                          }
+                      });
+                  } else {
+                      // Show error message
+                      Swal.fire({
+                          title: 'Error',
+                          text: 'Failed to add address. Please try again.',
+                          icon: 'error',
+                          confirmButtonText: 'OK'
+                      });
+                  }
+              },
+              error: function(error) {
+                  console.error('Error:', error);
+                  Swal.fire({
+                      title: 'Error',
+                      text: 'Failed to add address. Please try again.',
+                      icon: 'error',
+                      confirmButtonText: 'OK'
+                  });
+              }
+          });
+      });
     });
 </script>
 <!-- //////////////////////////////////////////////// -->
 
-
-<!-- <script>
-    document.getElementById('applyCoupon').addEventListener('click', () => {
-    const couponCode = document.getElementById('couponCode').value;
-    const couponMessage = document.getElementById('couponMessage');
-    const removeCouponButton = document.getElementById('removeCoupon');
-
-    if (couponCode) {
-        // Apply the coupon code logic here, for example, make an API call to validate the coupon
-        fetch(`/apply-coupon?code=${couponCode}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    couponMessage.textContent = `Coupon applied! Discount: ${data.discount}`;
-                    removeCouponButton.style.display = 'inline-block'; 
-                    // Update the total amount on the page
-                } else {
-                    couponMessage.textContent = 'Invalid coupon code';
-                }
-            })
-            .catch(error => {
-                console.error('Error applying coupon:', error);
-                couponMessage.textContent = 'Error applying coupon';
-            });
-    } else {
-        couponMessage.textContent = 'Please select a coupon';
-    }
-});
-</script> -->
-
-
-<!-- <script>
-    document.getElementById('applyCoupon').addEventListener('click', () => {
-    const couponCode = document.getElementById('couponCode').value;
-    const couponMessage = document.getElementById('couponMessage');
-    const discountElement = document.getElementById('discount');
-    const finalAmountElement = document.getElementById('finalAmount');
-    let totalAmount = parseFloat(finalAmountElement.textContent.replace(/[^0-9.-]+/g, ""));
-    
-    if (couponCode) {
-        fetch(`/apply-coupon?code=${couponCode}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const discount = data.discount;
-                    couponMessage.textContent = `Coupon applied! Discount: ₹${discount}`;
-                    discountElement.innerHTML = `<em>₹${discount}</em>`;
-
-                    const newTotalAmount = totalAmount - discount;
-                    finalAmountElement.textContent = `₹${newTotalAmount.toLocaleString()}`;
-                    appliedCouponCode.value = couponCode; 
-                } else {
-                    couponMessage.textContent = 'Invalid coupon code';
-                    discountElement.innerHTML = `<em>₹ 0</em>`;
-                    finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
-                }
-            })
-            .catch(error => {
-                console.error('Error applying coupon:', error);
-                couponMessage.textContent = 'Error applying coupon';
-                discountElement.innerHTML = `<em>₹ 0</em>`;
-                finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
-            });
-    } else {
-        couponMessage.textContent = 'Please select a coupon';
-        discountElement.innerHTML = `<em>₹ 0</em>`;
-        finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
-    }
-});
-</script> -->
-
-
 <!-- apply-coupon -->
-<!-- <script>
-    document.getElementById('applyCoupon').addEventListener('click', () => {
-        const couponCode = document.getElementById('couponCode').value;
-        const couponMessage = document.getElementById('couponMessage');
-        const discountElement = document.getElementById('discount');
-        const finalAmountElement = document.getElementById('finalAmount');
-        const appliedCouponCode = document.getElementById('appliedCouponCode'); // Assuming this element exists
-        let totalAmount = parseFloat(finalAmountElement.textContent.replace(/[^0-9.-]+/g, ""));
-    
-        if (couponCode) {
-            fetch(`/apply-coupon?code=${couponCode}&price=${totalAmount}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const discount = data.discount;
-                        couponMessage.textContent = `Coupon applied! Discount: ₹${discount}`;
-                        discountElement.innerHTML = `<em>₹${discount}</em>`;
-    
-                        const newTotalAmount = totalAmount - discount;
-                        finalAmountElement.textContent = `₹${newTotalAmount.toLocaleString()}`;
-                        appliedCouponCode.value = couponCode; 
-                    } else {
-                        couponMessage.textContent = 'Invalid coupon code';
-                        discountElement.innerHTML = `<em>₹ 0</em>`;
-                        finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error applying coupon:', error);
-                    couponMessage.textContent = 'Error applying coupon';
-                    discountElement.innerHTML = `<em>₹ 0</em>`;
-                    finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
-                });
-        } else {
-            couponMessage.textContent = 'Please select a coupon';
-            discountElement.innerHTML = `<em>₹ 0</em>`;
-            finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
-        }
-    });
-</script> -->
 <script>
     document.getElementById('applyCoupon').addEventListener('click', () => {
         const couponCode = document.getElementById('couponCode').value;
@@ -578,6 +506,7 @@
     });
 </script>
 
+<!-- //////////////////////////////////////////////////// -->
 
 <!-- JavaScript to handle form submission -->
 <script>
