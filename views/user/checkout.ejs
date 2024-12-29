@@ -3,6 +3,7 @@
 <title>Checkout</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
+
 <style>
     #loader, #orderLoader {
         position: absolute;
@@ -33,147 +34,148 @@
         background-color: #ffc107;
     }
 </style>
-
+<!-- //////////////////////////////////////////////// -->
 <body>
-
-    <div class="container mt-5">
-        <% if (cart && cart.items.length > 0) { %>
-            <table class="table table-bordered table-hover shadow-sm bg-white rounded">
-                <thead class="thead-dark">
-                    <tr>
-                        <th colspan="2">Product</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% cart.items.forEach(item => { %>
+<!-- order data -->
+<div class="container mt-5">
+    <% if (cart && cart.items.length > 0) { %>
+        <div class="card shadow-sm">
+            
+            <div class="card-body p-0">
+                <table class="table table-bordered table-hover m-0">
+                    <thead class="thead-dark">
                         <tr>
-                            <td class="image product-thumbnail">
-                                <% if (item.productId.productImages?.length) { %>
-                                    <img src="/uploads/re-image/<%= item.productId.productImages[0] %>" alt="<%= item.productId.productName %>" class="img-thumbnail" style="width: 100px; height: 100px;">
-                                <% } else { %>
-                                    <img src="/uploads/re-image/default.jpg" alt="Default Image" class="img-thumbnail" style="width: 100px; height: 100px;">
-                                <% } %>
-                            </td>
-                            <td>
-                                <h5><a href="/product/<%= item.productId._id %>"><%= item.productId.productName %></a></h5>
-                                <span class="product-qty">x <%= item.quantity %></span>
-                            </td>
-                            <td>₹<%= item.totalPrice %></td>
+                            <th colspan="2">Product</th>
+                            <th>Total</th>
                         </tr>
-                    <% }); %>
-                    
-
-            <!-- Coupon Section -->
-                    <tr>
-                        <th>Coupon Code</th>
-                        <td colspan="2">
-                            <div class="input-group">
-                                <select class="form-control" id="couponCode">
-                                    <option value="">Select a coupon</option>
-                                    <% coupons.forEach(coupon => { %>
-                                        <option value="<%= coupon.code %>"><%= coupon.code %> - <%= coupon.description %></option>
-                                    <% }); %>
-                                </select>
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" id="applyCoupon">Apply</button>
-                                    <a href=""><button  class="btn btn-danger" id="removeCoupon" style="display: none;">Remove</button></a>
+                    </thead>
+                    <tbody>
+                        <% cart.items.forEach(item => { %>
+                            <tr>
+                                <td class="image product-thumbnail">
+                                    <% if (item.productId.productImages?.length) { %>
+                                        <img src="/uploads/re-image/<%= item.productId.productImages[0] %>" alt="<%= item.productId.productName %>" class="img-thumbnail" style="width: 100px; height: 100px;">
+                                    <% } else { %>
+                                        <img src="/uploads/re-image/default.jpg" alt="Default Image" class="img-thumbnail" style="width: 100px; height: 100px;">
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <h5><a href="/product/<%= item.productId._id %>"><%= item.productId.productName %></a></h5>
+                                    <span class="product-qty">x <%= item.quantity %></span>
+                                </td>
+                                <td>₹<%= item.totalPrice %></td>
+                            </tr>
+                        <% }); %>
+                        <!-- Coupon Section -->
+                        <tr>
+                            <th>Coupon Code</th>
+                            <td colspan="2">
+                                <div class="input-group">
+                                    <select class="form-control" id="couponCode">
+                                        <option value="">Select a coupon</option>
+                                        <% coupons.forEach(coupon => { %>
+                                            <option value="<%= coupon.code %>"><%= coupon.code %> - <%= coupon.description %></option>
+                                        <% }); %>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" id="applyCoupon">Apply</button>
+                                        <a href=""><button class="btn btn-danger" id="removeCoupon" style="display: none;">Remove</button></a>
+                                    </div>
                                 </div>
-                            </div>
-                            <small id="couponMessage" class="form-text text-muted"></small>
-                        </td>
-                    </tr>
-
-
-
-
-                    <tr>
-                        <th>SubTotal</th>
-                        <td colspan="2">₹<%= totalAmount.toLocaleString() %></td>
-                    </tr>
-                    <tr>
-                        <th>Coupon Discount</th>
-                        <td colspan="2" id="discount"><em>₹ 0</em></td>
-                    </tr>
-                    <tr>
-                        <th>Total</th>
-                        <td colspan="2" id="finalAmount" class="text-brand font-weight-bold">₹<%= totalAmount.toLocaleString() %></td>
-                    </tr>
-                </tbody>
-            </table>
-
-        <% } else { %>
-            <div class="alert alert-warning text-center shadow-sm rounded p-4">
-                <h5>Your cart is empty.</h5>
-                <p>Start adding items to your cart now!</p>
-                <a href="/shop" class="btn btn-primary btn-lg mt-3">Continue Shopping</a>
+                                <small id="couponMessage" class="form-text text-muted"></small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>SubTotal</th>
+                            <td colspan="2">₹<%= totalAmount.toLocaleString() %></td>
+                        </tr>
+                        <tr>
+                            <th>Coupon Discount</th>
+                            <td colspan="2" id="discount"><em>₹ 0</em></td>
+                        </tr>
+                        <tr>
+                            <th>Total</th>
+                            <td colspan="2" id="finalAmount" class="text-success font-weight-bold">₹<%= totalAmount.toLocaleString() %></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        <% } %>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog" aria-labelledby="addAddressModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class=" modal-header">
-                    <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="modalAddressForm" method="POST" action="#">
-                        <div class="form-group">
-                            <label for="modalAddressType">Address Type</label>
-                            <input type="text" class="form-control" id="modalAddressType" name="addressType">
-                        </div>
-                        <div class="form-group">
-                            <label for="modalName">Name</label>
-                            <input type="text" class="form-control" id="modalName" name="name">
-                        </div>
-                        <div class="form-group">
-                            <label for="modalCity">City</label>
-                            <input type="text" class="form-control" id="modalCity" name="city">
-                        </div>
-                        <div class="form-group">
-                            <label for="modalLandMark">Landmark</label>
-                            <input type="text" class="form-control" id="modalLandMark" name="landMark">
-                        </div>
-                        <div class="form-group">
-                            <label for="modalState">State</label>
-                            <input type="text" class="form-control" id="modalState" name="state">
-                        </div>
-                        <div class="form-group">
-                            <label for="modalPincode">Pincode</label>
-                            <input type="number" class="form-control" id="modalPincode" name="pincode">
-                        </div>
-                        <div class="form-group">
-                            <label for="modalPhone">Phone</label>
-                            <input type="number" class="form-control" id="modalPhone" name="phone">
-                        </div>
-                        <div class="form-group">
-                            <label for="modalAltPhone">Alternate Phone</label>
-                            <input type="number" class="form-control" id="modalAltPhone" name="altPhone">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
-                </div>
+          
+        </div>
+    <% } else { %>
+        <div class="alert alert-warning text-center shadow-sm rounded p-4">
+            <h5>Your cart is empty.</h5>
+            <p>Start adding items to your cart now!</p>
+            <a href="/shop" class="btn btn-primary btn-lg mt-3">Continue Shopping</a>
+        </div>
+    <% } %>
+</div>
+<!-- ///////////////////////////////////////////////// -->
+<!-- Modal -->
+<div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog"         
+    aria-labelledby="addAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class=" modal-header">
+                <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="modalAddressForm" method="POST" action="#">
+                    <div class="form-group">
+                        <label for="modalAddressType">Address Type</label>
+                        <input type="text" class="form-control" id="modalAddressType" name="addressType">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalName">Name</label>
+                        <input type="text" class="form-control" id="modalName" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalCity">City</label>
+                        <input type="text" class="form-control" id="modalCity" name="city">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalLandMark">Landmark</label>
+                        <input type="text" class="form-control" id="modalLandMark" name="landMark">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalState">State</label>
+                        <input type="text" class="form-control" id="modalState" name="state">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalPincode">Pincode</label>
+                        <input type="number" class="form-control" id="modalPincode" name="pincode">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalPhone">Phone</label>
+                        <input type="number" class="form-control" id="modalPhone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalAltPhone">Alternate Phone</label>
+                        <input type="number" class="form-control" id="modalAltPhone" name="altPhone">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
             </div>
         </div>
     </div>
-
-    <!-- Displaying Addresses -->
-    <div class="container mt-4" id="addresses-container">
-        <% addresses.forEach((address, index) => { %>
-            <% address.address.forEach((addr, addrIndex) => { %>
-                <div class="address-box mb-3">
-                    <input type="radio" name="selectedAddress" id="<%= addrIndex %>" value="<%= addr._id %>" class="address-radio">
+</div>
+<!-- ///////////////////////////////////////////////// -->
+   <!-- Displaying Addresses -->
+<div class="container mt-4" id="addresses-container">
+    <% addresses.forEach((address, index) => { %>
+        <% address.address.forEach((addr, addrIndex) => { %>
+            <div class="card address-box mb-3 shadow-sm">
+                <div class="card-body">
+                    <input type="radio" name="selectedAddress" id="address-<%= index %>-<%= addrIndex %>" value="<%= addr._id %>" class="address-radio me-2">
                     <label class="address-label" for="address-<%= index %>-<%= addrIndex %>">
-                        <div class="address-type-badge <%= addr.addressType.toLowerCase() %>">
+                        <div class="address-type-badge badge <%= addr.addressType.toLowerCase() === 'home' ? 'badge-primary' : 'badge-secondary' %>">
                             <%= addr.addressType %>
                         </div>
                         <div class="address-content">
-                            <div class="name-section">
+                            <div class="name-section my-2">
                                 <h6 class="mb-2"><%= addr.name %></h6>
                             </div>
                             <div class="address-details">
@@ -194,81 +196,191 @@
                         </div>
                     </label>
                 </div>
-            <% }); %>
+            </div>
         <% }); %>
+    <% }); %>
+</div>
+<style>
+    .address-box {
+        border: 1px solid #e0e0e0;
+        border-radius: 0.25rem;
+    }
+
+    .address-type-badge {
+        display: inline-block;
+        padding: 0.25em 0.4em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
+    }
+
+    .address-content {
+        margin-left: 1.5rem;
+    }
+
+    .card-body {
+        display: flex;
+        align-items: center;
+    }
+
+    .address-radio {
+        margin-right: 1rem;
+    }
+
+    .address-details p {
+        margin: 0;
+    }
+
+    .contact-info {
+        margin-top: 0.5rem;
+    }
+
+    .alt-phone {
+        color: #6c757d;
+    }
+
+    .badge-primary {
+        background-color: #007bff;
+    }
+
+    .badge-secondary {
+        background-color: #6c757d;
+    }
+</style>
+<!-- Displaying Addresses ends-->
+
+<!-- ///////////////////////////////////////////////// -->
+<!-- Button to Open the Modal -->
+<div class="text-center mt-4">
+    <button style="font-size: 12px;" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
+        Add New Address
+    </button>
+</div>
+<!-- ///////////////////////////////////////////////// -->
+<!-- Order Form -->
+<div class="container my-4 d-flex justify-content-center">
+    <div class="card shadow-sm" style="max-width: 400px; width: 100%;">
+        
+        <div class="card-body d-flex justify-content-center align-items-center">
+            <form id="orderForm" method="POST" action="/placeOrder">
+                <!-- RazorPay Option -->
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="payment_option" id="razorpay" value="razorpay" required>
+                    <label class="form-check-label" for="razorpay">RazorPay</label>
+                </div>
+                <!-- Cash on Delivery Option -->
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="payment_option" id="paymentCOD" value="COD" required>
+                    <label class="form-check-label" for="paymentCOD">Cash on Delivery</label>
+                </div>
+                <!-- Wallet Option -->
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="payment_option" id="wallet" value="wallet" required>
+                    <label class="form-check-label" for="wallet">Wallet</label>
+                </div>
+
+                <!-- Hidden Fields -->
+                <input type="hidden" name="orderId" id="orderId">
+                <input type="hidden" name="razorpayOrderId" id="razorpayOrderId">
+                <input type="hidden" name="razorpayKey" id="razorpayKey">
+                <input type="hidden" name="finalAmount" id="finalAmount">
+                <input type="hidden" name="userName" id="userName">
+                <input type="hidden" name="userEmail" id="userEmail">
+                <input type="hidden" name="userPhone" id="userPhone">
+                <input type="hidden" id="selectedAddressId" name="addressId">
+                <input type="hidden" id="appliedCouponCode" name="appliedCouponCode">
+
+                <style>
+                    .btn-small {
+                      padding: 5px 10px; /* Reduce padding to make the button smaller */
+                      font-size: 10px;   /* Reduce font size */
+                      margin: 2px;       /* Adjust margin if needed */
+                    }
+                    </style>
+                    
+                    <button type="submit" class="btn btn-success btn-small">Place Order</button>
+
+
+            </form>
+        </div>
     </div>
+</div>
+<style>
+    .card {
+        border: 1px solid #e0e0e0;
+        border-radius: 0.5rem;
+    }
 
-    <!-- Button to Open the Modal -->
-    <div class="text-center mt-4">
-        <button style="font-size: 12px;" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
-            Add New Address
-        </button>
-    </div>
+    .card-header {
+        background-color: #087fffa2;
+        color: white;
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
 
-    <!-- Order Form -->
-    <div class="text-center mt-4">
-        <form id="orderForm" method="POST" action="/placeOrder" class="my-5">
-            <h4>Payment Method</h4>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="payment_option" id="razorpay" value="razorpay" required>
-                <label class="form-check-label" for="razorpay">RazorPay</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="payment_option" id="paymentCOD" value="COD" required>
-                <label class="form-check-label" for="paymentCOD">Cash on Delivery</label>
-            </div>
-            <!-- Hidden Fields -->
-            <input type="hidden" name="orderId" id="orderId">
-            <input type="hidden" name="razorpayOrderId" id="razorpayOrderId">
-            <input type="hidden" name="razorpayKey" id="razorpayKey">
-            <input type="hidden" name="finalAmount" id="finalAmount">
-            <input type="hidden" name="userName" id="userName">
-            <input type="hidden" name="userEmail" id="userEmail">
-            <input type="hidden" name="userPhone" id="userPhone">
-            <input type="hidden" id="selectedAddressId" name="addressId">
-            <input type="hidden" id="appliedCouponCode" name="appliedCouponCode"> 
-            <div class="d-flex justify-content-center my-5">
-                <button type="submit" class="btn btn-success btn-sm mt-3">Place Order</button>
-            </div>
-        </form>
-    </div>
+    .card-body {
+        padding: 1.5rem;
+    }
 
-    <%- include("../../views/partials/user/footer") %>
+    .form-check {
+        margin-bottom: 1rem;
+    }
 
-    <script>
-        // Add a click event listener to all radio buttons with the class "address-radio"
-        document.querySelectorAll('.address-radio').forEach((radio) => {
-            radio.addEventListener('click', (event) => {
-                const addressId = event.target.value;
-                document.getElementById("selectedAddressId").value = addressId;
-                console.log(`User  clicked on radio button with ID: ${addressId}`);
-            });
+    .form-check-input {
+        margin-right: 0.5rem;
+    }
+
+    .form-check-label {
+        font-size: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+</style>
+
+<!-- Include SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- //////////////////////////////////////////////// -->
+<!-- address selection -->
+<script>
+    // Add a click event listener to all radio buttons with the class "address-radio"
+    document.querySelectorAll('.address-radio').forEach((radio) => {
+        radio.addEventListener('click', (event) => {
+            const addressId = event.target.value;
+            document.getElementById("selectedAddressId").value = addressId;
+            console.log(`User  clicked on radio button with ID: ${addressId}`);
+        });
+    });
+
+    $(document).ready(function() {
+        // Ensure the selected address is set in the hidden input before submitting
+        $('#orderForm').submit(function(event) {
+            const selectedAddress = $('input[name="selectedAddress"]:checked').val();
+            if (!selectedAddress) {
+                event.preventDefault();
+                
+                return;
+            }
+            $('#selectedAddressId').val(selectedAddress);
         });
 
-        $(document).ready(function() {
-            // Ensure the selected address is set in the hidden input before submitting
-            $('#orderForm').submit(function(event) {
-                const selectedAddress = $('input[name="selectedAddress"]:checked').val();
-                if (!selectedAddress) {
-                    event.preventDefault();
-                    alert('Please select an address.');
-                    return;
-                }
-                $('#selectedAddressId').val(selectedAddress);
-            });
+
+        
 
 
-            
-  
-
-            // Loader display during order submission
-            $(document).on('submit', '#orderForm', function() {
-                $('#orderLoader').show(); // Show the loader
-            });
+        // Loader display during order submission
+        $(document).on('submit', '#orderForm', function() {
+            $('#orderLoader').show(); // Show the loader
         });
-    </script>
-
-
+    });
+</script>
+<!-- //////////////////////////////////////////////// -->
 <!-- modalAddressForm -->
 <script>
     $(document).ready(function() {
@@ -294,11 +406,10 @@
         });
     });
 </script>
+<!-- //////////////////////////////////////////////// -->
 
 
-
-
-<script>
+<!-- <script>
     document.getElementById('applyCoupon').addEventListener('click', () => {
     const couponCode = document.getElementById('couponCode').value;
     const couponMessage = document.getElementById('couponMessage');
@@ -325,10 +436,10 @@
         couponMessage.textContent = 'Please select a coupon';
     }
 });
-</script>
+</script> -->
 
 
-<script>
+<!-- <script>
     document.getElementById('applyCoupon').addEventListener('click', () => {
     const couponCode = document.getElementById('couponCode').value;
     const couponMessage = document.getElementById('couponMessage');
@@ -366,35 +477,183 @@
         finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
     }
 });
-</script>
-
-<!-- <script>
-    document.getElementById('removeCoupon').addEventListener('click', () => {
-    const couponMessage = document.getElementById('couponMessage');
-    const discountElement = document.getElementById('discount');
-    const finalAmountElement = document.getElementById('finalAmount');
-    const appliedCouponCodeElement = document.getElementById('couponCode');
-    const removeCouponButton = document.getElementById('removeCoupon');
-    let totalAmount = parseFloat(finalAmountElement.textContent.replace(/[^0-9.-]+/g, ""));
-    
-    fetch('/remove-coupon')
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                couponMessage.textContent = 'Coupon removed successfully';
-                discountElement.innerHTML = `<em>₹ 0</em>`;
-                finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
-                appliedCouponCodeElement.value = ''; // Clear the applied coupon code
-                removeCouponButton.style.display = 'none'; // Hide the remove button
-            } else {
-                couponMessage.textContent = 'Error removing coupon';
-            }
-        })
-        .catch(error => {
-            console.error('Error removing coupon:', error);
-            couponMessage.textContent = 'Error removing coupon';
-        });
-});
 </script> -->
 
+
+<!-- apply-coupon -->
+<!-- <script>
+    document.getElementById('applyCoupon').addEventListener('click', () => {
+        const couponCode = document.getElementById('couponCode').value;
+        const couponMessage = document.getElementById('couponMessage');
+        const discountElement = document.getElementById('discount');
+        const finalAmountElement = document.getElementById('finalAmount');
+        const appliedCouponCode = document.getElementById('appliedCouponCode'); // Assuming this element exists
+        let totalAmount = parseFloat(finalAmountElement.textContent.replace(/[^0-9.-]+/g, ""));
+    
+        if (couponCode) {
+            fetch(`/apply-coupon?code=${couponCode}&price=${totalAmount}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const discount = data.discount;
+                        couponMessage.textContent = `Coupon applied! Discount: ₹${discount}`;
+                        discountElement.innerHTML = `<em>₹${discount}</em>`;
+    
+                        const newTotalAmount = totalAmount - discount;
+                        finalAmountElement.textContent = `₹${newTotalAmount.toLocaleString()}`;
+                        appliedCouponCode.value = couponCode; 
+                    } else {
+                        couponMessage.textContent = 'Invalid coupon code';
+                        discountElement.innerHTML = `<em>₹ 0</em>`;
+                        finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error applying coupon:', error);
+                    couponMessage.textContent = 'Error applying coupon';
+                    discountElement.innerHTML = `<em>₹ 0</em>`;
+                    finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
+                });
+        } else {
+            couponMessage.textContent = 'Please select a coupon';
+            discountElement.innerHTML = `<em>₹ 0</em>`;
+            finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
+        }
+    });
+</script> -->
+<script>
+    document.getElementById('applyCoupon').addEventListener('click', () => {
+        const couponCode = document.getElementById('couponCode').value;
+        const couponMessage = document.getElementById('couponMessage');
+        const discountElement = document.getElementById('discount');
+        const finalAmountElement = document.getElementById('finalAmount');
+        const appliedCouponCode = document.getElementById('appliedCouponCode'); // Assuming this element exists
+        let totalAmount = parseFloat(finalAmountElement.textContent.replace(/[^0-9.-]+/g, ""));
+
+        if (couponCode) {
+            fetch(`/apply-coupon?code=${couponCode}&price=${totalAmount}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const discount = data.discount;
+                        couponMessage.textContent = `Coupon applied! Discount: ₹${discount}`;
+                        discountElement.innerHTML = `<em>₹${discount}</em>`;
+
+                        const newTotalAmount = totalAmount - discount;
+                        finalAmountElement.textContent = `₹${newTotalAmount.toLocaleString()}`;
+                        appliedCouponCode.value = couponCode; 
+                        document.getElementById('removeCoupon').style.display = 'inline-block'; // Show remove button
+                    } else {
+                        couponMessage.textContent = data.message || 'Invalid coupon code';
+                        discountElement.innerHTML = `<em>₹ 0</em>`;
+                        finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error applying coupon:', error);
+                    couponMessage.textContent = 'Error applying coupon';
+                    discountElement.innerHTML = `<em>₹ 0</em>`;
+                    finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
+                });
+        } else {
+            couponMessage.textContent = 'Please select a coupon';
+            discountElement.innerHTML = `<em>₹ 0</em>`;
+            finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
+        }
+    });
+
+    document.getElementById('removeCoupon').addEventListener('click', () => {
+        const couponMessage = document.getElementById('couponMessage');
+        const discountElement = document.getElementById('discount');
+        const finalAmountElement = document.getElementById('finalAmount');
+        const appliedCouponCode = document.getElementById('appliedCouponCode'); // Assuming this element exists
+        let totalAmount = parseFloat(finalAmountElement.textContent.replace(/[^0-9.-]+/g, ""));
+
+        // Reset coupon details
+        couponMessage.textContent = '';
+        discountElement.innerHTML = `<em>₹ 0</em>`;
+        finalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
+        appliedCouponCode.value = ''; 
+        document.getElementById('removeCoupon').style.display = 'none'; // Hide remove button
+    });
+</script>
+
+
+<!-- JavaScript to handle form submission -->
+<script>
+    document.getElementById('orderForm').addEventListener('submit', function(event) {
+        // Check if any address is selected
+        const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+
+        if (!selectedAddress) {
+            // Prevent form submission
+            event.preventDefault();
+
+            // Show Swal alert
+            Swal.fire({
+                icon: 'warning',
+                title: 'No address selected',
+                text: 'Please select an address before placing the order.',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+</script>
+
+<style>
+    .address-box {
+        border: 1px solid #e0e0e0;
+        border-radius: 0.25rem;
+    }
+
+    .address-type-badge {
+        display: inline-block;
+        padding: 0.25em 0.4em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
+    }
+
+    .address-content {
+        margin-left: 1.5rem;
+    }
+
+    .card-body {
+        display: flex;
+        align-items: center;
+    }
+
+    .address-radio {
+        margin-right: 1rem;
+    }
+
+    .address-details p {
+        margin: 0;
+    }
+
+    .contact-info {
+        margin-top: 0.5rem;
+    }
+
+    .alt-phone {
+        color: #6c757d;
+    }
+
+    .badge-primary {
+        background-color: #007bff;
+    }
+
+    .badge-secondary {
+        background-color: #6c757d;
+    }
+</style>
+
+</script>
+
 </body>
+
+<%- include("../../views/partials/user/footer") %>

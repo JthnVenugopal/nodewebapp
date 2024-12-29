@@ -58,6 +58,9 @@
                     <div>
                         <h2 class="store-name">Order Details</h2>
                         <br>
+
+                        <%console.log("orderdata------------"+order);%>
+
                         <p>Order ID: <%= order.orderId %> <br>Payment Status:
                                 <span class=" text-dark ms-2 ">
                                     <%= order.paymentStatus %>
@@ -68,7 +71,7 @@
                                     <% } %>
                         </p>
                         <br>
-                        <p>Placed on: <%= new Date(order.createdOn).toLocaleString() %>
+                        <p>Placed on: <%= new Date(order.createdAt).toLocaleString() %>
                         </p>
                     </div>
                     <div class="order-total">

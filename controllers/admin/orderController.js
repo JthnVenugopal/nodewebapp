@@ -5,25 +5,63 @@ const Address = require("../../models/addressSchema");
 
 /////////////////////////////////////////////////
 
+// const getOrders = async (req, res) => {
+//     if (req.session.admin) {
+//         try {
+//             const page = parseInt(req.query.page) || 1;
+//             const limit = 5;
+//             const skip = (page - 1) * limit;
+
+//             const totalOrders = await Order.countDocuments();
+//             const totalPages = Math.ceil(totalOrders / limit);
+
+//             const orders = await Order.find()
+//             .sort({ createdOn: -1 })
+//             .populate('user') 
+//             .populate('address')          
+//             .populate('orderedItems.product')
+//             .skip(skip) 
+//             .limit(limit);
+
+            
+//             res.render("adminOrder", {
+//                 orders: orders,
+//                 totalPages,
+//                 currentPage: page
+//             });
+//         } catch (error) {
+//             console.error('Error loading orders:', error);
+//             res.redirect("/admin/pageerror");
+//         }
+//     } else {
+//         res.redirect("/admin/login");
+//     }
+// };
+
 const getOrders = async (req, res) => {
     if (req.session.admin) {
         try {
+            // Get the current page from query params, default to 1 if not provided
             const page = parseInt(req.query.page) || 1;
-            const limit = 5;
-            const skip = (page - 1) * limit;
+            const limit = 5; // Number of orders to display per page
+            const skip = (page - 1) * limit; // Calculate the number of documents to skip
 
+            // Get the total count of orders
             const totalOrders = await Order.countDocuments();
+
+            // Calculate the total number of pages
             const totalPages = Math.ceil(totalOrders / limit);
 
+            // Fetch the orders from the database with sorting, pagination, and population of references
             const orders = await Order.find()
-            .sort({ createdOn: -1 })
-            .populate('user') 
-            .populate('address')          
-            .populate('orderedItems.product')
-            .skip(skip) 
-            .limit(limit);
+                .sort({ createdAt: -1 }) // Sort orders by creation date in descending order
+                .populate('user') // Populate user details in the order
+                .populate('address') // Populate address details in the order
+                .populate('orderedItems.product') // Populate product details in the ordered items
+                .skip(skip) // Skip the appropriate number of documents
+                .limit(limit); // Limit the results to the defined number of orders per page
 
-            
+            // Render the adminOrder view with the fetched orders and pagination details
             res.render("adminOrder", {
                 orders: orders,
                 totalPages,
@@ -31,10 +69,10 @@ const getOrders = async (req, res) => {
             });
         } catch (error) {
             console.error('Error loading orders:', error);
-            res.redirect("/admin/pageerror");
+            res.redirect("/admin/pageerror"); // Redirect to an error page in case of an exception
         }
     } else {
-        res.redirect("/admin/login");
+        res.redirect("/admin/login"); // Redirect to the admin login page if the session is not an admin
     }
 };
 
