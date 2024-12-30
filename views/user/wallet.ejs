@@ -166,14 +166,32 @@
                                 <th>Amount</th>
                             </tr>
                         </thead>
+
+                        <%//console.log("wallet-----------"+wallet.transactions.type)%>
+
                         <tbody>
                             <% wallet.transactions.reverse().forEach(transaction => { %>
                             <tr>
                                 <td><%= new Date(transaction._id.getTimestamp()).toLocaleDateString() %></td>
                                 <td><%= transaction.description %></td>
-                                <td class="text-danger" data-amount="<%= transaction.amount %>">
-                                    <%= transaction.amount >= 0 ? "-" : "" %>₹<%= transaction.amount %>
+
+
+                                <%if(transaction.type==="credit"){%>
+
+                                <td class="text-success" data-amount="<%= transaction.amount %>">
+                                    <%= transaction.amount >= 0 ? "+" : "" %>₹<%= transaction.amount %>
                                 </td>
+
+                                <%}else{%>
+                                 
+
+                                    <td class="text-danger" data-amount="<%= transaction.amount %>">
+                                        <%= transaction.amount >= 0 ? "-" : "" %>₹<%= transaction.amount %>
+                                    </td>
+                                    
+                                    <%}%>
+
+
                             </tr>
                             <% }) %>
                         </tbody>

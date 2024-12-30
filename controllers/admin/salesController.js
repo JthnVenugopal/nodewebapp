@@ -61,16 +61,23 @@ const getSalesPage = async (req, res) => {
 const applyFilter = async (req, res) => {
     try {
         console.log("///////////////applyFilter//////////////");
-        
+
         const { startDate, endDate, presetRange } = req.query;
         console.log("req.query : ", req.query);
-        
+
         let filter = {};
         const today = new Date();
-        
+        const todayUTC = new Date(today.toISOString().split('T')[0] + 'T00:00:00.000Z');
+        console.log("today (UTC): ", todayUTC.toISOString());
+
+        console.log("today//////////// : ", today);
+
         // Set default dates if not provided
         let filterStartDate = startDate ? new Date(startDate) : new Date(today.setDate(today.getDate() - 7)); // Default to last 7 days
         let filterEndDate = endDate ? new Date(endDate) : new Date(today);
+
+        console.log("filterStartDate: ", filterStartDate);
+        console.log("filterEndDate: ", filterEndDate);
 
         // Validate dates
         if (isNaN(filterStartDate.getTime()) || isNaN(filterEndDate.getTime())) {
@@ -85,17 +92,21 @@ const applyFilter = async (req, res) => {
         const endDateWithTime = new Date(filterEndDate);
         endDateWithTime.setHours(23, 59, 59, 999);
 
+        
         filter.createdAt = {
             $gte: filterStartDate,
             $lte: endDateWithTime,
         };
+        filter.status = 'Delivered'; 
+
+        console.log("filter: ", filter);
 
         const filteredSales = await Order.find(filter)
             .sort({ createdAt: -1 })
             .select('orderId finalAmount discount couponApplied createdAt');
 
         console.log('filteredSales :', filteredSales);
-  
+
         const totalSalesCount = filteredSales.length;
         const overallOrderAmount = filteredSales.reduce((sum, order) => sum + order.finalAmount, 0);
         const totalDiscount = filteredSales.reduce((sum, order) => sum + (order.discount || 0), 0);
@@ -115,7 +126,6 @@ const applyFilter = async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 };
-
 
 const calculateStats = async (startDate, endDate) => {
   try {
@@ -144,11 +154,13 @@ const calculateStats = async (startDate, endDate) => {
   }
 };
 
-
 ///////////////////////////////////////////////////////////////
 
 const downloadSalesPDF = async (req, res) => {
   try {
+
+    console.log("///////////////downloadSalesPDF//////////////");
+    
       const { dateFilter, startDate, endDate } = req.query;
 
       const start = new Date(startDate);
@@ -158,14 +170,16 @@ const downloadSalesPDF = async (req, res) => {
       end.setHours(23, 59, 59, 999);
 
 
-      console.log('Start Date:', startDate);
-      console.log('End Date:', endDate);
+      console.log('Start Date:', start);
+      console.log('End Date:', end);
 
       const orders = await Order.find({
           createdAt: { $gte: start, $lte: end }
       }).populate('orderedItems.product');
+
+      console.log('Orders:///////////', orders);
       
-      console.log(orders);
+   
 
 
       await generatePDF(res, orders, dateFilter, start, end);
@@ -351,7 +365,6 @@ const generatePDF = async (res, orders, dateFilter, startDate, endDate) => {
   doc.end();
 };
 
-
 ///////////////////////////////////////////////////////////////
 
 const downloadSalesExcel = async (req, res) => {
@@ -441,7 +454,6 @@ const downloadSalesExcel = async (req, res) => {
       res.status(500).send('Error generating Excel file');
   }
 };
-
 
 ///////////////////////////////////////////////////////////////
 

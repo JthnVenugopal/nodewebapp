@@ -230,6 +230,7 @@
         
                 <label for="endDate">To:</label>
                 <input type="date" id="endDate" name="endDate" value="<%= endDate %>">
+                
                 <span id="endDateError" class="error-message"></span>
 
                 <label for="presetRange">Preset Ranges:</label>
@@ -273,7 +274,7 @@
                     </tr>
                 </thead>
 
-                <%console.log("Recent Sales frontend"+JSON.stringify(recentSales)) %>
+                <%//console.log("Recent Sales frontend"+JSON.stringify(recentSales)) %>
 
                 <tbody id="salesTableBody">
                     <% if (recentSales.length === 0) { %>

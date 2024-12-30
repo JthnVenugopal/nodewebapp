@@ -54,23 +54,23 @@
                     <thead class="thead-dark">
                         <tr>
                             <th colspan="2">Product</th>
-                            <th>Total</th>
+                            <th>Price</th>
                         </tr>
                     </thead>
+
+                    <%//console.log("cart-------", cart);%>
+
+                    
+
                     <tbody>
                         <% cart.items.forEach(item => { %>
                             <tr>
-                                <td class="image product-thumbnail">
-                                    <% if (item.productId.productImages?.length) { %>
-                                        <img src="/uploads/re-image/<%= item.productId.productImages[0] %>" alt="<%= item.productId.productName %>" class="img-thumbnail" style="width: 100px; height: 100px;">
-                                    <% } else { %>
-                                        <img src="/uploads/re-image/default.jpg" alt="Default Image" class="img-thumbnail" style="width: 100px; height: 100px;">
-                                    <% } %>
-                                </td>
+                               
                                 <td>
                                     <h5><a href="/product/<%= item.productId._id %>"><%= item.productId.productName %></a></h5>
                                     <span class="product-qty">x <%= item.quantity %></span>
                                 </td>
+                                <td></td>
                                 <td>₹<%= item.totalPrice %></td>
                             </tr>
                         <% }); %>

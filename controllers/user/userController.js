@@ -10,7 +10,7 @@ const passport = require("passport")
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const Wallet = require("../../models/walletSchema");
 
-//-------------------------------------------------------
+////////////////////////////////////////////////////////////
 
 const pageNotFound = async (req,res) => {
   try{
@@ -20,7 +20,7 @@ const pageNotFound = async (req,res) => {
   }
 }
 
-//-------------------------------------------------------
+///////////////////////////////////////////////////////////
 
 const loadHomepage = async (req, res, next) => {
   try {
@@ -74,7 +74,8 @@ const loadHomepage = async (req, res, next) => {
   }
 };
 
-//------------------------------------------------------
+//////////////////////////////////////////////////////////
+
 const loadSignup = async (req,res) => {
   try{
     return res.render("signup");
@@ -84,7 +85,9 @@ const loadSignup = async (req,res) => {
 
   }
 }
+
 //------------------------------------------------------
+
 const loadShopping = async (req,res) => {
   try  {
     return res.render('shop');
@@ -331,6 +334,7 @@ const login = async (req, res) => {
       };
 
       res.redirect("/");
+      
   } catch (error) {
       console.error("Login error:", error);
       res.render("login", { message: "Login failed. Please try again." });

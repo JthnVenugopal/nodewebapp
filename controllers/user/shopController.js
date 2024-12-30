@@ -27,44 +27,44 @@ const loadShoppingPage = async (req, res) => {
 
 const filterProduct = async (req, res) => { 
   try { 
-    const user = req.session.user || req.user; // Ensure user is fetched correctly
+    const user = req.session.user || req.user; 
 
-    // Extract filter criteria from the request body
+    
     const { category, brand, minPrice, maxPrice, sort, search } = req.body; 
 
-    // Build the filter object
-    let filter = { isBlocked: false }; // Ensure only unblocked products are included
+   
+    let filter = { isBlocked: false }; 
 
-    // Filter by category if provided
+    
     if (category) { 
-      filter.category = category; // Assuming category is an ObjectId 
+      filter.category = category; 
     }
 
-    // Filter by brand if provided
+ 
     if (brand) { 
-      filter.brand = brand; // Assuming brand is an ObjectId 
+      filter.brand = brand; 
     }
 
-    // Filter by price range if provided
+    
     if (minPrice || maxPrice) { 
       filter.price = {}; 
       if (minPrice) { 
-        filter.price.$gte = parseFloat(minPrice); // Ensure it's a number 
+        filter.price.$gte = parseFloat(minPrice); 
       } 
       if (maxPrice) { 
-        filter.price.$lte = parseFloat(maxPrice); // Ensure it's a number 
+        filter.price.$lte = parseFloat(maxPrice); 
       } 
     }
 
-    // Search functionality
+    
     if (search) { 
-      filter.productName = { $regex: search, $options: 'i' }; // Case-insensitive search 
+      filter.productName = { $regex: search, $options: 'i' }; 
     }
 
-    // Fetch filtered products with sorting
+    
     let productsQuery = Product.find(filter).populate('variant'); 
 
-    // Sorting logic
+   
     if (sort) { 
       const sortOptions = {}; 
       switch (sort) { 

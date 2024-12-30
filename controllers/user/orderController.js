@@ -139,7 +139,7 @@ const getOrderDetails = async (req, res) => {
 
 const cancelOrder = async (req, res) => {
     try {
-        console.log("-----------------------------------cancelOrder--------------------------------------");
+        console.log("//////////////////cancelOrder//////////////////////");
         
         const { orderId } = req.body;
 
@@ -175,7 +175,7 @@ const cancelOrder = async (req, res) => {
 
         if (orderDetails.paymentMethod === 'razorpay') {
             // Calculate the refund amount for Razorpay
-            const razorpayRefundAmount = orderDetails.totalPrice - orderDetails.walletPayment;
+            const razorpayRefundAmount = orderDetails.totalPrice;
 
             // Update wallet balance for Razorpay refund
             wallet.balance += razorpayRefundAmount;
@@ -191,9 +191,9 @@ const cancelOrder = async (req, res) => {
             console.log("Refund processed successfully to wallet (Razorpay):", razorpayRefundAmount);
         }
 
-        if (orderDetails.paymentMethod === 'wallet' || orderDetails.walletPayment > 0) {
+        if (orderDetails.paymentMethod === 'wallet') {
             // Calculate the refund amount for wallet payment
-            const walletRefundAmount = orderDetails.walletPayment;
+            const walletRefundAmount = orderDetails.totalPrice;
 
             // Update wallet balance for wallet refund
             wallet.balance += walletRefundAmount;

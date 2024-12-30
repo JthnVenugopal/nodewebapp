@@ -32,6 +32,8 @@ const getCheckout = async (req, res) => {
         },
       });
 
+      console.log("cart////////////////////////", cart);
+
       const coupon = await Coupon.find({ status: "Active" });
 
       // console.log("Coupon/////////////", coupon);

@@ -94,57 +94,67 @@
                     <h4>New Arrivals</h4>
                 </div>
 
-                <div class="tab-content wow fadeIn animated" id="myTabContent">
-                    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
-                        <div class="row" id="product-list">
-                            <% for (let i = 0; i < products.length; i++) { %>
-                                <div class="col-md-4 col-lg-3 mb-4">
-                                    <div class="card h-100 shadow-sm border-0 product-card">
-                                        <!-- Product Image -->
-                                        <% if (products[i].variantData && products[i].variantData.productImages && products[i].variantData.productImages.length > 0) { %>
-                                            <img style="height: 200px; width: 200px;" src="/uploads/re-image/<%= products[i].variantData.productImages[0] %>"
-                                                 class="card-img-top ml-4"
-                                                 alt="<%= products[i].productName %>">
-                                        <% } else { %>
-                                            <img src="/images/placeholder.png"
-                                                 class="card-img-top"
-                                                 alt="No image available">
-                                        <% } %>
 
-                                        <!-- Product Details -->
-                                        <div class="card-body text-center" style="z-index: 5;">
-                                            <h5 class="card-title text-truncate"><%= products[i].productName %></h5>
+               
 
-                                            <% const { variantData } = products[i]; %>
-                                            <% if (variantData) { %>
-                                                <strong>₹<%= variantData.salePrice %></strong>
+                <div class="container mt-5">
+                    <div class="tab-content wow fadeIn animated" id="myTabContent">
+                        <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+                            <div class="row" id="product-list">
+                                <% for (let i = 0; i < products.length; i++) { %>
+                                    <div class="col-md-4 col-lg-3 mb-4">
+                                        <div class="card h-100 shadow-sm border-0 product-card">
+                                            <!-- Product Image -->
+                                            <% if (products[i].variantData && products[i].variantData.productImages && products[i].variantData.productImages.length > 0) { %>
+                                                <img src="/uploads/re-image/<%= products[i].variantData.productImages[0] %>" 
+                                                     class="card-img-top img-fluid" 
+                                                     alt="<%= products[i].productName %>" 
+                                                     style="height: 200px; object-fit: cover;">
                                             <% } else { %>
-                                                <strong>Price not available</strong>
+                                                <img src="/images/placeholder.png" 
+                                                     class="card-img-top img-fluid" 
+                                                     alt="No image available" 
+                                                     style="height: 200px; object-fit: cover;">
                                             <% } %>
-
-                                            <div class="my-1">
-                                                <% if (variantData && variantData.quantity > 0) { %>
-                                                    <span class="badge mb-2">In Stock: <%= variantData.quantity %></span>
+                
+                                            <!-- Product Details -->
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title text-truncate"><%= products[i].productName %></h5>
+                
+                                                <% const { variantData } = products[i]; %>
+                                                <% if (variantData) { %>
+                                                    <p class="card-text text-primary">₹<%= variantData.salePrice %></p>
                                                 <% } else { %>
-                                                    <span class="badge mb-2">Out of Stock</span>
+                                                    <p class="card-text text-secondary">Price not available</p>
                                                 <% } %>
+                
+                                                <div class="my-1">
+                                                    <% if (variantData && variantData.quantity > 0) { %>
+                                                        <span class="badge badge-success mb-2">In Stock: <%= variantData.quantity %></span>
+                                                        <button class="btn btn-outline-primary btn-sm">Add to Cart</button>
+                                                    <% } else { %>
+                                                        <span class="badge badge-danger mb-2">Out of Stock</span>
+                                                    <% } %>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            <% } %>
+                                <% } %>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </div> 
+
+
+
+
             </div>
 
             <div class="view-more-container my-5">
                 <a href="/shop" class="view-more-btn">View More Products</a>
             </div>
 
-            <div class="banner">
-                <img src="https://i.gifer.com/Z1g.gif" style="width: 100%; height: 700px; opacity: 0.9;">
-            </div>
+          
 
         </section>
     </main>

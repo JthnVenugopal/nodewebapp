@@ -122,6 +122,9 @@
                             <li class="list-group-item" data-value="above5000">Above ₹5000</li>
                         </ul>
                     </div>
+
+
+
                     <!-- Sort List -->
                     <div class="mb-3">
                         <label for="sortList" class="form-label">Sort By</label>
@@ -135,6 +138,10 @@
                             <li class="list-group-item" data-value="nameDesc">Name: Z-A</li>
                         </ul>
                     </div>
+
+
+
+                    
                 </form>
             </div>
 
@@ -298,6 +305,52 @@
 
             applyFilters();
         });
+
+
+
+
+        document.querySelectorAll('#sortList .list-group-item').forEach(item => {
+    item.addEventListener('click', function() {
+        document.querySelectorAll('#sortList .list-group-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        
+        const sortValue = this.getAttribute('data-value');
+        console.log("Selected sort value:", sortValue); // Debugging log
+        submitSortForm(sortValue);
+    });
+});
+
+function submitSortForm(sortValue) {
+    const formData = new FormData();
+    formData.append('sort', sortValue);
+
+    fetch('/sortProducts', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(data => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data, 'text/html');
+        const newProducts = doc.querySelector('#productsContainer').innerHTML;
+        document.getElementById('productsContainer').innerHTML = newProducts;
+    })
+    .catch(error => console.error('Error:', error));
+}
     </script>
+
+
+
+
+
+    
 
 </body>
