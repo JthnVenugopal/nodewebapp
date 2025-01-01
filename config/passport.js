@@ -24,14 +24,6 @@ async (accessToken, refreshToken, profile, done) => {
                 await user.save();
             }
 
-            const userWallet = new Wallet({
-                user: user._id,
-                balance: 0,
-                transactions: []
-            });
-
-            await userWallet.save();
-            return done(null, user);
 
             // Check if the user is blocked
             if (user.isBlocked) {

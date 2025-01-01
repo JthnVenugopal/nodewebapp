@@ -51,80 +51,7 @@ const getRazorpay = async (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////
 
 
-// const razorpaySuccess = async (req, res) => {
-//     try {
 
-//       const user = req.session.user || req.user;
-//       const userId = req.session.user.id || req.user.id;
-
-
-//       console.log("///////////////razorpay//////////////////");
-//       console.log("reqBody/////" + JSON.stringify(req.body));
-  
-//       const { paymentId, orderId, paymentStatus } = req.body;
-//       console.log('Payment ID:', paymentId);
-//       console.log('Order ID:', orderId);
-//       console.log("status//////" + paymentStatus);
-  
-//       const order = await Order.findById(orderId) 
-//       // Use findById to correctly fetch the order by ObjectId 
-//       .populate('user') 
-//       .populate('orderedItems.product');
-  
-//       console.log("/////////////order", order);
-  
-//       if (!order || order === null) {
-//         console.error('Order not found for orderId:', orderId);
-//         return res.status(400).json({ success: false, message: 'Order not found' });
-//       }
-  
-//       if (paymentStatus === 'success') {
-//         order.paymentStatus = 'Paid';
-//         order.paymentId = paymentId;
-//         await order.save();
-  
-//         const userId = order.user; // Correct field reference
-//         await Cart.updateOne({ userId }, { $set: { items: [] } });
-  
-//         await User.findByIdAndUpdate(
-//           userId,
-//           { $push: { orderHistory: order._id } },
-//           { new: true }
-//         );
-  
-//         console.log('Ordered Items:', order.orderedItems);
-  
-//         const updateOperations = order.orderedItems.map(item => {
-//           console.log('Item:', item);
-//           const filter = {
-//             _id: item.product,
-//             'sizes.size': item.size
-//           };
-  
-//           console.log('Filter for product update:', filter);
-  
-//           return {
-//             updateOne: {
-//               filter: filter,
-//               update: {
-//                 $inc: { 'sizes.$.quantity': -item.quantity }
-//               }
-//             }
-//           };
-//         });
-  
-//         const result = await Product.bulkWrite(updateOperations);
-//         console.log('BulkWrite result:', result);
-  
-//         return res.json({ success: true, orderId: order._id });
-//       } else {
-//         return res.status(400).json({ success: false, message: 'Payment failed' });
-//       }
-//     } catch (error) {
-//       console.error('Error processing payment:', error);
-//       return res.status(500).json({ success: false, message: 'Internal Server Error' });
-//     }
-//   };
 
 const razorpaySuccess = async (req, res) => {
   try {
@@ -144,7 +71,7 @@ const razorpaySuccess = async (req, res) => {
       .populate('user') // Populate user details if needed
       .populate('orderedItems.product'); // Populate product details if needed
 
-    console.log("/////////////order", order);
+    // console.log("/////////////order", order);
 
     if (!order || order === null) {
       console.error('Order not found for orderId:', orderId);
@@ -164,17 +91,19 @@ const razorpaySuccess = async (req, res) => {
         { new: true }
       );
 
-      console.log('Ordered Items:', order.orderedItems);
+      
+      const {orderedItems} = order;
 
-      const updateOperations = order.orderedItems.map(item => {
-        console.log('Item:', item);
+      // console.log('Ordered Items:', orderedItems); 
+
+      const updateOperations =  orderedItems.map(item => {
+        // console.log('Item:', item);
         const filter = {
           _id: item.product._id,
           'sizes.size': item.size
         };
 
-        console.log('Filter for product update:', filter);
-
+        // console.log('Filter for product update:', filter);
         return {
           updateOne: {
             filter: filter,
@@ -185,8 +114,13 @@ const razorpaySuccess = async (req, res) => {
         };
       });
 
+      console.log('Update Operations:', updateOperations);
+      console.log('Update Operations:', updateOperations);
+
+
+
       const result = await Product.bulkWrite(updateOperations);
-      console.log('BulkWrite result:', result);
+      // console.log('BulkWrite result:', result);
 
       return res.json({ success: true, orderId: order._id });
     } 

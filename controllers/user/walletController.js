@@ -14,7 +14,7 @@ const getWalletPage = async (req, res) => {
   try {
       console.log('--------getWalletPage-----------');
       const userData = req.session.user || req.user;
-      const userId = req.session.user.id || req.session.user._id;
+      const userId = req.session.user?.id || req.user?._id || req.user?.userId;;
       
       const wallet = await Wallet.findOne({userId: userId});
 

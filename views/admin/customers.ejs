@@ -1,60 +1,56 @@
 <%- include("../../views/partials/admin/header") %>
-       
-        </div>
-        
-            <header class="card-header text-center mb-20" style="margin-left: 50px; width: 5000px;">
-                <form action="/admin/users/" method="get" class="d-inline">
-                    <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 1200px;">
-                        <input type="text" class="form-control border-0 rounded-pill" placeholder="Search customers..." name="search" >
-                        <button class="btn  border-0" type="submit">Search</button>
-                    </div>
-                </form>
-            </header>
-            <div>
-                <h2 class="d-flex justify-content-center my-5">Users</h2>
-            </div>
-            <div class="right mt-5">
-                <table class="table table-striped" style="margin-left: 265px;font-size: 22px;">
-                    <thead>
-                      <tr>
-                        <th scope="col" style="width: 400px;"><b>Name</b></th>
-                        <th scope="col" style="width: 400px;"><b>Email</b></th>
-                        <th scope="col" style="width: 400px;"><b>Phone No</b></th>
-                        <th scope="col" style="width: 400px;"><b>Action</b></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        <%for(let i=0; i<data.length; i++){%>
-                            <tr>
-                                <td><%=data[i].name%></td>
-                                <td><%=data[i].email%></td>
-                                <td><%=data[i].phone%></td>
-                                <td> 
-                                    <%if(data[i].isBlocked===false){%>
-                                        <button class="btn btn-danger" style="width: 120px; height: 40px; font-size: 15px;">
-                                            <a href="/admin/blockCustomer?id=<%=data[i].id%>" class="text-white" style="text-decoration: none;">Block</a>
-                                        </button>
-                                        <%}else{%>
-                                        <button class="btn btn-success" style="width: 120px; height: 40px; font-size: 15px;">
-                                            <a href="/admin/unblockCustomer?id=<%=data[i].id%>" class="text-white" style="text-decoration: none;">Unblock</a>
-                                        </button>
-                                        <%}%> 
-                                </td>
-                            </tr>
-                            <%}%>
-                    </tbody>
-                  </table>
-        </div>
-        <div class="container mt-3">
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
-                    <%for(let i=1; i<=totalPages; i++) {%>
-                        <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
-                                <a style="height: 40px;font-size: 15px;" class="page-link" href="?page=<%=i%>" ><%= i %></a>
-                        </li>
-                        <%}%>
-                </ul>
-            </nav>
-        </div>
-        <%- include("../../views/partials/admin/footer") %>
-   
+
+
+<div class="container my-5 bg-light" style="margin-left: 15%;">
+    <h2 class="text-center ">Users</h2>
+    <div class="table-responsive" style="border-radius: 10px; padding: 20px; height: 80vh;">
+        <table class="table table-striped table-hover text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col"><b>Name</b></th>
+                    <th scope="col"><b>Email</b></th>
+                    <th scope="col"><b>Phone No</b></th>
+                    <th scope="col"><b>Action</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let i = 0; i < data.length; i++) { %>
+                    <tr>
+                        <td><%= data[i].name %></td>
+                        <td><%= data[i].email %></td>
+                        <td><%= data[i].phone %></td>
+                        <td>
+                            <% if (data[i].isBlocked === false) { %>
+                                <button class="btn btn-danger btn-sm">
+                                    <a href="/admin/blockCustomer?id=<%= data[i].id %>" class="text-white" style="text-decoration: none;">
+                                        <i class="fas fa-ban"></i> Block
+                                    </a>
+                                </button>
+                            <% } else { %>
+                                <button class="btn btn-success btn-sm">
+                                    <a href="/admin/unblockCustomer?id=<%= data[i].id %>" class="text-white" style="text-decoration: none;">
+                                        <i class="fas fa-check"></i> Unblock
+                                    </a>
+                                </button>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container mt-3">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-4">
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+</div>
+
+<%- include("../../views/partials/admin/footer") %>
