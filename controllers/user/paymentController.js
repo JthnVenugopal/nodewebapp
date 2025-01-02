@@ -8,6 +8,7 @@ const Wishlist = require('../../models/wishlistSchema');
 const Coupon = require('../../models/couponSchema');
 const Wallet = require('../../models/walletSchema');
 const Category = require('../../models/categorySchema');
+const Variant = require('../../models/variantSchema');
 
 
 
@@ -59,26 +60,20 @@ const razorpaySuccess = async (req, res) => {
     const userId = req.session.user.id || req.user.id;
 
     console.log("///////////////razorpay//////////////////");
-    console.log("reqBody/////" + JSON.stringify(req.body));
 
     const { paymentId, orderId, paymentStatus } = req.body;
-    console.log('Payment ID:', paymentId);
-    console.log('Order ID:', orderId);
-    console.log("status//////" + paymentStatus);
 
     // Fetch the order using orderId and populate necessary fields
     const order = await Order.findById(orderId) // Use findById to correctly fetch the order by ObjectId
       .populate('user') // Populate user details if needed
       .populate('orderedItems.product'); // Populate product details if needed
 
-    // console.log("/////////////order", order);
-
     if (!order || order === null) {
       console.error('Order not found for orderId:', orderId);
       return res.status(400).json({ success: false, message: 'Order not found' });
     }
 
-    if (req.body.paymentStatus === 'success') {
+    if (paymentStatus === 'success') {
       order.paymentStatus = 'Completed';
       order.paymentId = paymentId;
       await order.save();
@@ -91,41 +86,37 @@ const razorpaySuccess = async (req, res) => {
         { new: true }
       );
 
-      
-      const {orderedItems} = order;
+      const { orderedItems } = order;
 
-      // console.log('Ordered Items:', orderedItems); 
+      console.log('Ordered Items///////////:', orderedItems); 
 
-      const updateOperations =  orderedItems.map(item => {
-        // console.log('Item:', item);
-        const filter = {
-          _id: item.product._id,
-          'sizes.size': item.size
-        };
+      const variantIds = orderedItems.map(item => item.product.variant);
 
-        // console.log('Filter for product update:', filter);
+      console.log('Variants/////////////////:', variantIds);
+
+      const variantsData = await Variant.find({ _id: { $in: variantIds } });
+
+      console.log('Variants:', variantsData);
+
+      const updateOperations = orderedItems.map(item => {
+        const variantId = item.product.variant;
+        const quantityToReduce = item.quantity;
+
         return {
           updateOne: {
-            filter: filter,
-            update: {
-              $inc: { 'sizes.$.quantity': -item.quantity }
-            }
+            filter: { _id: variantId },
+            update: { $inc: { quantity: -quantityToReduce } }
           }
         };
       });
 
-      console.log('Update Operations:', updateOperations);
-      console.log('Update Operations:', updateOperations);
+      console.log('Update Operations:', JSON.stringify(updateOperations));
 
-
-
-      const result = await Product.bulkWrite(updateOperations);
-      // console.log('BulkWrite result:', result);
+      const result = await Variant.bulkWrite(updateOperations);
+      console.log('BulkWrite result:', result);
 
       return res.json({ success: true, orderId: order._id });
-    } 
-    
-    else {
+    } else {
       return res.status(400).json({ success: false, message: 'Payment failed' });
     }
 
@@ -134,8 +125,6 @@ const razorpaySuccess = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 };
-
-  
 
 /////////////////////////////////////////////////////////////////////////////
 
