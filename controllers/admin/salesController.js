@@ -170,8 +170,8 @@ const downloadSalesPDF = async (req, res) => {
       end.setHours(23, 59, 59, 999);
 
 
-      console.log('Start Date:', start);
-      console.log('End Date:', end);
+    //   console.log('Start Date:', start);
+    //   console.log('End Date:', end);
 
       const orders = await Order.find({
           createdAt: { $gte: start, $lte: end }
