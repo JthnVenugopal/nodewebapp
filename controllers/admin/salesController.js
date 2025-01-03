@@ -179,9 +179,6 @@ const downloadSalesPDF = async (req, res) => {
 
       console.log('Orders:///////////', orders);
       
-   
-
-
       await generatePDF(res, orders, dateFilter, start, end);
 
   } catch (error) {
