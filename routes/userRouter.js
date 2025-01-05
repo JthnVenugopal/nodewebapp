@@ -82,12 +82,13 @@ router.post("/addAddress2",userIsAuthenticated,checkoutController.postAddAddress
 router.get("/orderDetails",orderController.getOrderDetails);
 router.post("/cancelOrder",orderController.cancelOrder);
 router.get('/orderConfirmed', userIsAuthenticated, checkoutController.getOrderConfirmed);
+router.get('/single-order-details/:orderId',userIsAuthenticated,orderController.getSingleOrderDetails);
+router.get('/download-invoice/:orderId', userIsAuthenticated, orderController.downloadInvoice);
 
 //wishlist management------------------------------------------------------------
 router.post('/add-to-wishlist', userIsAuthenticated,wishlistController.addToWishlist);
 router.get("/wishlist", userIsAuthenticated, wishlistController.loadWishlist);
 router.post('/remove-from-wishlist', userIsAuthenticated, wishlistController.removeFromWishlist);
-
 
 // payment management------------------------------------------------------------
 router.get('/razorpay', userIsAuthenticated, paymentController.getRazorpay);

@@ -141,6 +141,12 @@
                         <button class="btn btn-danger btn-sm" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
                     <% } %>
                 </div>
+
+                <div class="text-center mt-3">
+                    <a href="/single-order-details/<%= order._id %>">View Order details</a>
+                </div>
+
+                
             </div>
         <% }) %>
     </div>

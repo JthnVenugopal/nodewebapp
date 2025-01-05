@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to bottom, #fffbdcd9, #fbfed097);
+        }
+
+        .order-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .order-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            background-color: white;
+        }
+
+        .order-card img {
+            border-radius: 10px;
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .summary-table,
+        .address-table {
+            width: 100%;
+        }
+
+        .summary-table th,
+        .summary-table td,
+        .address-table th,
+        .address-table td {
+            vertical-align: middle;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .card-header {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include("../../views/partials/user/header") %>
+
+    <div class="container p-5">
+        <h1 class="text-center mb-5 text-center">Order Details</h1>
+
+        <!-- Product Details Section -->
+        <div class="order-container">
+            <% order.forEach(function(item) { %>
+                <div class="order-card">
+                    <h4 class="card-title"><%= item.product.productName %></h4>
+                    <table class="summary-table">
+                        <tbody>
+                            <tr>
+                                <th>Quantity</th>
+                                <td><%= item.quantity %></td>
+                            </tr>
+                            <br>
+                            <tr>
+                                <th>Price per Item</th>
+                                <td>₹<%= item.price %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            <% }); %>
+        </div>
+
+        <!-- Product Images Section -->
+        <div class="order-container">
+            <% variants.forEach(function(variant) { %>
+                <div class="order-card">
+                    <img src="/uploads/re-image/<%= variant.productImages[0] %>" alt="Product Image" data-toggle="modal" data-target="#imageModal" style="object-fit: contain;">
+                </div>
+            <% }); %>
+        </div>
+
+        <!-- Image Modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <img id="modalImage" src="" alt="Product Image" style="object-fit: contain; width: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary Section -->
+        <div class="order-card my-3 p-5">
+            <div class=" my-2" data-toggle="collapse" data-target="#orderSummary">
+                <h4 class="card-title text-center my-2">Order Summary</h4>
+            </div>
+            <div id="orderSummary" class="collapse show">
+                <table class="summary-table">
+                    <tbody>
+                        <tr>
+                            <th>Order ID</th>
+                            <td><%= orderData.orderId %></td>
+                        </tr>
+                        <tr>
+                            <th>Order Status</th>
+                            <td><%= orderData.status %></td>
+                        </tr>
+                        <tr>
+                            <th>Payment Method</th>
+                            <td><%= orderData.paymentMethod %></td>
+                        </tr>
+                        <tr>
+                            <th>Payment Status</th>
+                            <td><%= orderData.paymentStatus %></td>
+                        </tr>
+                        <tr>
+                            <th>Total Price</th>
+                            <td>₹ <%= orderData.totalPrice %></td>
+                        </tr>
+                        <tr>
+                            <th>Discount</th>
+                            <td>₹ <%= orderData.discount %></td>
+                        </tr>
+                        <tr>
+                            <th>Final Amount</th>
+                            <td class="text-success">₹ <%= orderData.finalAmount %></td>
+                        </tr>
+                        <tr>
+                            <th>Order Created At</th>
+                            <td><%= new Date(orderData.createdAt).toLocaleString() %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Shipping Address Section -->
+        <div class="order-card p-5">
+            <div class=" my-2" data-toggle="collapse" data-target="#shippingAddress">
+                <h4 class="card-title text-center my-2">Shipping Address</h4>
+            </div>
+            <div id="shippingAddress" class="collapse show">
+                <table class="address-table">
+                    <tbody>
+                        <tr>
+                            <th>House</th>
+                            <td><%= orderData.address.house %></td>
+                        </tr>
+                        <tr>
+                            <th>Place</th>
+                            <td><%= orderData.address.place %></td>
+                        </tr>
+                        <tr>
+                            <th>City</th>
+                            <td><%= orderData.address.city %></td>
+                        </tr>
+                        <tr>
+                            <th>State</th>
+                            <td><%= orderData.address.state %></td>
+                        </tr>
+                        <tr>
+                            <th>Landmark</th>
+                            <td><%= orderData.address.landMark %></td>
+                        </tr>
+                        <tr>
+                            <th>PIN</th>
+                            <td><%= orderData.address.pin %></td>
+                        </tr>
+                        <tr>
+                            <th>Contact No</th>
+                            <td><%= orderData.address.contactNo %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Download Invoice Button -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary" onclick="downloadInvoice('<%= orderData.orderId %>')">Download Invoice</button>
+        </div>
+    </div>
+
+    <%- include("../../views/partials/user/footer") %>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Show modal with image
+            $('img[data-toggle="modal"]').on('click', function () {
+                var src = $(this).attr('src');
+                $('#modalImage').attr('src', src);
+            });
+        });
+
+        function downloadInvoice(orderId) {
+            // URL of the invoice file
+            const invoiceUrl = `/download-invoice/${orderId}`;
+
+            // Creating an anchor element to trigger the download
+            const link = document.createElement('a');
+            link.href = invoiceUrl;
+            link.download = 'invoice.pdf'; // The name of the downloaded file
+
+            // Append the anchor element to the body
+            document.body.appendChild(link);
+
+            // Trigger the download
+            link.click();
+
+            // Remove the anchor element from the document
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+
+</html>

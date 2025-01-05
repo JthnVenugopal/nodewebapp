@@ -55,8 +55,8 @@
     }
 </style>
 
-<body>
-    <main class="main bg-light">
+<body class="bg-light" >
+    <main class="main bg-success">
         <!-- New Banner Section -->
         <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
@@ -150,15 +150,32 @@
 
             </div>
 
-            <div class="view-more-container my-5">
-                <a href="/shop" class="view-more-btn">View More Products</a>
+            <div class="container p-5 bg-light my-5" style="height: 30vh;">
+                
+                <div class="container">
+                    <div class="row justify-content-center">
+
+                        <div class="col-md-8 text-center">
+                            <h2 class="text-dark mt-5">Get 50% off on your first purchase</h2>
+                            <p class="text-dark mt-3">Use code <strong>NEW50</strong> at checkout</p>
+                            <a href="/shop" class="btn btn-success mt-3">Shop Now</a>
+                            </div>
+                            </div>
+
             </div>
 
+            <div class="container my-5 bg-info p-5" style="height: 30vh;">
+                <h4 class="text-center">Today Offers</h4>
+
+            </div>
+
+            
           
 
         </section>
     </main>
 </body>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <%- include("../partials/user/footer") %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
