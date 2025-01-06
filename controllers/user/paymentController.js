@@ -158,19 +158,29 @@ const razorpayFailure = async (req, res) => {
 
 ////////////////////////////////////////////////////////////////////////////
 
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_ID,
+  key_secret: process.env.RAZORPAY_SECRET_KEY
+});
+
 const retryRazorpay = async (req, res) => {
-  
   console.log('------------retryRazorpay--------------');
+
+  const user = req.session.user || req.user;
+
   const { orderId } = req.params;
 
   try {
-      const existingOrder = await Order.findOne({ orderId });
+      const existingOrder = await Order.findById( orderId );
+
+      console.log("exist order " + existingOrder);
 
       if (!existingOrder) {
           return res.status(404).send('Order not found.');
       }
 
-      if (existingOrder.paymentMethod !== 'Razorpay') {
+      if (existingOrder.paymentMethod !== 'razorpay') {
           return res.status(400).send('Payment method is not Razorpay.');
       }
 
@@ -182,13 +192,17 @@ const retryRazorpay = async (req, res) => {
               notes: { userId: existingOrder.customer, addressData: existingOrder.address }
           });
 
+          console.log(razorpayOrder)
+
           existingOrder.razorpayOrderId = razorpayOrder.id;
           existingOrder.status = 'Pending';
           await existingOrder.save();
 
           const userData = await User.findById(existingOrder.customer);
 
-          return res.redirect(`/razorpay?orderId=${existingOrder.orderId}&razorpayOrderId=${razorpayOrder.id}&razorpayKey=${process.env.RAZORPAY_ID}&finalAmount=${existingOrder.finalAmount}&userName=${userData.name}&userEmail=${userData.email}&userPhone=${userData.phone}`);
+          console.log("userData///////////////"+userData)
+
+          return res.redirect(`/razorpay?orderId=${existingOrder._id}&razorpayOrderId=${razorpayOrder.id}&razorpayKey=${process.env.RAZORPAY_ID}&finalAmount=${existingOrder.finalAmount}&userName=${user.name}&userEmail=${user .email}`);
       } catch (err) {
           console.error('Razorpay Order Creation Error:', err);
           return res.status(500).send('Failed to create Razorpay order. Please try again.');
@@ -198,6 +212,11 @@ const retryRazorpay = async (req, res) => {
       res.status(500).send('Server error occurred.');
   }
 };
+
+
+
+///////////////////////////////////////////////////////////////////////////
+
 
 module.exports = {
   razorpaySuccess,

@@ -240,7 +240,7 @@ if (!validPaymentMethods.includes(payment_option)) {
 if (payment_option === "wallet") {
   const userWallet = await Wallet.findOne({ userId: req.session.user.id }).exec();
 
-  console.log("userWallet//////////", userWallet);
+//console.log("userWallet//////////", userWallet);
   
 
   if (!userWallet || userWallet.balance < finalAmount) {

@@ -5,6 +5,7 @@ const User = require("../../models/userSchema");
 const mongoose = require('mongoose');
 const Variant = require("../../models/variantSchema");
 const Wallet = require("../../models/walletSchema");
+const Razorpay = require('razorpay');
 const bcrypt = require('bcrypt');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
@@ -209,7 +210,7 @@ const getSingleOrderDetails = async (req, res) => {
     console.log("//////////////////getSingleOrderDetails//////////////////////");
 
     const orderId = req.params.orderId;
-    console.log("orderId----------------------", orderId);
+   
 
     if (!orderId) {
       return res.status(400).render('error', { message: 'Order ID is required' });

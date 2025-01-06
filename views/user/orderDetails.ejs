@@ -105,17 +105,25 @@
                                 <td><%= order.orderId %></td> 
                                 <td>₹<%= item.price %></td> 
                                 <td><%= order.paymentMethod %></td>
-                                <td>
-                                    <p class="text-center">
-                                        <% if (order.status === "Cancelled") { %>
-                                            <span class="badge bg-warning">Refunded</span>
-                                        <% } else if (order.status === "Delivered") { %>
-                                            <span class="badge bg-success">Completed</span>
-                                        <% } else { %>
-                                            <span class="badge bg-success"><%= order.paymentStatus %></span>
-                                        <% } %>
-                                    </p>
-                                </td>
+
+
+
+ <td>
+    <p class="text-center">
+        <% if (order.status === "Cancelled") { %>
+            <span class="badge bg-warning">Refunded</span>
+        <% } else if (order.status === "Delivered") { %>
+            <span class="badge bg-success">Completed</span>
+        <% } else if (order.paymentStatus === "Not Applicable") { %>
+            <span class="badge bg-danger">Pending</span>
+        <% } else { %>
+            <span class="badge bg-success"><%= order.paymentStatus %></span>
+        <% } %>
+    </p>
+</td>
+
+
+
                                 <td>
                                     <p class="text-center">
                                         <% if (order.status === "Cancelled") { %>
@@ -132,19 +140,16 @@
                     </tbody>
                 </table>           
 
-                <%//onsole.log("Order data ---- " +JSON.stringify(order)) %>
-
-              
-
                 <div class="mx-5 d-flex justify-content-center">
                     <% if (order.status === "Cancelled") { %> 
                         <span class="text-muted">Order Cancelled</span>
                     <% } else if (order.status === "Delivered") { %>
                         <span class="text-muted">Order Delivered</span>
 
-                        <% } else if(order.paymentStatus ==="Not Applicable"){ %>
+                     <% }else if(order.paymentStatus ==="Not Applicable"){ %>
 
-                            <button class="btn btn-warning btn-sm" >Retry payment</button>
+
+                        <p style="display: none"></p>
 
                     <% } else { %> 
                         <button class="btn btn-danger btn-sm" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>

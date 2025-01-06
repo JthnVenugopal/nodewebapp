@@ -1,7 +1,7 @@
 <%- include("../../views/partials/user/header") %>
 
 <div class="container my-5 ">
-    <h2 class="text-center mb-4">Razorpay Payment</h2>
+    <h2 class="text-center my-5 ">Razorpay Payment</h2>
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
@@ -20,6 +20,8 @@
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 <script>
     const options = {
         key: '<%= razorpayKey %>',

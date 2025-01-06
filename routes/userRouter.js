@@ -85,6 +85,7 @@ router.get('/orderConfirmed', userIsAuthenticated, checkoutController.getOrderCo
 router.get('/single-order-details/:orderId',userIsAuthenticated,orderController.getSingleOrderDetails);
 router.get('/download-invoice/:orderId', userIsAuthenticated, orderController.downloadInvoice);
 
+
 //wishlist management------------------------------------------------------------
 router.post('/add-to-wishlist', userIsAuthenticated,wishlistController.addToWishlist);
 router.get("/wishlist", userIsAuthenticated, wishlistController.loadWishlist);
@@ -95,6 +96,7 @@ router.get('/razorpay', userIsAuthenticated, paymentController.getRazorpay);
 router.post('/paymentSuccess', userIsAuthenticated, paymentController.razorpaySuccess);
 router.post('/paymentFailed', userIsAuthenticated, paymentController.razorpayFailure);
 router.get('/retry-payment/:orderId', userIsAuthenticated, paymentController.retryRazorpay);
+
 
 //wallet management-------------------------------------------------------------
 router.get('/wallet', userIsAuthenticated, walletController.getWalletPage)

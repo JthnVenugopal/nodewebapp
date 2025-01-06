@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,14 +10,12 @@
         body {
             background: linear-gradient(to bottom, #fffbdcd9, #fbfed097);
         }
-
         .order-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-bottom: 20px;
         }
-
         .order-card {
             border: none;
             border-radius: 10px;
@@ -26,7 +23,6 @@
             padding: 15px;
             background-color: white;
         }
-
         .order-card img {
             border-radius: 10px;
             height: 200px;
@@ -34,54 +30,44 @@
             width: 100%;
             cursor: pointer;
         }
-
-        .summary-table,
-        .address-table {
+        .summary-table, .address-table {
             width: 100%;
         }
-
-        .summary-table th,
-        .summary-table td,
-        .address-table th,
-        .address-table td {
+        .summary-table th, .summary-table td, .address-table th, .address-table td {
             vertical-align: middle;
         }
-
         .btn-primary {
             background: #007bff;
             border: none;
             border-radius: 30px;
             padding: 10px 20px;
         }
-
         .btn-primary:hover {
             background: #0056b3;
         }
-
         .card-header {
             cursor: pointer;
         }
     </style>
 </head>
-
 <body>
     <%- include("../../views/partials/user/header") %>
-
     <div class="container p-5">
-        <h1 class="text-center mb-5 text-center">Order Details</h1>
+        <h1 class="text-center mb-5">Order Details</h1>
 
+        <%//onsole.log("Order data-----------------"+order) %>
+        
         <!-- Product Details Section -->
         <div class="order-container">
             <% order.forEach(function(item) { %>
                 <div class="order-card">
-                    <h4 class="card-title"><%= item.product.productName %></h4>
+                    <h4 class="card-title text-center"><%= item.product.productName %></h4>
                     <table class="summary-table">
                         <tbody>
                             <tr>
                                 <th>Quantity</th>
                                 <td><%= item.quantity %></td>
                             </tr>
-                            <br>
                             <tr>
                                 <th>Price per Item</th>
                                 <td>₹<%= item.price %></td>
@@ -114,7 +100,7 @@
 
         <!-- Order Summary Section -->
         <div class="order-card my-3 p-5">
-            <div class=" my-2" data-toggle="collapse" data-target="#orderSummary">
+            <div class="my-2" data-toggle="collapse" data-target="#orderSummary">
                 <h4 class="card-title text-center my-2">Order Summary</h4>
             </div>
             <div id="orderSummary" class="collapse show">
@@ -138,15 +124,15 @@
                         </tr>
                         <tr>
                             <th>Total Price</th>
-                            <td>₹ <%= orderData.totalPrice %></td>
+                            <td>₹<%= orderData.totalPrice %></td>
                         </tr>
                         <tr>
                             <th>Discount</th>
-                            <td>₹ <%= orderData.discount %></td>
+                            <td>₹<%= orderData.discount %></td>
                         </tr>
                         <tr>
                             <th>Final Amount</th>
-                            <td class="text-success">₹ <%= orderData.finalAmount %></td>
+                            <td class="text-success">₹<%= orderData.finalAmount %></td>
                         </tr>
                         <tr>
                             <th>Order Created At</th>
@@ -159,7 +145,7 @@
 
         <!-- Shipping Address Section -->
         <div class="order-card p-5">
-            <div class=" my-2" data-toggle="collapse" data-target="#shippingAddress">
+            <div class="my-2" data-toggle="collapse" data-target="#shippingAddress">
                 <h4 class="card-title text-center my-2">Shipping Address</h4>
             </div>
             <div id="shippingAddress" class="collapse show">
@@ -198,14 +184,26 @@
             </div>
         </div>
 
-        <!-- Download Invoice Button -->
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary" onclick="downloadInvoice('<%= orderData.orderId %>')">Download Invoice</button>
-        </div>
+        <% if(orderData.paymentStatus === "Not Applicable"){ %>
+            <div>
+                <p class="text-center text-danger mt-5">Your payment failed</p>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="/retry-payment/<%=orderId %>" >     
+                <button type="button" class="btn btn-warning"  >Retry Payment</button>
+            </div>
+
+        <% } else { %>
+            <div class="text-center mt-4">
+                <button type="button" class="btn btn-primary" onclick="downloadInvoice('<%= orderData.orderId %>')">Download Invoice</button>
+            </div>
+        <% } %>
+
+
     </div>
-
     <%- include("../../views/partials/user/footer") %>
-
+    
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
@@ -222,22 +220,23 @@
         function downloadInvoice(orderId) {
             // URL of the invoice file
             const invoiceUrl = `/download-invoice/${orderId}`;
-
             // Creating an anchor element to trigger the download
             const link = document.createElement('a');
             link.href = invoiceUrl;
             link.download = 'invoice.pdf'; // The name of the downloaded file
-
             // Append the anchor element to the body
             document.body.appendChild(link);
-
             // Trigger the download
             link.click();
-
             // Remove the anchor element from the document
             document.body.removeChild(link);
         }
-    </script>
-</body>
 
+    </script>
+
+
+
+
+
+</body>
 </html>
