@@ -309,28 +309,47 @@
             console.log(`User clicked on radio button with ID: ${addressId}`);
         });
     });
-
+    
     $(document).ready(function() {
-        $('#orderForm').submit(function(event) {
-            const selectedAddress = $('input[name="selectedAddress"]:checked').val();
-            if (!selectedAddress) {
-                event.preventDefault();
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'No address selected',
-                    text: 'Please select an address before placing the order.',
-                    confirmButtonText: 'OK'
-                });
-                return;
-            }
-            $('#selectedAddressId').val(selectedAddress);
-        });
+    $('#orderForm').submit(function(event) {
+        const selectedAddress = $('input[name="selectedAddress"]:checked').val();
+        if (!selectedAddress) {
+            event.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'No address selected',
+                text: 'Please select an address before placing the order.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
 
-        $(document).on('submit', '#orderForm', function() {
-            $('#orderLoader').show();
-        });
+        const paymentOption = $('input[name="payment_option"]:checked').val();
+        const finalAmount = parseFloat($('#finalAmount').text().replace(/[^0-9.-]+/g, ""));
+        if (paymentOption === 'COD' && finalAmount > 1000) {
+            event.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'COD Not Available',
+                text: 'Cash on Delivery is not available for orders above ₹1000.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        $('#selectedAddressId').val(selectedAddress);
     });
+
+    $(document).on('submit', '#orderForm', function() {
+        $('#orderLoader').show();
+    });
+});
+
 </script>
+
+
+
+
 
 <!-- Handle Modal Address Form Submission Script -->
 <script>

@@ -132,11 +132,20 @@
                     </tbody>
                 </table>           
 
+                <%//onsole.log("Order data ---- " +JSON.stringify(order)) %>
+
+              
+
                 <div class="mx-5 d-flex justify-content-center">
                     <% if (order.status === "Cancelled") { %> 
                         <span class="text-muted">Order Cancelled</span>
                     <% } else if (order.status === "Delivered") { %>
                         <span class="text-muted">Order Delivered</span>
+
+                        <% } else if(order.paymentStatus ==="Not Applicable"){ %>
+
+                            <button class="btn btn-warning btn-sm" >Retry payment</button>
+
                     <% } else { %> 
                         <button class="btn btn-danger btn-sm" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
                     <% } %>

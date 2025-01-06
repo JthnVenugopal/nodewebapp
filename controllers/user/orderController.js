@@ -306,6 +306,11 @@ const calculateEstimatedDeliveryDate = (createdAt) => {
                 select: 'productName regularPrice salePrice',
             });
 
+            console.log("orderDetails/////////////////"+orderDetails);
+
+            console.log("orderDetails/////////////////"+orderDetails);
+
+
         if (!userData) return res.redirect('/login');
 
         const order = userData.orderHistory.find(o => o.orderId === orderId);
@@ -434,6 +439,8 @@ const calculateEstimatedDeliveryDate = (createdAt) => {
             console.error('Stream Error:', err);
             res.status(500).send('Failed to generate invoice');
         });
+
+        console.log("Invoice downloaded//////////////////");
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');

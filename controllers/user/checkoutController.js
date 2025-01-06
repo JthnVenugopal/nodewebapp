@@ -77,70 +77,6 @@ const getCheckout = async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////
 
-// const applyCoupon = async (req, res) => {
-//   try {
-
-//     // console.log("req.query////////////////////////", req.query);
-
-//     console.log("applyCoupon////////////////////////");
-    
-//     const couponCode = req.query.code;
-//     const pdtPrice = parseFloat(req.query.price);
-
-//     // console.log("couponCode-"+couponCode);
-    
-
-//     if (!couponCode) {
-//       return res.status(400).json({ success: false, message: 'Coupon code is required' });
-//     }
-
-//     // Fetch the coupon from the database
-//     const coupon = await Coupon.findOne({ code: couponCode });
-
-//     // console.log("coupon////////////////////////", coupon);
-    
-
-//     if (!coupon) {
-//       return res.status(404).json({ success: false, message: 'Invalid coupon code' });
-//     }
-
-//     if (pdtPrice < coupon.minPurchaseAmount) {
-//       return res.status(400).json({ success: false, message: `Minimum purchase amount of ${coupon.minPurchaseAmount} not reached` });
-//     }
-
-//     // Validate coupon status
-//     if (coupon.status !== 'Active') {
-//       return res.status(400).json({ success: false, message: 'Coupon is not active' });
-//     }
-
-//     // Validate coupon usage limit
-//     if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
-//       return res.status(400).json({ success: false, message: 'Coupon usage limit reached' });
-//     }
-
-//     // Validate coupon date range
-//     const currentDate = new Date();
-//     if (currentDate < coupon.startDate || currentDate > coupon.endDate) {
-//       return res.status(400).json({ success: false, message: 'Coupon is not valid at this time' });
-//     }
-
-//     // Assuming the coupon has a discount field that holds the discount value
-//     const discount = coupon.discountValue;
-
-//     // Perform any additional validation or business logic here
-
-//     // Increment the used count if coupon is valid
-//     coupon.usedCount += 1;
-//     await coupon.save();
-
-//     return res.status(200).json({ success: true, discount, message: 'Coupon applied successfully' });
-//   } catch (error) {
-//     console.error('Error applying coupon:', error);
-//     return res.status(500).json({ success: false, message: 'Server error' });
-//   }
-// };
-
-
 const applyCoupon = async (req, res) => {
   try {
     console.log("applyCoupon////////////////////////");
@@ -286,6 +222,8 @@ const placeOrder = async (req, res) => {
 
     const finalAmount = totalPrice - discount;
 
+    console.log("final amt //////////"+finalAmount)
+
     let orderedItems = cart.items.map(item => ({
       product: item.productId._id,
       quantity: item.quantity,
@@ -321,6 +259,13 @@ if (payment_option === "wallet") {
 
   await userWallet.save();
 }
+
+
+ // Check if COD is available for the final amount
+ if (finalAmount > 1000 && payment_option === "COD") {
+  return res.json({ message: "COD not available for Orders above 1000 price" });
+}
+
 
     const newOrder = new Order({
       orderedItems,
