@@ -387,6 +387,211 @@ const getOrderConfirmed = (req, res) => {
   });
 };
 
+//////////////////////////////////////////////////////////////////////////
+
+const getEditAddressCheckout = async (req, res) => {
+
+  console.log("getEditAddressCheckout////////////////////////////")
+
+  try {
+
+    const user = req.session.user || req.user;
+    const userId = user.id;
+   
+    //console.log("req//////////"+req.query)
+    
+    const  address  = {...req.query};
+    //console.log(address)
+
+    const addressId = Object.keys(address)[0];
+
+    //console.log(addressId)
+
+    const userAddressData = await Address.findOne({ userId }).populate('address')
+    //console.log("userAddressData//////////"+userAddressData)
+    
+    const specificAddress = userAddressData.address.find(addr => addr._id.toString() === addressId);
+    if (!specificAddress) {
+      return res.status(404).json({ message: 'Address not found' });
+    }
+    //console.log("selectedAddress//////////"+specificAddress)
+    
+  
+    res.render('edit-address-checkout' ,{
+      address: specificAddress,
+      user,
+    })
+    
+
+    
+
+  } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+  }
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+// const postNewAddressCheckout = async (req,res) => {
+
+//   try {
+
+//     console.log("postNewAddressCheckout////////////////////");
+
+//       console.log(req.body)
+
+//       const {addressType,name,city,landMark,state,pincode,phone,altPhone} = req.body
+
+     
+
+//       const newAddress = {
+//         addressType,
+//         name,
+//         city,
+//         landMark,
+//         state,
+//         pincode,
+//         phone,
+//         altPhone
+        
+//       };
+
+//       const user = req.session.user || req.user;
+//       //console.log(req.query)
+      
+//       const userId = user.id;
+//       const addressId = req.query.id
+//       //console.log(addressId);
+
+//       const userAddressData = await Address.findOne({ userId }).populate('address')
+//       //console.log("userAddress//////////"+userAddressData)
+
+//       const specificAddress = userAddressData.address.find(addr => addr._id.toString() === addressId);
+//     if (!specificAddress) {
+//       return res.status(404).json({ message: 'Address not found' });
+//     }
+//     //console.log("selectedAddress//////////"+specificAddress)
+      
+//       if (!userAddressData) {
+        
+//         userAddressData = new Address({
+//           userId,
+//           address: [newAddress]
+//         });
+//       } else {
+        
+//         userAddressData.address.push(newAddress);
+//       }
+
+//       await userAddressData.save();
+
+
+      
+//   } catch (error) {
+    
+//   }
+
+// }
+
+// const postNewAddressCheckout = async (req, res) => {
+//   try {
+//     console.log("postNewAddressCheckout////////////////////");
+//     console.log(req.body);
+
+//     // Extract address details from the request body
+//     const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body;
+
+//     // Extract user information
+//     const user = req.session.user || req.user;
+//     const userId = user.id;
+//     const addressId = req.query.id;
+
+//     // Find the user's address data
+//     const userAddressData = await Address.findOne({ userId }).populate('address');
+
+//     if (!userAddressData) {
+//       return res.status(404).json({ message: 'User address data not found' });
+//     }
+
+//     // Find the specific address to update
+//     const specificAddress = userAddressData.address.find(addr => addr._id.toString() === addressId);
+//     if (!specificAddress) {
+//       return res.status(404).json({ message: 'Address not found' });
+//     }
+
+//     // Update the specific address with the new details
+//     specificAddress.addressType = addressType;
+//     specificAddress.name = name;
+//     specificAddress.city = city;
+//     specificAddress.landMark = landMark;
+//     specificAddress.state = state;
+//     specificAddress.pincode = pincode;
+//     specificAddress.phone = phone;
+//     specificAddress.altPhone = altPhone;
+
+//     // Save the updated address data
+//     await userAddressData.save();
+
+//     // Respond with the updated address
+//     res.status(200).json({ message: 'Address updated successfully', address: specificAddress });
+
+    
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'An error occurred while updating the address' });
+//   }
+// };
+
+const postNewAddressCheckout = async (req, res) => {
+  try {
+    console.log("postNewAddressCheckout////////////////////");
+    console.log(req.body);
+
+    // Extract address details from the request body
+    const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body;
+
+    // Extract user information
+    const user = req.session.user || req.user;
+    const userId = user.id;
+    const addressId = req.query.id;
+
+    // Find the user's address data
+    const userAddressData = await Address.findOne({ userId }).populate('address');
+
+    if (!userAddressData) {
+      return res.status(404).json({ message: 'User address data not found' });
+    }
+
+    // Find the specific address to update
+    const specificAddress = userAddressData.address.find(addr => addr._id.toString() === addressId);
+    if (!specificAddress) {
+      return res.status(404).json({ message: 'Address not found' });
+    }
+
+    // Update the specific address with the new details
+    specificAddress.addressType = addressType;
+    specificAddress.name = name;
+    specificAddress.city = city;
+    specificAddress.landMark = landMark;
+    specificAddress.state = state;
+    specificAddress.pincode = pincode;
+    specificAddress.phone = phone;
+    specificAddress.altPhone = altPhone;
+
+    // Save the updated address data
+    await userAddressData.save();
+
+    // Respond with a success message
+    res.status(200).json({ success: true, message: 'Address updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while updating the address' });
+  }
+};
+
+//////////////////////////////////////////////////////////////////////////
+
 module.exports = {
   getCheckout,
   placeOrder,
@@ -394,6 +599,7 @@ module.exports = {
   getOrderConfirmed,
   applyCoupon,
   removeCoupon,
-
+  getEditAddressCheckout,
+  postNewAddressCheckout,
 
 }

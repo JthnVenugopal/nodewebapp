@@ -77,6 +77,8 @@ router.post('/cart/update/:id', cartController.updateCartItem);
 router.get("/checkout",userIsAuthenticated,checkoutController.getCheckout);
 router.post("/placeOrder",checkoutController.placeOrder);
 router.post("/addAddress2",userIsAuthenticated,checkoutController.postAddAddress);
+router.get("/edit-address-checkout", userIsAuthenticated, checkoutController.getEditAddressCheckout);
+router.post("/post-newAddress-checkout", userIsAuthenticated, checkoutController.postNewAddressCheckout)
 
 //order management--------------------------------------------------------------
 router.get("/orderDetails",orderController.getOrderDetails);

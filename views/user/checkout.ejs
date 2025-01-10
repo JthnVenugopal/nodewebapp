@@ -39,9 +39,9 @@
 </style>
 
 <body>
-<div class="container my-5">
-    <div class="row">
-        <div class="col-md-7">
+<div class="container my-5 ">
+    <div class="row ">
+        <div class="col-md-12">
             <% if (cart && cart.items.length > 0) { %>
                 <div class="card shadow-sm">
                     <div class="card-body p-0">
@@ -105,13 +105,24 @@
                 </div>
             <% } %>
         </div>
-        <div class="col-md-5">
+
+        <div class="col-md-12 ">
+
+            
+
+
             <!-- Displaying Addresses -->
-            <div id="addresses-container">
+            <div id="addresses-container  " class="d-flex">
+
+                
+
                 <% addresses.forEach((address, index) => { %>
                     <% address.address.forEach((addr, addrIndex) => { %>
-                        <div class="card address-box mb-3 shadow-sm">
-                            <div class="card-body">
+
+
+
+                        <div class="card address-box my-3 mx-1 shadow-md w-50">
+                            <div class="card-body d-flex " style="flex-direction: column; align-items: center;">
                                 <input type="radio" name="selectedAddress" id="address-<%= index %>-<%= addrIndex %>" value="<%= addr._id %>" class="address-radio me-2">
                                 <label class="address-label" for="address-<%= index %>-<%= addrIndex %>">
                                     <div class="address-type-badge badge <%= addr.addressType.toLowerCase() === 'home' ? 'badge-primary' : 'badge-secondary' %>">
@@ -138,11 +149,30 @@
                                         </div>
                                     </div>
                                 </label>
+
+
+
+                               
+                                
+                               
+
+                                  <div class="mt-5" style="display: flex; justify-content: center;">
+                                    <a href="/edit-address-checkout?<%= addr._id %>"
+                                     class="btn-small-edit">Edit</a>
+                                </div>
+                                  
+ 
+                                
+
                             </div>
+                          
                         </div>
                     <% }); %>
                 <% }); %>
+         
             </div>
+
+
             <div class="text-center mt-4">
                 <button style="font-size: 12px;" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
                     Add New Address
@@ -150,45 +180,48 @@
             </div>
         </div>
     </div>
+    
 
-    <!-- Order Form -->
-    <div class="row">
-        <div class="col-md-12 d-flex justify-content-start">
-            <div class="card shadow-sm" style="max-width: 400px; width: 100%;">
-                <div class="card-body d-flex justify-content-center align-items-center">
-                    <form id="orderForm" method="POST" action="/placeOrder">
-                        <!-- RazorPay Option -->
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="radio" name="payment_option" id="razorpay" value="razorpay" required>
-                            <label class="form-check-label" for="razorpay">RazorPay</label>
-                        </div>
-                        <!-- Cash on Delivery Option -->
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="radio" name="payment_option" id="paymentCOD" value="COD" required>
-                            <label class="form-check-label" for="paymentCOD">Cash on Delivery</label>
-                        </div>
-                        <!-- Wallet Option -->
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="radio" name="payment_option" id="wallet" value="wallet" required>
-                            <label class="form-check-label" for="wallet">Wallet</label>
-                        </div>
-
-                        <!-- Hidden Fields -->
-                        <input type="hidden" name="orderId" id="orderId">
-                        <input type="hidden" name="razorpayOrderId" id="razorpayOrderId">
-                        <input type="hidden" name="razorpayKey" id="razorpayKey">
-                        <input type="hidden" name="finalAmount" id="finalAmount">
-                        <input type="hidden" name="userName" id="userName">
-                        <input type="hidden" name="userEmail" id="userEmail">
-                        <input type="hidden" name="userPhone" id="userPhone">
-                        <input type="hidden" id="selectedAddressId" name="addressId">
-                        <input type="hidden" id="appliedCouponCode" name="appliedCouponCode">
-                        <button type="submit" class="btn btn-success btn-small">Place Order</button>
-                    </form>
-                </div>
+    <div class="row col-md-12 mx-auto my-5 d-flex justify-content-center">
+        <div>
+            <div class="border rounded p-4 bg-white shadow-sm" style="max-width: 1000px; width: 100%;">
+                <h3 class="text-center text-dark mb-4">Payment Options</h3>
+                <form id="orderForm" method="POST" action="/placeOrder">
+                    <!-- RazorPay Option -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="payment_option" id="razorpay" value="razorpay" required>
+                        <label class="form-check-label" for="razorpay">RazorPay</label>
+                    </div>
+                    <!-- Cash on Delivery Option -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="payment_option" id="paymentCOD" value="COD" required>
+                        <label class="form-check-label" for="paymentCOD">Cash on Delivery</label>
+                    </div>
+                    <!-- Wallet Option -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="payment_option" id="wallet" value="wallet" required>
+                        <label class="form-check-label" for="wallet">Wallet</label>
+                    </div>
+    
+                    <!-- Hidden Fields -->
+                    <input type="hidden" name="orderId" id="orderId">
+                    <input type="hidden" name="razorpayOrderId" id="razorpayOrderId">
+                    <input type="hidden" name="razorpayKey" id="razorpayKey">
+                    <input type="hidden" name="finalAmount" id="finalAmount">
+                    <input type="hidden" name="userName" id="userName">
+                    <input type="hidden" name="userEmail" id="userEmail">
+                    <input type="hidden" name="userPhone" id="userPhone">
+                    <input type="hidden" id="selectedAddressId" name="addressId">
+                    <input type="hidden" id="appliedCouponCode" name="appliedCouponCode">
+    
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm">Place Order</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+    
 
 
 
@@ -245,6 +278,8 @@
         </div>
     </div>
 </div>
+
+
 
 <!-- Include SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
