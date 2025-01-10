@@ -11,6 +11,8 @@ const Wishlist = require("../../models/wishlistSchema")
 const getCart = async (req, res) => {
   try {
 
+    console.log("getCart//////////////////////////");
+    
     const user = req.session.user || req.user;
 
     const userId = req.session.user.id || req.user;
@@ -29,6 +31,23 @@ const getCart = async (req, res) => {
         },
       })
       .populate('items.variantId');
+
+      //console.log("Cart////////////"+cart)
+
+      const {items} = cart;
+
+      console.log("items////////"+items)
+      
+
+      const cartQuantityMap = items.map((item) => {
+        return item.quantity
+      })
+      console.log(req.session)
+      const cartQuantity = cartQuantityMap[0]
+
+      req.session.cart.quantity = cartQuantity;
+
+      //console.log("sessionCart/////"+req.session.cart.quantity)
 
     if (!cart) {
       return res.render('cart', {
@@ -64,11 +83,13 @@ const addToCart = async (req, res) => {
     const { variantId, productId, quantity, size, price, wishlistItemId } = req.body;
     const parsedQuantity = parseInt(quantity);
 
+    
+
     console.log("variantId//////////" + variantId);
     console.log("productId//////////" + productId);
     console.log("wishlistId//////////" + wishlistItemId);
 
-    // Find the variant and product
+    
     const variant = await Variant.findById(variantId);
     const product = await Product.findById(productId);
 
@@ -76,9 +97,9 @@ const addToCart = async (req, res) => {
       return res.status(404).send('Variant or Product not found');
     }
 
-    // Remove item from Wishlist
+    
     if (wishlistItemId) {
-      const wishlistItem = await Wishlist.findByIdAndDelete(wishlistItemId); // Delete the item by wishlistItemId
+      const wishlistItem = await Wishlist.findByIdAndDelete(wishlistItemId);
       if (wishlistItem) {
         console.log("Item removed from Wishlist using wishlistItemId:", wishlistItemId);
       } else {
@@ -86,27 +107,27 @@ const addToCart = async (req, res) => {
       }
     }
 
-    // Find the user's cart
+   
     let cart = await Cart.findOne({ userId: user })
       .populate('items.productId')
       .populate('items.variantId');
 
-    console.log("cart///////Data" + cart);
+    //console.log("cart///////Data" + cart);
 
-    // If the cart doesn't exist, create a new one
+   
     if (!cart) {
       cart = new Cart({ userId: user, items: [] });
     }
 
-    console.log("CART:", cart.items);
+    //console.log("CART:", cart.items);
 
-    // Function to update existing item
+   
     const updateExistingItem = (index) => {
       cart.items[index].quantity += parsedQuantity;
-      cart.items[index].totalPrice = cart.items[index].quantity * price; // Update total price
+      cart.items[index].totalPrice = cart.items[index].quantity * price; 
     };
 
-    // Function to add new item
+   
     const addNewItem = () => {
       cart.items.push({
         productId: productId,
@@ -118,7 +139,7 @@ const addToCart = async (req, res) => {
       });
     };
 
-    // Check if the item already exists in the cart
+   
     const existingItemIndex = cart.items.findIndex(item =>
       item.productId._id.toString() === productId.toString() &&
       item.variantId._id.toString() === variantId.toString()
@@ -130,10 +151,10 @@ const addToCart = async (req, res) => {
       addNewItem();
     }
 
-    // Save the cart
+    
     await cart.save();
 
-    // Redirect to the cart page to prevent form resubmission
+   
     res.redirect('/cart');
   } catch (error) {
     console.error("Error adding to cart:", error);

@@ -21,13 +21,13 @@
                         <td><%= data[i].phone %></td>
                         <td>
                             <% if (data[i].isBlocked === false) { %>
-                                <button class="btn btn-danger btn-sm">
+                                <button class="btn btn-md" style="background-color: red;">
                                     <a href="/admin/blockCustomer?id=<%= data[i].id %>" class="text-white" style="text-decoration: none;">
                                         <i class="fas fa-ban"></i> Block
                                     </a>
                                 </button>
                             <% } else { %>
-                                <button class="btn btn-success btn-sm">
+                                <button class="btn btn-success btn-md">
                                     <a href="/admin/unblockCustomer?id=<%= data[i].id %>" class="text-white" style="text-decoration: none;">
                                         <i class="fas fa-check"></i> Unblock
                                     </a>

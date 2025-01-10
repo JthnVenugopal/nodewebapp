@@ -19,18 +19,15 @@ const getSalesPage = async (req, res) => {
 
         console.log("///////////////getSalesPage//////////////");
        
+        const recentSales = await Order.find({ }) 
+            .sort({ createdAt: -1 }) 
+            .select('orderId finalAmount discount couponApplied createdAt orderedItems') 
+            .populate('orderedItems.product', 'name price') 
+            .lean(); 
 
-        // Fetch only delivered orders and populate product details
-        const recentSales = await Order.find({ status: 'Delivered' }) // Adjust the field name and value as necessary
-            .sort({ createdAt: -1 }) // Use createdAt for sorting if you want the latest orders
-            .limit(10)
-            .select('orderId finalAmount discount couponApplied createdAt orderedItems') // Include orderedItems
-            .populate('orderedItems.product', 'name price') // Populate product details
-            .lean(); // Use lean() for better performance if you don't need Mongoose documents
+        console.log("recentSales////////////// : ", recentSales);
 
-        // console.log("recentSales////////////// : ", recentSales);
-
-        // console.log("orderedItems////////////// : ",JSON.stringify(recentSales[0].orderedItems))
+        console.log("orderedItems////////////// : ",JSON.stringify(recentSales[0].orderedItems))
         
         
         const totalSalesCount = recentSales.length;
@@ -72,14 +69,14 @@ const applyFilter = async (req, res) => {
 
         console.log("today//////////// : ", today);
 
-        // Set default dates if not provided
-        let filterStartDate = startDate ? new Date(startDate) : new Date(today.setDate(today.getDate() - 7)); // Default to last 7 days
+        
+        let filterStartDate = startDate ? new Date(startDate) : new Date(today.setDate(today.getDate() - 7)); 
         let filterEndDate = endDate ? new Date(endDate) : new Date(today);
 
         console.log("filterStartDate: ", filterStartDate);
         console.log("filterEndDate: ", filterEndDate);
 
-        // Validate dates
+        
         if (isNaN(filterStartDate.getTime()) || isNaN(filterEndDate.getTime())) {
             return res.status(400).send("Invalid date format");
         }
@@ -88,7 +85,7 @@ const applyFilter = async (req, res) => {
             return res.status(400).send("Start date cannot be after end date");
         }
 
-        // Create a new date object for the end date to avoid mutating the original
+        
         const endDateWithTime = new Date(filterEndDate);
         endDateWithTime.setHours(23, 59, 59, 999);
 

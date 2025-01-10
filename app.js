@@ -9,7 +9,7 @@ const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter")
 DB();
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
@@ -24,6 +24,13 @@ app.use(session({
     maxAge: 5 * 24 * 60 * 60 * 1000 // 5 days in milliseconds
   }
 }));
+
+app.use((req, res, next) => {
+  if (!req.session.cart) {
+    req.session.cart = { items: [], quantity: 0 };
+  }
+  next();
+});
 
 app.use(passport.initialize());
 app.use(passport.session());

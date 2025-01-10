@@ -181,10 +181,11 @@
                     <th>Amount</th>
                     <th>Discount</th>
                     <th>Coupons Applied</th>
+                    
                 </tr>
             </thead>
 
-            <%//console.log("Recent Sales frontend"+JSON.stringify(recentSales)) %>
+            <%console.log("Recent Sales frontend"+JSON.stringify(recentSales[0])) %>
 
             <tbody id="salesTableBody">
                 <% if (recentSales.length === 0) { %>
@@ -197,6 +198,7 @@
                             <td>₹<%= sale.finalAmount.toFixed(2) %></td>
                             <td>₹<%= sale.discount ? sale.discount.toFixed(2) : '0.00' %></td>
                             <td><%= sale.discount ? 'Yes' : 'No' %></td>
+                            
                         </tr>
                     <% }) %>
                 <% } %>
