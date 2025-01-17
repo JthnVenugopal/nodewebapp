@@ -65,6 +65,7 @@ const userProfile = async (req, res) => {
     // console.log("req.user:", req.user);
     // console.log("req.session:", req.session);
 
+    
     const userId = req.session?.user?.id || req?.user?.id || req.session.user._id;
     if (!userId) {
       throw new Error("User ID not found in session or request.");

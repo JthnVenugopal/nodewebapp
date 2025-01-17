@@ -77,9 +77,9 @@
             <nav aria-label="Breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="#" rel="nofollow">Home</a>
+                        <a href="/" rel="nofollow">Home</a>
                     </li>
-                    <li class="breadcrumb-item active" aria-current="page">Shop</li>
+                    <li class="breadcrumb-item active" aria-current="page">Orders</li>
                 </ol>
             </nav>
         </div>
@@ -88,7 +88,7 @@
     <div class="container my-5">
         <div class="row">
             <!-- Filters Section -->
-            <div class="col-lg-3 d-flex flex-column filter-section" style="font-size: 20px;">
+            <div class="col-lg-2 d-flex flex-column filter-section mr-5" style="font-size: 15px;">
                 <h5 class="my-2">Filter Products</h5>
                 <form id="filterForm">
                     <!-- Search Bar -->
@@ -192,7 +192,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            
             const filterForm = document.getElementById('filterForm');
+
             const searchInput = document.getElementById('search');
             const categoryList = document.getElementById('categoryList');
             const brandList = document.getElementById('brandList');
@@ -214,7 +216,7 @@
             brandList.addEventListener('click', handleBrandClick);
             priceList.addEventListener('click', handlePriceClick);
             sortList.addEventListener('click', handleSortClick);
-
+            
             function handleCategoryClick(event) {
                 if (event.target.classList.contains('list-group-item')) {
                     Array.from(categoryList.children).forEach(item => item.classList.remove('active'));

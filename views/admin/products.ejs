@@ -20,32 +20,28 @@
         
     </form>
 
-    <h3 style="color: aliceblue;">All Products</h3>
-    <form action="" method="get" class="d-inline">
-        <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px;">
-            <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products or brands" name="search">
-            <button class="btn border-0" type="submit">Search</button>
-        </div>
-    </form>
 </header>
 
-<div class="right mt-5" style="display: flex;justify-content: center;">
+<div class="right my-5" style="display: flex;justify-content: center;">
     <table class="table table-striped" style="width: 80%;margin-left: 15%;">
         <thead>
             <tr>
+
                 <th scope="col"><b>Product name</b></th>
                 <th scope="col"><b>Brand</b></th>
                 <th scope="col"><b>Category</b></th>
                 <th scope="col"><b>Sale Price</b></th>
-                <th scope="col"><b>Offer Price</b></th>
                 <th scope="col"><b>Offer</b></th>
+                <th scope="col"><b>Offer Remove</b></th>
                 <th scope="col"><b>Quantity</b></th>
                 <th scope="col"><b>Action</b></th>
                 <th scope="col"><b>Edit</b></th>
-                <th scope="col"><b>Size</b></th>
+                
             </tr>
         </thead>
         <tbody>
+
+            
 
             <% for(let i=data.length-1;i>=0;i--){ %>
  
@@ -79,6 +75,7 @@
                     <% } %>
                 
                 </td>
+
                 <td><%=data[i].variant.quantity%></td>
                 <td>
 

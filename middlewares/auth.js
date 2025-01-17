@@ -1,6 +1,7 @@
 const User = require("../models/userSchema");
 
 const adminAuth = (req, res, next) => {
+
   User.findOne({ isAdmin: true })
     .then(data => {
       if (data) {
@@ -13,7 +14,16 @@ const adminAuth = (req, res, next) => {
       console.log("Error in adminauth middleware", error);
       res.status(500).send("Internal Server Error");
     });
+    
 };
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////
 
 const userIsAuthenticated = (req, res, next) => {
   try {
@@ -21,13 +31,13 @@ const userIsAuthenticated = (req, res, next) => {
     const userCheck = req.session.user;
 
     if (isAuthenticated || userCheck) {
-      // Set headers to prevent caching
+      
       res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
       res.set('Pragma', 'no-cache');
       res.set('Expires', '0');
       return next();
     } else {
-      // Set headers to prevent caching
+      
       res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
       res.set('Pragma', 'no-cache');
       res.set('Expires', '0');

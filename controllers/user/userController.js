@@ -74,6 +74,7 @@ const loadHomepage = async (req, res, next) => {
   }
 };
 
+
 //////////////////////////////////////////////////////////
 
 const loadSignup = async (req,res) => {
@@ -374,5 +375,5 @@ module.exports = {
   loadLogin,
   login,
   logout,
- 
+  
 }

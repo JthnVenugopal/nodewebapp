@@ -23,6 +23,7 @@ router.get("/pageerror",adminController.pageerror);//Error management
 router.get("/login",adminController.loadLogin)
 router.post("/login",adminController.login);
 router.get("/",adminAuth,adminController.loadDashboard);
+router.get("/dashboard",adminAuth,adminController.dashboardFilter)
 router.get("/logout",adminController.logout)
 
 //customer management

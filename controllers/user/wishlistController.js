@@ -79,6 +79,8 @@ const loadWishlist = async (req, res) => {
 
     const userId = req.session.user?.id || req.user?.id;
 
+    
+
     if (!userId) {
       return res.status(401).send("Unauthorized. Please log in.");
     }

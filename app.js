@@ -25,12 +25,12 @@ app.use(session({
   }
 }));
 
-app.use((req, res, next) => {
-  if (!req.session.cart) {
-    req.session.cart = { items: [], quantity: 0 };
-  }
-  next();
-});
+// app.use((req, res, next) => {
+//   if (!req.session.cart) {
+//     req.session.cart = { items: [], quantity: 0 };
+//   }
+//   next();
+// });
 
 app.use(passport.initialize());
 app.use(passport.session());

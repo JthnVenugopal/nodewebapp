@@ -17,6 +17,7 @@ const getCart = async (req, res) => {
 
     const userId = req.session.user.id || req.user;
 
+
     if (!userId) {
       return res.status(401).json({ error: "User  not authenticated" });
     }
@@ -34,20 +35,28 @@ const getCart = async (req, res) => {
 
       //console.log("Cart////////////"+cart)
 
-      const {items} = cart;
+      // const {items} = cart;
 
-      console.log("items////////"+items)
+      // console.log("items////////"+items)
       
 
-      const cartQuantityMap = items.map((item) => {
-        return item.quantity
-      })
-      console.log(req.session)
-      const cartQuantity = cartQuantityMap[0]
+      // const cartQuantityMap = items.map((item) => {
+      //   return item.quantity
+      // })
+      // console.log(req.session)
+      // const cartQuantity = cartQuantityMap[0]
 
-      req.session.cart.quantity = cartQuantity;
+      // console.log(req.session)
+
+      // req.session.cart.quantity = cartQuantity;
+
+      
 
       //console.log("sessionCart/////"+req.session.cart.quantity)
+
+      // req.session.cart.quantity = req.session.cart.items.length;
+
+      // console.log(req.session.cart.quantity);
 
     if (!cart) {
       return res.render('cart', {
@@ -83,6 +92,8 @@ const addToCart = async (req, res) => {
     const { variantId, productId, quantity, size, price, wishlistItemId } = req.body;
     const parsedQuantity = parseInt(quantity);
 
+    console.log("req.session"+JSON.stringify(req.session))
+    console.log("req.session"+req.session)
     
 
     console.log("variantId//////////" + variantId);
@@ -278,6 +289,10 @@ const updateCartItem = async (req, res) => {
       res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 };
+
+
+//////////////////////////////////////////////////////////////////////
+
 
 
 //////////////////////////////////////////////////////////////////////

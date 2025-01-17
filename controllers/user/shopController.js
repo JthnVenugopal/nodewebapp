@@ -25,9 +25,11 @@ const loadShoppingPage = async (req, res) => {
   } 
 };
 
+/////////////////////////////////////////////////////////////////
+
 const filterProduct = async (req, res) => { 
   try { 
-    const user = req.session.user || req.user; 
+    
 
     
     const { category, brand, minPrice, maxPrice, sort, search } = req.body; 
@@ -112,6 +114,8 @@ const filterProduct = async (req, res) => {
   } 
 };
 
+
+////////////////////////////////////////////////////////////////
 module.exports = {
   loadShoppingPage,
   filterProduct,

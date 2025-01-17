@@ -2,6 +2,7 @@ const User = require("../../models/userSchema");
 const mongoose = require("mongoose")
 const bcrypt = require("bcrypt");
 const Order = require("../../models/orderSchema");
+const Category = require("../../models/categorySchema")
 
 const pageerror = async (req,res) => {
     res.render("admin-error")
@@ -96,7 +97,7 @@ const getCategorySalesData = async (startDate, endDate) => {
 };
 
 const getPaymentMethodsData = async (startDate, endDate) => {
-    console.log("/////////getPaymentMethodsData//////////");
+    console.log("/////////getPaymentMethodsData//////////"); 
 
     const pipeline = [
         {
@@ -271,6 +272,83 @@ const loadDashboard = async (req, res) => {
     }
 };
 
+/////////////////////////////////////////////////////////////
+
+const dashboardFilter = async (req, res) => {
+    const { filter, startDate, endDate } = req.query;
+
+    console.log(req.query)
+    console.log(req.query)
+
+
+    try {
+        // Initialize variables to hold data
+        let paymentMethodsData = [];
+        let categorySalesData = [];
+        let topProducts = [];
+        let topCategories = [];
+
+        // Determine the date range based on the filter
+        let dateRange = {};
+        const today = new Date();
+        
+        if (filter === 'custom') {
+            // Validate and parse custom date range
+            if (!startDate || !endDate) {
+                return res.status(400).send('Start date and end date are required for custom range.');
+            }
+            dateRange = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            };
+        } else {
+            // Set date range based on predefined filters
+            switch (filter) {
+                case 'yearly':
+                    dateRange = { $gte: new Date(today.getFullYear(), 0, 1), $lte: new Date(today.getFullYear(), 11, 31, 23, 59, 59) };
+                    break;
+                case 'monthly':
+                    dateRange = { $gte: new Date(today.getFullYear(), today.getMonth(), 1), $lte: new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59) };
+                    break;
+                case 'weekly':
+                    const lastWeek = new Date();
+                    lastWeek.setDate(today.getDate() - 7);
+                    dateRange = { $gte: lastWeek, $lte: today };
+                    break;
+                case 'daily':
+                    dateRange = { $gte: new Date(today.setHours(0, 0, 0, 0)), $lte: new Date(today.setHours(23, 59, 59, 999)) };
+                    break;
+                default:
+                    return res.status(400).send('Invalid filter option.');
+            }
+        }
+
+        // Fetch data from the database
+        paymentMethodsData = await getPaymentMethodsData(dateRange);
+        categorySalesData = await getCategorySalesData(dateRange);
+
+        topProducts = await getTopSellingItems('product', 10, dateRange);
+        topCategories = await getTopSellingItems('category', 10, dateRange);
+
+
+
+        // Render the dashboard with the fetched data
+        res.render('dashboard', {
+            filter,
+            customStartDate: startDate,
+            customEndDate: endDate,
+            paymentMethodsData,
+            categorySalesData,
+            topProducts,
+            topCategories
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
 
 //-----------------------------------------
 const logout = async (req,res) => {
@@ -297,6 +375,7 @@ module.exports = {
   login,
   loadDashboard,
   pageerror,
-  logout
+  logout,
+  dashboardFilter
 
 }

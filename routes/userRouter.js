@@ -19,7 +19,7 @@ router.get("/", userController.loadHomepage);
 
 //shop management----------------------------------------------------------=
 router.get("/shop", shopController.loadShoppingPage); 
-router.post('/sortProducts', shopController.filterProduct);
+router.post('/shop/filter',shopController.filterProduct);
 
 //signup--------------------------------------------------------------------
 router.get("/signup", userController.loadSignup);
